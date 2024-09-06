@@ -1,0 +1,75 @@
+run_metrics:
+  type: collection
+  displayName: Метрики и статистика запусков
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - run_id:
+        type: KEYTYPE
+        reference: runs
+    - name:
+        type: VARCHAR(200)
+    - value:
+        type: DECIMAL(15,4)
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              rm.id AS "ID" ,
+              r.name AS "Run",
+              rm.name AS "Metric",
+              rm.value AS "Value"
+            FROM run_metrics rm
+                INNER JOIN runs r ON r.ID = rm.run_id
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT 
+              rm.id AS "ID" ,
+              CONCAT( r.name, ' ', rm.name, ' ', rm.value ) AS "Name"
+            FROM run_metrics rm
+                INNER JOIN runs r ON r.ID = rm.run_id
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+

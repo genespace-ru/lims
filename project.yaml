@@ -1,0 +1,48 @@
+lims:
+  projectFileStructure:
+    groovyQueriesDir: src/main/groovy
+    groovyOperationsDir: src/main/groovy
+    groovyExtendersDir: src/main/groovy
+  features:
+  #- beSqlQueries
+  - eventDbLogging
+  #- compiledGroovy
+  l10n: [en,ru]
+  modules:
+  - core:
+      entities:
+      - users
+      - _logout_
+  application:
+  - _welcome_
+  - _dictionaries_
+  - _api_
+  - attachments
+  - analyses
+  - devices
+  - device_types
+  - device_statuses
+  - projects
+  - runs
+  - run_metrics
+  - run_applications
+  - reports
+  - samples
+  - run_samples
+  - sequencing_data
+  - sample_templates
+  - workflows
+  - uploads
+  - nf_workflows
+  - nf_heartbeat
+  scripts:
+  - Post-db
+  - dictionaries
+  - test-hematology/users
+  - test-hematology/project
+  - test-hematology/analyses
+  - test-hematology/devices
+  - test-hematology/sample_templates
+  - test-hematology/workflows
+  - test-hematology/test_data
+  includes: common

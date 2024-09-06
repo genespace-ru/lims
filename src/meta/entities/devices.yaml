@@ -1,0 +1,81 @@
+devices:
+  type: table
+  displayName: Devices
+  order: '25'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - sn:
+        type: VARCHAR(100)
+        doc: serial number 
+    - title:
+        type: TEXT
+    - typeID:
+        type: INT
+        reference: device_types
+    - tocken:
+        type: VARCHAR(100)
+        canBeNull: true
+        doc: authorisation key for remote access       
+    - statusID:
+        type: INT
+        reference: device_statuses
+    - stats:    
+        type: JSON
+        canBeNull: true        
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      defaultView: true
+      operations:
+      - Delete
+      - Edit
+      - Insert
+      code: |-
+          SELECT
+            d.sn AS "Serial",
+            d.title AS "Title",
+            dt.name AS "Type;<quick visible='true' />",
+            ds.name AS "Status;<quick visible='true' />",
+            d.stats AS "Statistics;<quick visible='true' />"
+          FROM devices d
+          LEFT JOIN device_types dt ON dt.id = d.typeID  
+          LEFT JOIN device_statuses ds ON ds.id = d.statusID
+          
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, sn||' - '||name FROM devices ORDER BY name
+
+  operations:
+    - Delete:
+        records: 2
+        roles: '@AllRoles'
+        layout: '{"type":"modalForm"}'
+        code: com.developmentontheedge.be5.server.operations.DeleteOperation
+    - Edit:
+        records: 1
+        roles: '@AllRoles'
+        code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+    - Insert:
+        roles: '@AllRoles'
+        code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  

@@ -1,0 +1,25 @@
+nf_heartbeat:
+  type: table
+  displayName: NF heartbeat
+  order: '21'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        primaryKey: true
+        autoIncrement: true
+    - workflow_id:
+        type: VARCHAR(16)
+        reference: nf_workflows
+        doc: Nexflow workflow_id
+    - creation_time:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+        canBeNull: true        
+        doc: Heartbeat time
+    - heartbeat_request:    
+        type: JSONB
+        canBeNull: true        
+        doc: request JSON - /trace/heartbeat
+        

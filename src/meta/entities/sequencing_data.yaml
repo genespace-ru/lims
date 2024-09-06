@@ -1,0 +1,85 @@
+sequencing_data:
+  type: collection
+  displayName: Данные секвенирования для каждого связанного образца
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - run_sample_id:
+        type: KEYTYPE
+        reference: run_samples
+    - read_count:
+        type: BIGINT
+        canBeNull: true 
+    - base_count:
+        type: BIGINT
+        canBeNull: true 
+    - quality_score:
+        type: DECIMAL(15,4)
+        canBeNull: true 
+    - sequence_data:
+        type: TEXT
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              sd.id AS "ID" ,
+              r.name AS "Run",
+              sd.read_count AS "Read Count",
+              sd.base_count AS "Base Count",
+              sd.quality_score AS "Quality Score",
+              <@COMMON_WHO_FIELDS 'sd' />
+            FROM sequencing_data sd
+              INNER JOIN run_samples rs ON rs.ID = sd.run_sample_id
+                INNER JOIN runs r ON r.ID = rs.run_id
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT 
+              sd.id AS "ID" ,
+              sd.id AS "Name"
+            FROM sequencing_data sd
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+

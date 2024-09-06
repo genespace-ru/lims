@@ -1,0 +1,73 @@
+sample_templates:
+  type: dictionary
+  displayName: Sample templates
+  order: '20'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        primaryKey: true
+    - name:
+        type: VARCHAR(100)
+    - description:
+        type: TEXT
+        canBeNull: true
+    - data:
+        type: TEXT
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      invisible: true
+      roles: '@AllRoles'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              st.id AS "ID",
+              st.name AS "Name",
+              st.description AS "Description",
+              st.data AS "Template",
+              <@COMMON_WHO_FIELDS 'st' />
+            FROM sample_templates st
+            ORDER BY st.name
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, name FROM sample_templates ORDER BY name
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+

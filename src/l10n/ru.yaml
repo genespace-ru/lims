@@ -1,0 +1,98 @@
+ru:
+  entities:
+  - index:
+    - topics: page
+      entries:
+      - title: lims
+      - description: Приложение lims
+  - _homepage_:
+    - topics: displayName
+      entries:
+      - homepage: Главная
+  - _welcome_:
+    - topics: displayName
+      entries:
+      - Welcome: Добро пожаловать
+  - _logout_:
+    - topics: displayName
+      entries:
+      - Logout: Выход
+  - _dictionaries_:
+    - topics: viewName
+      entries:
+      - Device types: Типы устройств
+      - Device statuses: Статусы устройств
+      - Analyses: Анализы
+      - Templates: Шаблоны
+      - Workflows: Сценарии анализа
+  - users:
+    - topics: displayName
+      entries:
+      - Logout: Пользователи
+    - topics: viewName
+      entries:
+      - Login: Вход
+  - samples:
+    - topics: displayName
+      entries:
+      - displayName: Образцы
+  - devices:
+    - topics: displayName
+      entries:
+      - displayName: Устройства
+  - analyses:
+    - topics: displayName
+      entries:
+      - displayName: Анализы
+  - device_types:
+    - topics: displayName
+      entries:
+      - displayName: Типы устройств
+  - device_statuses:
+    - topics: displayName
+      entries:
+      - displayName: Статусы устройств
+  - sample_templates:
+    - topics: displayName
+      entries:
+      - displayName: Шаблоны
+  - workflows:
+    - topics: displayName
+      entries:
+      - displayName: Сценарии анализа
+  - query.jsp:
+    - topics: page
+      entries:
+      - Active From: Дата начала
+      - Active To: Дата окончания
+      - Class: Класс
+      - Fio: Ф.И.О.
+      - Prev: Предыдущая
+      - amount: Сумма
+      - birthDay: Дата рожд.
+      - changeDate: Дата изменения
+      - 'no': нет
+      - 'yes': да
+  - testtable:
+    - topics: operationName
+      entries:
+      - TestOperation: Тестовая операция
+      - TestOperationInnerDps: Операция с вложенным DPS
+      - Delete: Удалить
+      - Edit: Редактировать
+      - Insert: Добавить
+    - topics: viewName
+      entries:
+      - All records: Все записи
+    - topics: 'Quick Filter: Test 1D name'
+      entries:
+      - test: тест
+    - topics: 'Quick Filter: Test 1D value'
+      entries:
+      - 'value': 'значение'
+      #todo localize by mask
+      - 'value $1': 'значение $1'
+    - topics: Test 1D
+      entries:
+      - Value: Значение
+      - Name: Имя

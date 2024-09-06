@@ -1,0 +1,34 @@
+connectionProfiles:
+  profiles:
+    test_h2:
+      connectionUrl: jdbc:h2:~/lims;AUTO_SERVER=TRUE
+      username: sa
+      password: ''
+    test_local:
+      connectionUrl: jdbc:postgresql://localhost:5434/lims
+      username: lims
+      password: lims
+    test_local_32:
+      connectionUrl: jdbc:postgresql://localhost:5432/lims
+      username: lims
+      password: lims
+    dockerBuildDev:
+      connectionUrl: jdbc:postgresql://docker:5433/lims
+      username: lims
+      password: lims
+    jettyDev:
+      connectionUrl: jdbc:postgresql://docker:5433/lims
+      username: lims
+      password: lims
+    dockerRemoteProd:
+      connectionUrl: jdbc:postgresql://localhost:5435/lims
+      username: lims
+      password: lims
+    dockerRemoteDev:
+      connectionUrl: jdbc:postgresql://localhost:5436/lims
+      username: lims
+      password: lims
+    dockerRunDev:
+      connectionUrl: jdbc:postgresql://postgres-lims:5432/lims
+      username: lims
+      password: lims

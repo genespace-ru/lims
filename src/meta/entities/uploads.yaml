@@ -1,0 +1,87 @@
+uploads:
+  type: table
+  displayName: Загрузки
+  order: '17'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - fileName:
+        type: VARCHAR(200)
+    - tableName:
+        type: VARCHAR(200)
+        canBeNull: true
+    - type:
+        type: ENUM( 'VEP', 'BAM', 'SAM', 'CRAM', 'FASTA', 'FASTQ', 'GTF', 'GFF', 'BED', 'unknown' )
+    - comment:
+        type: TEXT
+        canBeNull: true
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true
+    - creationDate___:
+        type: DATETIME
+        canBeNull: true
+    - modificationDate___:
+        type: DATETIME
+        canBeNull: true
+  queries:
+  - '*** Selection view ***':
+      code: |-
+        SELECT
+          u.ID,
+          u.fileName
+        FROM uploads u
+  - All records:
+      roles: '@AllRolesExceptGuest'
+      operations:
+      - Upload File
+      - Delete
+      - Filter
+      code: |-
+        SELECT
+          u.ID AS "ID",
+          CONCAT( 'uploads.', u.ID ) AS "___ownerID",
+          CASE WHEN type = 'VEP'
+          THEN
+            CONCAT( '<a href="#!table/uploads/VEP Data/table=', u.tableName, '">', u.tableName, '</a>' )
+          ELSE '' 
+          END    
+            AS "Data",
+          u.fileName
+            AS "Source File",
+          '<link table="attachments" using="___ownerID" columns="ownerID" />' 
+            AS ";Source File"
+        FROM uploads u
+  - VEP Data:
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+          SELECT 
+               *
+          FROM <parameter:table />
+          ORDER BY "___ID" 
+  operations:
+  - Upload File:
+      type: Groovy
+      roles: [Administrator, SystemDeveloper]
+      file: operations.UploadFile.groovy
+  - Delete:
+      records: 2
+      roles: [Administrator, SystemDeveloper]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+      extenders:
+      - file: extenders.EntityEditDeleteExtender.groovy
+  - Filter:
+      records: -1
+      roles: '@AllRoles'
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation

@@ -1,0 +1,109 @@
+projects:
+  type: table
+  displayName: Проекты
+  doc: Способ группировки образцов (samples).
+  order: '15'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - name:
+        type: VARCHAR(100)
+    - description:
+        type: TEXT
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              p.ID AS "ID" ,
+              p.ID AS "___prjID",
+              p.name AS "Name",
+              '<link table="projects" queryName="Project card" using="___prjID" columns="ID" />' 
+                AS ";Name",
+              p.description AS "Description;<quick visible='true' />",
+              <@COMMON_WHO_FIELDS 'p' />
+            FROM projects p
+            ORDER BY p.name
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, name FROM projects ORDER BY name
+  - Project card:
+      roles: '@AllRolesExceptGuest'
+      invisible: true
+      type: 1D_unknown
+      layout: '{"tableBox":"projectCard", "mode":"named", "hideTitle":"true"}'
+      code: |-
+          SELECT
+            pr.ID AS "ID",
+            CONCAT( 'Карточка проекта: ', pr.name ) AS "PageTitle"
+          FROM projects pr
+          WHERE 1 = 1
+          <if parameter="ID">
+              AND pr.ID = <parameter:ID/>
+          </if>
+  - ProjectTab:
+      roles: '@AllRolesExceptGuest'
+      invisible: true
+      type: 1D_unknown
+      layout: '{"tableBox":"projectTab", "mode":"named", "hideTitle":"true"}'
+      code: |-
+        SELECT p.ID AS "ID",
+            'Project: ' || p.name AS "PageTitle",
+             p.name AS "Name",
+             p.description AS "Description",
+             TO_CHAR(p.creationDate___,     'DD.MM.YYYY, HH24:MI') AS "creationdate___",
+             TO_CHAR(p.modificationDate___, 'DD.MM.YYYY, HH24:MI') AS "modificationdate___",
+             p.whoInserted___,
+             p.whoModified___
+        FROM projects p
+          WHERE (1=1)
+          <if parameter="___prjID">
+              AND p.ID = <parameter:___prjID/>
+          </if>
+        
+  operations:
+  - Insert:
+      roles: [Administrator, User]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      roles: [Administrator, User]
+      records: 1
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator, User]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      roles: [Administrator, User]
+      records: 2
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+

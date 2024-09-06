@@ -1,0 +1,17 @@
+_api_:
+  type: table
+  displayName: Lims API
+  order: '999'
+  primaryKey: _dummy_
+  queries:
+  - All records:
+      type: static
+      roles: []
+      value: ''
+      operations:
+      - 'get'
+  operations:
+  - 'get':
+      type: Groovy
+      roles: []
+      file: operations.api.get.groovy

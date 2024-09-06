@@ -1,0 +1,34 @@
+version: "3"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-lims
+    expose:
+      - 5434
+    ports:
+      - 127.0.0.1:5434:5432
+    environment:
+      - POSTGRES_PASSWORD=lims
+      - POSTGRES_USER=lims
+      - POSTGRES_DB=lims
+    restart: unless-stopped
+    volumes:
+      - ./empty.sql:/docker-entrypoint-initdb.d/init.sql
+      - ~/postgres-lims:/var/lib/postgresql/data
+  app:
+    image: tomcat:7-jdk8-openjdk
+    container_name: app
+    depends_on:
+      - postgres
+    environment:
+      - CATALINA_OPTS=-Djava.security.egd=file:/dev/./urandom
+      #- CATALINA_OPTS=-Djava.security.egd=file:/dev/./urandom -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8106
+    expose:
+      - 9099
+    ports:
+      - 9099:8080
+      - 9106:8106
+    volumes:
+      - ./docker.out/logs:/usr/local/tomcat/logs
+      - ../target/lims.war:/usr/local/tomcat/webapps/ROOT.war
+      - ../../../../projects/java/common/bin/postgresql/postgresql-42.2.6.jar:/usr/local/tomcat/lib/postgresql-42.2.6.jar

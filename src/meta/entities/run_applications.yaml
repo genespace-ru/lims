@@ -1,0 +1,80 @@
+run_applications:
+  type: collection
+  displayName: Приложения, которые могут использоваться в запусках для анализа данных
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - run_id:
+        type: KEYTYPE
+        reference: runs
+    - name:
+        type: VARCHAR(200)
+    - version:
+        type: VARCHAR(50)      
+        canBeNull: true
+    - description:
+        type: TEXT
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              ra.id AS "ID" ,
+              r.name AS "Run",
+              ra.name AS "Application",
+              ra.version AS "Version",
+              ra.description AS "Description"
+            FROM run_applications ra
+                INNER JOIN runs r ON r.ID = ra.run_id
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT 
+              ra.id AS "ID" ,
+              CONCAT( r.name, ' ', ra.name ) AS "Name"
+            FROM run_applications ra
+                INNER JOIN runs r ON r.ID = ra.run_id
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+

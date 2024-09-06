@@ -1,0 +1,99 @@
+analyses:
+  type: dictionary
+  displayName: Analyses
+  order: '20'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - project_id:
+        type: KEYTYPE
+        reference: projects
+    - name:
+        type: VARCHAR(100)
+    - icon:
+        type: VARCHAR(100)
+        canBeNull: true 
+    - description:
+        type: TEXT
+        canBeNull: true
+    - data:
+        type: TEXT
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      invisible: true
+      roles: '@AllRoles'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              a.id AS "ID",
+              a.name AS "Name",
+              a.description AS "Description",
+              a.data AS "Definition",
+              <@COMMON_WHO_FIELDS 'a' />
+            FROM analyses a
+            ORDER BY a.name
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, name FROM analyses ORDER BY name
+  - ForProjectCard:
+      type: 1D
+      invisible: true
+      layout: '{"hideTitle":"true"}'
+      roles: [Administrator]
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |-
+            SELECT 
+              a.id AS "ID",
+              a.name AS "Name",
+              a.description AS "Description",
+              a.data AS "Definition",
+              <@COMMON_WHO_FIELDS 'a' />
+            FROM analyses a
+            ORDER BY a.name
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+

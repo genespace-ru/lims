@@ -1,0 +1,172 @@
+samples:
+  type: table
+  displayName: Образцы
+  doc: Отдельные образцы для секвинирования. За основу взяты поля Illumina.
+  order: '16'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - name:
+        type: VARCHAR(100)
+    - type:
+        type: VARCHAR(50)
+    - template_id:
+        type: KEYTYPE
+        reference: sample_templates
+        canBeNull: true
+    - plate:
+        type: VARCHAR(100)
+        canBeNull: true
+    - well:
+        type: VARCHAR(100)
+        canBeNull: true
+    - index_plate:
+        type: VARCHAR(100)
+        canBeNull: true
+    - index_well:
+        type: VARCHAR(100)
+        canBeNull: true
+    - I7_index_id:
+        type: VARCHAR(100)
+        canBeNull: true
+    - index1:
+        type: VARCHAR(100)
+        canBeNull: true
+    - I5_index_id:
+        type: VARCHAR(100)
+        canBeNull: true
+    - index2:
+        type: VARCHAR(100)
+        canBeNull: true
+    - description:
+        type: TEXT
+        canBeNull: true
+    - file_path:
+        type: VARCHAR(300)
+        canBeNull: true
+    - file_size:
+        type: INT
+        canBeNull: true
+    - metadata:
+        type: TEXT
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              s.id AS "ID" ,
+              s.id AS "___sampleID" ,
+              s.name AS "Name",
+              s.type AS "Type",
+              s.plate AS "Plate",
+              s.well AS "Well",
+              s.index_plate AS "Index Plate;<quick visible='false'/>",
+              s.index_well AS "Index Plate;<quick visible='false' />",
+              s.I7_index_id AS "I7 index;<quick visible='false' />",
+              s.index1 AS "Index1;<quick visible='false' />",
+              s.I5_index_id AS "I5 index;<quick visible='false' />",
+              s.index2 AS "Index2;<quick visible='false' />",
+              '<sql>SELECT DISTINCT prj.name
+              FROM projects prj
+                  INNER JOIN runs r ON r.project_id = prj.ID
+                     INNER JOIN run_samples rs ON rs.run_id = r.ID AND rs.sample_id = <var:___sampleID />
+              </sql>'
+                AS "Projects;<quick visible='true' />",
+              s.file_path AS "File path;<quick visible='false' />",
+              s.file_size AS "File size;<quick visible='false' />",
+              s.description AS "Description;<quick visible='true' />",
+              st.name AS "Template;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 's' />
+            FROM samples s
+                LEFT JOIN sample_templates st ON st.id = s.template_id
+            ORDER BY s.name
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, name FROM samples ORDER BY name
+  - ForProjectCard:
+      type: 1D
+      invisible: true
+      layout: '{"hideTitle":"true"}'
+      roles: [Administrator]
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |-
+            SELECT 
+              s.id AS "ID",
+              rs.id AS "___rsID",
+              s.name AS "Name",
+              s.type AS "Type",
+              s.plate AS "Plate",
+              s.well AS "Well",
+              s.index_plate AS "Index Plate;<quick visible='false'/>",
+              s.index_well AS "Index Plate;<quick visible='false' />",
+              s.I7_index_id AS "I7 index;<quick visible='false' />",
+              s.index1 AS "Index1;<quick visible='false' />",
+              s.I5_index_id AS "I5 index;<quick visible='false' />",
+              s.index2 AS "Index2;<quick visible='false' />",
+              s.file_path AS "File path;<quick visible='false' />",
+              s.file_size AS "File size;<quick visible='false' />",
+              s.description AS "Description;<quick visible='true' />",
+              st.name AS "Template;<quick visible='false' />",
+              '<sql>SELECT COUNT(1)
+              FROM sequencing_data sd
+              WHERE sd.run_sample_id = <var:___rsID />
+              </sql>'
+                 AS "Sequencing Data;<quick visible='true' />",
+              '<link table="sequencing_data" using="___rsID" columns="run_sample_id" class="open-in-modal" />' 
+                AS ";Sequencing Data",
+              <@COMMON_WHO_FIELDS 's' />
+            FROM samples s
+                INNER JOIN run_samples rs ON rs.sample_id = s.ID
+                   INNER JOIN runs r ON rs.run_id = r.ID AND r.project_id = <parameter:___prjID />
+                LEFT JOIN sample_templates st ON st.id = s.template_id
+            ORDER BY s.name
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+

@@ -1,0 +1,107 @@
+runs:
+  type: collection
+  displayName: Запуски
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - project_id:
+        type: KEYTYPE
+        reference: projects
+    - name:
+        type: VARCHAR(100)
+    - status:
+        type: ENUM( 'in_progress', 'completed' )
+    - description:
+        type: TEXT
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              p.id AS "ID" ,
+              r.name AS "Name",
+              p.name AS "Project",
+              r.description AS "Description;<quick visible='true' />",
+              <@COMMON_WHO_FIELDS 'r' />
+            FROM runs r
+                INNER JOIN projects p ON p.ID = r.project_id
+            ORDER BY p.name
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, name FROM runs ORDER BY name
+  - RunTab:
+      type: 1D
+      invisible: true
+      layout: '{"hideTitle":"true"}'
+      roles: [Administrator, User]
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |-
+            SELECT 
+              r.id AS "ID" ,
+              r.id AS "___runID" ,
+              r.name AS "Name",
+              p.name AS "Project",
+              '<sql>SELECT COUNT(1) FROM run_applications WHERE run_id = <var:___runID /></sql>'
+                AS "Applications",
+              '<link table="run_applications" using="___runID" columns="run_id" class="open-in-modal" />' 
+                AS ";Applications",
+              '<sql>SELECT COUNT(1) FROM run_metrics WHERE run_id = <var:___runID /></sql>'
+                AS "Metrics",
+              '<link table="run_metrics" using="___runID" columns="run_id" class="open-in-modal" />' 
+                AS ";Metrics",
+              r.description AS "Description;<quick visible='true' />",
+              <@COMMON_WHO_FIELDS 'r' />
+            FROM runs r
+                INNER JOIN projects p ON p.ID = r.project_id
+            WHERE r.project_id = <parameter:___prjID />
+            ORDER BY p.name
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+
