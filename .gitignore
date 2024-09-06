@@ -1,6 +1,5 @@
 .settings
 src/profile.local
-dev.yaml
 package-lock.json 
 
 /.project
