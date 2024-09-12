@@ -71,3 +71,10 @@ Password: 12345
 
 Для обновления yaml проекта без перезапуска настройте dev.yaml    
 [Быстрое обновление dev.yaml](https://github.com/DevelopmentOnTheEdge/be5/wiki/%D0%91%D1%8B%D1%81%D1%82%D1%80%D0%BE%D0%B5-%D0%BE%D0%B1%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-dev.yaml)
+
+### Генерация таблиц и диаграмм для документации
+```sh
+mvn be5:generate-doc -DBE5_DOC_PATH=../lims-docs/source
+```
+
+
