@@ -22,7 +22,7 @@ class ProjectTabTableBox extends Component
             <Field  title='Создал'              value={project.whoinserted___.value}/>
             <FieldNotEmpty  title='Изменено'    value={project.whomodified___.value}/>
             <FieldNotEmpty  title='Изменил'     value={project.modificationdate___.value}/>
-        </div>);
+       </div>);
   }
 }
 

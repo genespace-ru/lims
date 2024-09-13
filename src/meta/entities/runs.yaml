@@ -1,7 +1,9 @@
 runs:
-  type: collection
+  type: table
   displayName: Запуски
   primaryKey: ID
+  order: '16'
+  doc: Запуски секвенатора
   scheme:
     columns:
     - ID:
@@ -15,9 +17,10 @@ runs:
         type: VARCHAR(100)
     - status:
         type: ENUM( 'in_progress', 'completed' )
-    - description:
+    - data:
         type: TEXT
         canBeNull: true
+        doc: данные из/для файла запуска секвенатора
     - creationDate___:
         type: TIMESTAMP
         canBeNull: true        
@@ -42,13 +45,17 @@ runs:
       - Filter
       code: |2-
             SELECT 
-              p.id AS "ID" ,
+              r.id AS "ID" ,
+              p.ID AS "___prjID",
               r.name AS "Name",
               p.name AS "Project",
-              r.description AS "Description;<quick visible='true' />",
+              '<link table="projects" queryName="Project card" using="___prjID" columns="ID" />' AS ";Project",
+              r.status AS "Status",
+              '<pre>' || r.data || '</pre>' AS "File data;<quick visible='false' />",
               <@COMMON_WHO_FIELDS 'r' />
             FROM runs r
-                INNER JOIN projects p ON p.ID = r.project_id
+            INNER JOIN projects p ON p.ID = r.project_id
+            LEFT JOIN systemsettings s ON s.section_name='lims' AND s.setting_name='projects_dir'
             ORDER BY p.name
   - '*** Selection view ***':
       type: 1D_unknown
@@ -57,34 +64,24 @@ runs:
             SELECT id, name FROM runs ORDER BY name
   - RunTab:
       type: 1D
+      roles: '@AllRolesExceptGuest'
       invisible: true
-      layout: '{"hideTitle":"true"}'
-      roles: [Administrator, User]
-      operations:
-      - Insert
-      - Edit
-      - Delete
-      - Filter
-      code: |-
+      layout: '{"tableBox":"runTab", "mode":"named", "hideTitle":"true"}'
+      code: |2-
             SELECT 
               r.id AS "ID" ,
-              r.id AS "___runID" ,
+              p.ID AS "___prjID",
               r.name AS "Name",
-              p.name AS "Project",
-              '<sql>SELECT COUNT(1) FROM run_applications WHERE run_id = <var:___runID /></sql>'
-                AS "Applications",
-              '<link table="run_applications" using="___runID" columns="run_id" class="open-in-modal" />' 
-                AS ";Applications",
-              '<sql>SELECT COUNT(1) FROM run_metrics WHERE run_id = <var:___runID /></sql>'
-                AS "Metrics",
-              '<link table="run_metrics" using="___runID" columns="run_id" class="open-in-modal" />' 
-                AS ";Metrics",
-              r.description AS "Description;<quick visible='true' />",
-              <@COMMON_WHO_FIELDS 'r' />
+              r.status AS "Status",
+              r.data AS "Data;<quick visible='false' />",
+             TO_CHAR(p.creationDate___,     'DD.MM.YYYY, HH24:MI') AS "creationdate___",
+             TO_CHAR(p.modificationDate___, 'DD.MM.YYYY, HH24:MI') AS "modificationdate___",
+             p.whoInserted___,
+             p.whoModified___
             FROM runs r
-                INNER JOIN projects p ON p.ID = r.project_id
+            INNER JOIN projects p ON p.ID = r.project_id
+            LEFT JOIN systemsettings s ON s.section_name='lims' AND s.setting_name='projects_dir'
             WHERE r.project_id = <parameter:___prjID />
-            ORDER BY p.name
   operations:
   - Insert:
       roles: [Administrator]

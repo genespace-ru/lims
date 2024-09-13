@@ -24,11 +24,11 @@ lims:
   - device_statuses
   - projects
   - runs
+  - run_samples
   - run_metrics
   - run_applications
   - reports
   - samples
-  - run_samples
   - sequencing_data
   - sample_templates
   - workflows
@@ -40,6 +40,7 @@ lims:
   - dictionaries
   - test-hematology/users
   - test-hematology/project
+  - test-hematology/systemsettings
   - test-hematology/analyses
   - test-hematology/devices
   - test-hematology/sample_templates

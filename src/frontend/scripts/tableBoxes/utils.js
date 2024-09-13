@@ -1,22 +1,12 @@
 import React, {Component} from 'react';
 
-export function field(title, value)
-{
-    return (
-        <div className="row">
-        <div className="col-md-2 fieldTitle">{title}:</div>
-        <div className="col fieldValue">{value}</div>
-        </div>  
-    );
-}
-
 export function Field(props)
 {
     return (
         <div className="row">
-	    <div className="col-md-2 fieldTitle">{props.title}:</div>
-		<div className="col fieldValue">{props.value}</div>
-		</div>	
+            <div className="col-md-2 fieldTitle">{props.title}:</div>
+            <div className="col fieldValue">{props.value}</div>
+	</div>	
 	);
 }
 

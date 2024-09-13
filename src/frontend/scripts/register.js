@@ -21,3 +21,4 @@ import 'be5-react/src/css/main.css';
 
 import './tableBoxes/ProjectCardTableBox';
 import './tableBoxes/ProjectTabTableBox';
+import './tableBoxes/RunTabTableBox';
