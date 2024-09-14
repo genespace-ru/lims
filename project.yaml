@@ -18,6 +18,9 @@ lims:
   - _dictionaries_
   - _api_
   - attachments
+  - attributes
+  - attribute_groups
+  - attribute_types
   - analyses
   - devices
   - device_types

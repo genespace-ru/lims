@@ -4,6 +4,18 @@ _dictionaries_:
   order: '70'
   primaryKey: dummy
   queries:
+  - Аттрибуты:
+      type: static
+      roles: '@AllRoles'
+      value: attributes.redir
+  - Аттрибуты - группы:
+      type: static
+      roles: '@AllRoles'
+      value: attribute_groups.redir
+  - Аттрибуты - типы:
+      type: static
+      roles: '@AllRoles'
+      value: attribute_types.redir
   - Device types:
       type: static
       roles: [Administrator]

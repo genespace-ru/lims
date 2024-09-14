@@ -1,0 +1,36 @@
+attribute_types:
+  type: dictionary
+  displayName: Типы аттрибутов
+  doc: Типы  аттрибутов (свойств) для аннотации SNV и CNV.
+  order: '14'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - title:
+        type: VARCHAR(20)
+        doc: Название типа аттрибута.
+    - description:
+        type: TEXT
+        doc: Описание типа аттрибута.
+        canBeNull: true
+    - comment:
+        type: TEXT
+        doc: Комментарий.
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 

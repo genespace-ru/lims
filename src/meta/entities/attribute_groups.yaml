@@ -1,0 +1,90 @@
+attribute_groups:
+  type: dictionary
+  displayName: Группа аттрибутов
+  doc: Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.
+  order: '14'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - title:
+        type: VARCHAR(100)
+        doc: Название группы. Где это возможно используются названия группы аттрибутов из VEP и/или Genomenal.
+    - title_ru:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - description:
+        type: TEXT
+        doc: Описание группы аттрибутов. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
+        canBeNull: true
+    - description_ru:
+        type: TEXT
+        doc: Описание группы аттрибутов. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
+        canBeNull: true
+    - comment:
+        type: TEXT
+        doc: Комментарий.
+        canBeNull: true
+    - displayOrder:
+        type: VARCHAR(5)
+        canBeNull: true
+        doc: Порядок отображения групп аттрибутов в представлении.
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRoles'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              w.id AS "ID",
+              w.name AS "Name",
+              w.description AS "Description",
+              w.data AS "Definition",
+              <@COMMON_WHO_FIELDS 'w' />
+            FROM workflows w
+            ORDER BY w.name
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, name FROM workflows ORDER BY name
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
