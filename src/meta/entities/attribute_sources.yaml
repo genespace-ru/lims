@@ -1,0 +1,40 @@
+attribute_sources:
+  type: dictionary
+  displayName: Данные для аттрибутов
+  doc: Пара программа-база данных, которые были использованы для вычисления значения аттрибута при аннотации SNV и CNV.
+  order: '14'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - attribute: 
+        type: INT
+        reference: attributes
+        doc: Аттрибут. 
+    - database: 
+        type: INT
+        reference: databases
+        doc: База данных, использованная для получения значения аттрибута. 
+    - program:
+        type: INT
+        reference: programs
+        doc: Программа, использованная для получения значения аттрибута. 
+    - comment:
+        type: TEXT
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 

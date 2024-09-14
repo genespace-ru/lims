@@ -20,11 +20,14 @@ lims:
   - attachments
   - attributes
   - attribute_groups
+  - attribute_sources
   - attribute_types
   - analyses
+  - databases
   - devices
   - device_types
   - device_statuses
+  - programs
   - projects
   - runs
   - run_samples
@@ -49,4 +52,5 @@ lims:
   - test-hematology/sample_templates
   - test-hematology/workflows
   - test-hematology/test_data
+  - attributes/types
   includes: common
