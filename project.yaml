@@ -20,20 +20,20 @@ lims:
   - attachments
   - attributes
   - attribute_groups
-  - attribute_sources
+  - attribute_resources
   - attribute_types
   - analyses
-  - databases
   - devices
   - device_types
   - device_statuses
-  - programs
   - projects
   - runs
   - run_samples
   - run_metrics
   - run_applications
   - reports
+  - resources
+  - resource_recommendations
   - samples
   - sequencing_data
   - sample_templates

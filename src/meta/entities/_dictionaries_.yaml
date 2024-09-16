@@ -16,6 +16,10 @@ _dictionaries_:
       type: static
       roles: '@AllRoles'
       value: attribute_types.redir
+  - Аттрибуты - ресурсы:
+      type: static
+      roles: '@AllRoles'
+      value: resources.redir
   - Device types:
       type: static
       roles: [Administrator]

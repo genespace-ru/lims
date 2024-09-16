@@ -1,0 +1,44 @@
+attribute_resources:
+  type: collection
+  displayName: Ресурсы для аттрибутов
+  doc: |-
+    Ресурсы, которые были использованы для вычисления значения аттрибута при аннотации SNV и CNV.
+    
+    Как правило, для каждого аттрибута необходимо указать:
+      * базу данных;
+      * программу;
+      * рекомендацию. 
+    
+    Pending: версионирование ресурсов.
+  order: '14'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - attribute: 
+        type: INT
+        reference: attributes
+        doc: Аттрибут. 
+    - resource: 
+        type: INT
+        reference: resources
+        doc: Ресурс (программа, база данных или рекомендация), использованная для получения значения аттрибута. 
+    - comment:
+        type: TEXT
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 

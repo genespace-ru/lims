@@ -1,0 +1,12 @@
+snv_:
+  type: table
+  displayName: SNV
+  doc: Список найденных SNV.
+  order: '14'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true

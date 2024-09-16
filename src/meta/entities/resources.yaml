@@ -1,0 +1,50 @@
+resources:
+  type: dictionary
+  displayName: Ресурсы (для аннотации)
+  doc: Программы, базы данных и рекоммендации, используемые для аннотации SNV и CNV.
+  order: '14'
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - type:
+        type: ENUM('database', 'program', 'recommendation', 'other')
+        doc: Тип ресурса.
+    - title:
+        type: VARCHAR(20)
+        doc: Название ресурса.
+    - version:
+        type: VARCHAR(20)
+        canBeNull: true        
+        doc: Версия ресурса.
+    - description:
+        type: TEXT
+        canBeNull: true
+    - url:
+        type: VARCHAR(100)
+        canBeNull: true        
+        doc: Ссылка на сайт ресурса.
+    - license:
+        type: VARCHAR(200)
+        canBeNull: true        
+        doc: Лицензия, по которой распространяется ресурс.
+    - comment:
+        type: TEXT
+        canBeNull: true
+        doc: Разные комментарии, в том числе вопросы и замечания. 
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 

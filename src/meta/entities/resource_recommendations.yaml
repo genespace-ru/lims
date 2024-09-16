@@ -1,7 +1,7 @@
-programs:
-  type: dictionary
-  displayName: Программы
-  doc: Программы, используемые для аннотации SNV и CNV.
+resource_recommendations:
+  type: collection
+  displayName: Ресурсы - рекомендации
+  doc: Описывает связь между ресурсами для аннотации SNV и CNV и соответствующими методическими рекомендациями.
   order: '14'
   primaryKey: ID
   scheme:
@@ -10,17 +10,12 @@ programs:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - title:
-        type: VARCHAR(20)
-        doc: Название программы.
-    - version:
-        type: VARCHAR(20)
-        canBeNull: true        
-        doc: Версия программы.
-    - description:
-        type: TEXT
-        doc: Описание программы.
-        canBeNull: true
+    - resource: 
+        type: INT
+        reference: resources
+    - recommendation: 
+        type: INT
+        reference: resources
     - comment:
         type: TEXT
         canBeNull: true
