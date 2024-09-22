@@ -1,7 +1,10 @@
 snv_:
   type: table
   displayName: SNV
-  doc: Список найденных SNV.
+  doc: |-
+    Список найденных SNV. Для каждого образца создается отдельная таблица,
+    где название образца является суффиксом в названии таблицы.
+    Например: snv_sample1.
   order: '14'
   primaryKey: ID
   scheme:
@@ -10,3 +13,42 @@ snv_:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
+    - VEP_ID:
+        type: VARCHAR(50)
+        canBeNull: true        
+        doc: Идентификатор SNV в VEP файле.
+    - location:
+        type: VARCHAR(50)
+        doc: |- 
+          Расположение SNV в стандартном формате (chr:start or chr:start-end)
+    - allele:
+        type: VARCHAR(10)
+        doc: Вариант, исопльзуемы для рассчета последствий SNV.
+    - pathogenicity:
+        type: INT
+        reference: pathogenicity
+        canBeNull: true        
+        doc: Патогенность SNV 
+    - pathogenicityAuthority:
+        type: INT
+        reference: pathogenicity_authority
+        canBeNull: true        
+        doc: Автор или рекоммендации, по которой проставлена патогенность. 
+    - isAttached:
+        type: ENUM('yes', 'no')
+        defaultValue: '''no'''
+        doc: Нужно ли закрепить, отмеченные SNV, в начале представления.
+    - isHidden:
+        type: ENUM('yes', 'no')
+        defaultValue: '''no'''
+        doc: Нужно ли показывать SNV в представлении.
+    - includeInReport:
+        type: ENUM('yes', 'no')
+        defaultValue: '''no'''
+        doc: Нужно ли включать SNV в отчет.
+    - reportComment:
+        type: ENUM('yes', 'no')
+        defaultValue: '''no'''
+        doc: Нужно ли включать SNV в отчет.
+     
+        

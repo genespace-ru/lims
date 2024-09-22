@@ -1,0 +1,35 @@
+pathogenicity:
+  type: dictionary
+  displayName: Патогенность
+  doc: Справочник возможных значений патогенности SNV/CNV.   
+  primaryKey: ID
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - title:
+        type: VARCHAR(20)
+        doc: Название типа аттрибута.
+    - description:
+        type: TEXT
+        canBeNull: true
+        doc: Описание типа аттрибута.
+    - comment:
+        type: TEXT
+        doc: Комментарий.
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 

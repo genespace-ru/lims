@@ -10,6 +10,9 @@ attributes:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
+    - entity:
+        type: VARCHAR(50)
+        doc: Сущность, к которой относится данный аттрибут.
     - group:
         type: INT
         reference: attribute_groups
@@ -38,7 +41,10 @@ attributes:
         doc: Тип аттрибута. Используется предопределенный справочник типов аттрибутов attribute_types. 
     - dictionary:
         type: VARCHAR(100)
-        doc: Справочник для возможных значений аттрибута. Где это возможно используются значения из VEP и/или Genomenal. 
+        doc: Справочник для возможных значений аттрибута. Где это возможно используются значения из VEP и/или Genomenal.
+    - source:      
+        type: ENUM('SNV', 'CNV', 'transcript')
+        doc: Уровень к которому относится аттрибут - к самой SNV/CNV или транскрипту.
     - level:
         type: ENUM('SNV', 'CNV', 'transcript')
         doc: Уровень к которому относится аттрибут - к самой SNV/CNV или транскрипту.

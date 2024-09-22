@@ -26,6 +26,8 @@ lims:
   - devices
   - device_types
   - device_statuses
+  - pathogenicity
+  - pathogenicity_authority
   - projects
   - runs
   - run_samples
@@ -37,6 +39,7 @@ lims:
   - samples
   - sequencing_data
   - sample_templates
+  - snv_
   - workflows
   - uploads
   - nf_workflows
