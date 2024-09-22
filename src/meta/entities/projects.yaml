@@ -1,9 +1,10 @@
 projects:
   type: table
+  primaryKey: ID
+  order: '15'
   displayName: Проекты
   doc: Способ группировки образцов (samples).
-  order: '15'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

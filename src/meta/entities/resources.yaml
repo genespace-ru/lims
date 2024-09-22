@@ -1,9 +1,9 @@
 resources:
   type: dictionary
+  primaryKey: ID
   displayName: Ресурсы (для аннотации)
   doc: Программы, базы данных и рекоммендации, используемые для аннотации SNV и CNV.
-  order: '14'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

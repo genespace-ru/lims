@@ -1,9 +1,10 @@
 resource_recommendations:
   type: collection
+  primaryKey: ID
+  order: '14'
   displayName: Ресурсы - рекомендации
   doc: Описывает связь между ресурсами для аннотации SNV и CNV и соответствующими методическими рекомендациями.
-  order: '14'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

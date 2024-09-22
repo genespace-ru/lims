@@ -1,8 +1,9 @@
 pathogenicity:
   type: dictionary
+  primaryKey: ID
   displayName: Патогенность
   doc: Справочник возможных значений патогенности SNV/CNV.   
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

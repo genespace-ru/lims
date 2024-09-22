@@ -1,11 +1,10 @@
-snv_:
+snv_history:
   type: table
   primaryKey: ID
-  displayName: SNV
+  displayName: SNV архив
   doc: |-
-    Список найденных SNV. Для каждого образца создается отдельная таблица,
-    где название образца является суффиксом в названии таблицы.
-    Например: snv_sample1.
+    Список ранее найденных и проаннотированных SNV, которые могут быть 
+    повторно использованы для аннотации новых образцов.
 
   scheme:
     columns:
@@ -38,21 +37,18 @@ snv_:
         type: JSON 
         canBeNull: true        
         doc: Значения аттрибутов в формате JSON (название аттрибута - значение).
-    - isAttached:
-        type: ENUM('yes', 'no')
-        defaultValue: '''no'''
-        doc: Нужно ли закрепить, отмеченные SNV, в начале представления.
-    - isHidden:
-        type: ENUM('yes', 'no')
-        defaultValue: '''no'''
-        doc: Нужно ли показывать SNV в представлении.
-    - includeInReport:
-        type: ENUM('yes', 'no')
-        defaultValue: '''no'''
-        doc: Нужно ли включать SNV в отчет.
-    - reportComment:
-        type: ENUM('yes', 'no')
-        defaultValue: '''no'''
-        doc: Нужно ли включать SNV в отчет.
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
      
         

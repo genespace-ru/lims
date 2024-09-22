@@ -1,8 +1,8 @@
 sample_templates:
   type: dictionary
-  displayName: Sample templates
-  order: '20'
   primaryKey: ID
+  displayName: Sample templates
+
   scheme:
     columns:
     - ID:

@@ -1,9 +1,10 @@
 samples:
   type: table
+  primaryKey: ID
+  order: '16'
   displayName: Образцы
   doc: Отдельные образцы для секвинирования. За основу взяты поля Illumina.
-  order: '16'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

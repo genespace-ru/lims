@@ -1,8 +1,9 @@
 devices:
   type: table
-  displayName: Devices
-  order: '25'
   primaryKey: ID
+  order: '25'
+  displayName: Devices
+
   scheme:
     columns:
     - ID:

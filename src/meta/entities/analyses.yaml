@@ -1,8 +1,8 @@
 analyses:
+  primaryKey: ID
   type: dictionary
   displayName: Analyses
-  order: '20'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

@@ -1,8 +1,8 @@
 workflows:
   type: dictionary
-  displayName: Workflows
-  order: '20'
   primaryKey: ID
+  displayName: Workflows
+
   scheme:
     columns:
     - ID:

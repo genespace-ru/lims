@@ -1,8 +1,8 @@
 device_types:
   type: dictionary
-  displayName: Device types
-  order: '20'
   primaryKey: ID
+  displayName: Device types
+
   scheme:
     columns:
     - ID:

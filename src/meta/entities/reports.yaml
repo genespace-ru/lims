@@ -1,8 +1,9 @@
 reports:
   type: table
-  displayName: Отчеты
-  order: '20'
   primaryKey: ID
+  order: '20'
+  displayName: Отчеты
+
   scheme:
     columns:
     - ID:

@@ -1,9 +1,9 @@
 attribute_types:
   type: dictionary
+  primaryKey: ID
   displayName: Типы аттрибутов
   doc: Типы  аттрибутов (свойств) для аннотации SNV и CNV.
-  order: '14'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

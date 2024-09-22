@@ -40,6 +40,9 @@ lims:
   - sequencing_data
   - sample_templates
   - snv_
+  - snv_history
+  - snv_transcripts_
+  - snv_transcripts_history
   - workflows
   - uploads
   - nf_workflows

@@ -1,0 +1,27 @@
+snv_transcripts_:
+  type: table
+  primaryKey: ID
+  displayName: SNV (транскрипты)
+  doc: |-
+    Список транскриптов и их свойств для соответствующей SNV.
+    Для каждого образца создается отдельная таблица,
+    где название образца является суффиксом в названии таблицы.
+    Например: snv_transcripts_sample1.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - SNV:
+        type: INT
+        reference: snv_
+        doc: ссылка на SNV, к которой относится данный транскрипт
+    - transcript:
+        type: VARCHAR(50)
+        doc: Идентификатор транскрипта.
+    - attributes:
+        type: JSON 
+        canBeNull: true        
+        doc: Значения аттрибутов в формате JSON (название аттрибута - значение).

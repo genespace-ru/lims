@@ -1,7 +1,8 @@
 run_samples:
   type: collection
-  displayName: Связь запусков и образцов
   primaryKey: ID
+  displayName: Связь запусков и образцов
+
   scheme:
     columns:
     - ID:

@@ -1,9 +1,9 @@
 attribute_groups:
+  primaryKey: ID
   type: dictionary
   displayName: Группа аттрибутов
   doc: Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.
-  order: '14'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

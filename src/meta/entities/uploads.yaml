@@ -1,8 +1,9 @@
 uploads:
   type: table
-  displayName: Загрузки
-  order: '17'
   primaryKey: ID
+  order: '17'
+  displayName: Загрузки
+
   scheme:
     columns:
     - ID:

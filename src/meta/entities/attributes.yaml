@@ -1,9 +1,9 @@
 attributes:
   type: dictionary
+  primaryKey: ID
   displayName: Аттрибуты
   doc: Аттрибуты (свойства) для аннотации SNV и CNV.
-  order: '15'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:
@@ -43,8 +43,11 @@ attributes:
         type: VARCHAR(100)
         doc: Справочник для возможных значений аттрибута. Где это возможно используются значения из VEP и/или Genomenal.
     - source:      
-        type: ENUM('SNV', 'CNV', 'transcript')
-        doc: Уровень к которому относится аттрибут - к самой SNV/CNV или транскрипту.
+        type: ENUM('json', 'query')
+        doc: |-
+            Где хранится значение аттрибута.
+            * json - в формате json поля 'attributes' соответствующей таблицы сущности.
+            * query - вычисляется значением запроса и идет как поле значений запроса.
     - level:
         type: ENUM('SNV', 'CNV', 'transcript')
         doc: Уровень к которому относится аттрибут - к самой SNV/CNV или транскрипту.

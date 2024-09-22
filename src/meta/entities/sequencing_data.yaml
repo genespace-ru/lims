@@ -1,7 +1,8 @@
 sequencing_data:
   type: collection
-  displayName: Данные секвенирования для каждого связанного образца
   primaryKey: ID
+  displayName: Данные секвенирования для каждого связанного образца
+
   scheme:
     columns:
     - ID:

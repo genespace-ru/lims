@@ -1,9 +1,10 @@
 runs:
   type: table
-  displayName: Запуски
   primaryKey: ID
   order: '16'
+  displayName: Запуски
   doc: Запуски секвенатора
+
   scheme:
     columns:
     - ID:

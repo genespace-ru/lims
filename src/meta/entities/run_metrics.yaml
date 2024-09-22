@@ -1,7 +1,8 @@
 run_metrics:
   type: collection
-  displayName: Метрики и статистика запусков
   primaryKey: ID
+  displayName: Метрики и статистика запусков
+
   scheme:
     columns:
     - ID:

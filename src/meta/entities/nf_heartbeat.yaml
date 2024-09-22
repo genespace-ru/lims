@@ -1,8 +1,8 @@
 nf_heartbeat:
   type: table
-  displayName: NF heartbeat
-  order: '21'
   primaryKey: ID
+  displayName: NF heartbeat
+
   scheme:
     columns:
     - ID:

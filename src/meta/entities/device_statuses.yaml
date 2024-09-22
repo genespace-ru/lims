@@ -1,8 +1,8 @@
 device_statuses:
   type: dictionary
-  displayName: Device statuses
-  order: '20'
   primaryKey: ID
+  displayName: Device statuses
+
   scheme:
     columns:
     - ID:

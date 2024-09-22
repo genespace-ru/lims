@@ -1,7 +1,8 @@
 attachments:
   type: genericCollection
-  displayName: Attachments
   primaryKey: ID
+  displayName: Attachments
+
   scheme:
     columns:
     - ID:

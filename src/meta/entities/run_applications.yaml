@@ -1,7 +1,8 @@
 run_applications:
   type: collection
-  displayName: Приложения, которые могут использоваться в запусках для анализа данных
   primaryKey: ID
+  displayName: Приложения, которые могут использоваться в запусках для анализа данных
+
   scheme:
     columns:
     - ID:

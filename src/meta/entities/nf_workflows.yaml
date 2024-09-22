@@ -1,9 +1,10 @@
 nf_workflows:
   type: table
-  displayName: NF workflows
-  order: '20'
   primaryKey: ID
+  order: '20'
+  displayName: NF workflows
   doc: Хранит JSON сообщения от Nexflow о ходе выполнения worrkflow.
+
   scheme:
     columns:
     - ID:

@@ -1,8 +1,9 @@
 pathogenicity_authority:
   type: dictionary
+  primaryKey: ID
   displayName: Патогенность (основание)
   doc: Справочник источников для проставления патогенности.   
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:

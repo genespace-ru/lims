@@ -1,5 +1,6 @@
 attribute_resources:
   type: collection
+  primaryKey: ID
   displayName: Ресурсы для аттрибутов
   doc: |-
     Ресурсы, которые были использованы для вычисления значения аттрибута при аннотации SNV и CNV.
@@ -10,8 +11,7 @@ attribute_resources:
       * рекомендацию. 
     
     Pending: версионирование ресурсов.
-  order: '14'
-  primaryKey: ID
+
   scheme:
     columns:
     - ID:
