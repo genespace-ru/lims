@@ -21,6 +21,7 @@ lims:
   - attributes
   - attribute_groups
   - attribute_resources
+  - attribute_rules
   - attribute_types
   - analyses
   - devices

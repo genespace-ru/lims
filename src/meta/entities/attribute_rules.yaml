@@ -1,0 +1,40 @@
+attribute_rules:
+  type: table
+  primaryKey: ID
+  displayName: Правила
+  doc: Правила для вычисления аттрибутов для аннотации SNV и CNV.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - attribute:
+        type: INT
+        reference: attributes
+        doc: Аттрибут, значение которого вычисляется. 
+    - code:
+        type: TEXT
+        doc: Код (JavaScript) для вычисления значения аттрибута.
+    - desription:
+        type: TEXT
+        canBeNull: true        
+        doc: Описание кода для вычисления значения аттрибута. 
+    - comment:
+        type: TEXT
+        canBeNull: true        
+        doc: Название аттрибута. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
+    - creationDate___:
+        type: TIMESTAMP
+        canBeNull: true
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        canBeNull: true        
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 

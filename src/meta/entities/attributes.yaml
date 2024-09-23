@@ -26,14 +26,15 @@ attributes:
         canBeNull: true        
     - description:
         type: TEXT
-        doc: Описание аттрибута. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
         canBeNull: true
+        doc: Описание аттрибута. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
     - description_ru:
         type: TEXT
-        doc: Описание аттрибута. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
         canBeNull: true
+        doc: Описание аттрибута. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
     - comment:
         type: TEXT
+        canBeNull: true
         doc: Комментарий.
     - type:
         type: INT
@@ -42,7 +43,12 @@ attributes:
     - dictionary:
         type: VARCHAR(100)
         doc: Справочник для возможных значений аттрибута. Где это возможно используются значения из VEP и/или Genomenal.
-    - source:      
+    - rule:
+        type: INT
+        reference: attribute_rules
+        canBeNull: true
+        doc: Правило, использованное для вычисления аттрибута.
+    - storage:      
         type: ENUM('json', 'query')
         doc: |-
             Где хранится значение аттрибута.
