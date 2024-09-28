@@ -3,41 +3,15 @@ _dictionaries_:
   displayName: Справочники
   order: '70'
   primaryKey: dummy
+
   queries:
-  - Аттрибуты:
-      type: static
+  - All records:
+      type: '1D_unknown'
       roles: '@AllRoles'
-      value: attributes.redir
-  - Аттрибуты - группы:
-      type: static
-      roles: '@AllRoles'
-      value: attribute_groups.redir
-  - Аттрибуты - типы:
-      type: static
-      roles: '@AllRoles'
-      value: attribute_types.redir
-  - Аттрибуты - ресурсы:
-      type: static
-      roles: '@AllRoles'
-      value: resources.redir
-  - Device types:
-      type: static
-      roles: [Administrator]
-      value: device_types.redir
-  - Device statuses:
-      type: static
-      roles: [Administrator]
-      value: device_statuses.redir
-  - Templates:
-      type: static
-      roles: [Administrator]
-      value: sample_templates.redir
-  - Analyses:
-      type: static
-      roles: [Administrator]
-      value: analyses.redir
-  - Workflows:
-      type: static
-      roles: [Administrator]
-      value: workflows.redir
+      code: |2-
+            <@DICTIONARY_REF 'attribute_types', 'Аттрибуты - типы данных', 
+                'Аттрибуты (свойства) SNV, CNV или другой сущности.' /> 
+            UNION SELECT 
+                '<a href="./#!table/attribute_groups/All records">Группы аттрибутов</a>' AS "Справочник",
+                'Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.' AS "Описание"
 

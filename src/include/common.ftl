@@ -5,3 +5,8 @@
      AS "Modified;<quick visible='false' />"
 </#macro>
 
+<#macro DICTIONARY_REF table, title, description>
+    SELECT
+        '<a href="./#!table/${table}/All records">${title}</a>' AS "Справочник",
+                ${description?str} AS "Описание"
+</#macro>

@@ -23,14 +23,52 @@ attribute_types:
         canBeNull: true
     - creationDate___:
         type: TIMESTAMP
-        canBeNull: true
         defaultValue: CURRENT_TIMESTAMP
     - modificationDate___:
         type: TIMESTAMP
         canBeNull: true        
     - whoInserted___:
         type: VARCHAR(100)
-        canBeNull: true        
+        defaultValue: '''Administrator'''
     - whoModified___:
         type: VARCHAR(100)
         canBeNull: true 
+
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRoles'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      code: |2-
+            SELECT 
+              at.id AS "ID",
+              at.title AS "Title",
+              at.description AS "Description",
+              at.comment AS "Comment",
+              <@COMMON_WHO_FIELDS 'at' />
+            FROM attribute_types at
+            ORDER BY at.ID
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, name FROM attribute_types at ORDER BY name
+  
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
