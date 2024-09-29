@@ -9,9 +9,8 @@ _dictionaries_:
       type: '1D_unknown'
       roles: '@AllRoles'
       code: |2-
-            <@DICTIONARY_REF 'attribute_types', 'Аттрибуты - типы данных', 
+            <@DICTIONARY_REF 'attribute_groups', 'Аттрибуты - группы', 
+                'Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.' /> 
+            UNION <@DICTIONARY_REF 'attribute_types', 'Аттрибуты - типы данных', 
                 'Аттрибуты (свойства) SNV, CNV или другой сущности.' /> 
-            UNION SELECT 
-                '<a href="./#!table/attribute_groups/All records">Группы аттрибутов</a>' AS "Справочник",
-                'Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.' AS "Описание"
 

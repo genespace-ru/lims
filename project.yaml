@@ -59,5 +59,6 @@ lims:
   - test-hematology/sample_templates
   - test-hematology/workflows
   - test-hematology/test_data
+  - attributes/groups
   - attributes/types
   includes: common

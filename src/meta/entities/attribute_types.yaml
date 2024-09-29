@@ -38,6 +38,7 @@ attribute_types:
   - All records:
       type: 1D
       roles: '@AllRoles'
+      layout: '{"quickType":"select"}'
       operations:
       - Insert
       - Edit

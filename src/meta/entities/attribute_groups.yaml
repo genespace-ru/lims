@@ -50,6 +50,7 @@ attribute_groups:
   - All records:
       type: 1D
       roles: '@AllRoles'
+      layout: '{"quickType":"select"}'
       operations:
       - Insert
       - Edit
@@ -57,18 +58,19 @@ attribute_groups:
       - Filter
       code: |2-
             SELECT 
-              w.id AS "ID",
-              w.name AS "Name",
-              w.description AS "Description",
-              w.data AS "Definition",
-              <@COMMON_WHO_FIELDS 'w' />
-            FROM workflows w
-            ORDER BY w.name
+              ag.id AS "ID",
+              ag.displayOrder AS "Display order",
+              ag.title || '<br/>' || ag.title_ru  "Title",
+              ag.description || '<br/>' || ag.description_ru AS "Description",
+              ag.comment AS "Comment",
+              <@COMMON_WHO_FIELDS 'ag' />
+            FROM attribute_groups ag
+            ORDER BY ag.displayOrder
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, name FROM workflows ORDER BY name
+            SELECT id, title FROM ag.display_order ORDER BY title
   operations:
   - Insert:
       roles: [Administrator]
