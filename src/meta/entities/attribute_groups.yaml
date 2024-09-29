@@ -70,7 +70,7 @@ attribute_groups:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, title FROM ag.display_order ORDER BY title
+            SELECT id, title FROM attribute_groups ORDER BY title
   operations:
   - Insert:
       roles: [Administrator]
