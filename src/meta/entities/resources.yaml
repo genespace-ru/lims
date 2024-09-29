@@ -66,7 +66,15 @@ resources:
               COALESCE('<a href="' || r.url || '" target="_blank">' || r.title || '</a>', r.title) AS "Title",
               r.version AS "Version;<quick visible='true' />",
               r.description AS "Description",
-              r.license AS "License;<quick visible='true' />",
+              '<sql using="ID" beautifierName="line">
+                SELECT
+                  '<a href="#!table/resource_recommendations/All records/resource=' || r.id || '">' ||  
+                  r.title || ' (' || r.version || ')</a>' AS "Recommendation"
+                FROM resources r
+                INNER JOIN resource_recommendations rr ON r.ID = rr.recommendation AND rr.resource = ?
+                ORDER BY 1
+              </sql>' AS "Recommendations;<quick visible='true' />", 
+              r.license AS "License;<quick visible='false' />",
               r.comment AS "Comment;<quick visible='true' />",
               <@COMMON_WHO_FIELDS 'r' />
             FROM resources r

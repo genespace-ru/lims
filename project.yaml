@@ -4,7 +4,7 @@ lims:
     groovyOperationsDir: src/main/groovy
     groovyExtendersDir: src/main/groovy
   features:
-  #- beSqlQueries
+  # beSqlQueries
   - eventDbLogging
   #- compiledGroovy
   l10n: [en,ru]
