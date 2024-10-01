@@ -27,14 +27,13 @@ attribute_rules:
         doc: Название аттрибута. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
     - creationDate___:
         type: TIMESTAMP
-        canBeNull: true
         defaultValue: CURRENT_TIMESTAMP
     - modificationDate___:
         type: TIMESTAMP
         canBeNull: true        
     - whoInserted___:
         type: VARCHAR(100)
-        canBeNull: true        
+        defaultValue: '''Administrator'''
     - whoModified___:
         type: VARCHAR(100)
         canBeNull: true 

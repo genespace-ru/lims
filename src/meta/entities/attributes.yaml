@@ -13,7 +13,7 @@ attributes:
     - entity:
         type: VARCHAR(50)
         doc: Сущность, к которой относится данный аттрибут.
-    - group:
+    - groupID:
         type: INT
         reference: attribute_groups
         canBeNull: true        
@@ -42,6 +42,7 @@ attributes:
         doc: Тип аттрибута. Используется предопределенный справочник типов аттрибутов attribute_types. 
     - dictionary:
         type: VARCHAR(100)
+        canBeNull: true
         doc: Справочник для возможных значений аттрибута. Где это возможно используются значения из VEP и/или Genomenal.
     - rule:
         type: INT
@@ -71,14 +72,13 @@ attributes:
         doc: Маска для формирования гиперссылки для значения свойства.
     - creationDate___:
         type: TIMESTAMP
-        canBeNull: true
         defaultValue: CURRENT_TIMESTAMP
     - modificationDate___:
         type: TIMESTAMP
         canBeNull: true        
     - whoInserted___:
         type: VARCHAR(100)
-        canBeNull: true        
+        defaultValue: '''Administrator'''
     - whoModified___:
         type: VARCHAR(100)
         canBeNull: true 

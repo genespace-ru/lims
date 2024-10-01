@@ -31,14 +31,13 @@ attribute_resources:
         canBeNull: true
     - creationDate___:
         type: TIMESTAMP
-        canBeNull: true
         defaultValue: CURRENT_TIMESTAMP
     - modificationDate___:
         type: TIMESTAMP
         canBeNull: true        
     - whoInserted___:
         type: VARCHAR(100)
-        canBeNull: true        
+        defaultValue: '''Administrator'''
     - whoModified___:
         type: VARCHAR(100)
         canBeNull: true 

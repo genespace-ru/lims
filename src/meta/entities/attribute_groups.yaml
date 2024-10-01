@@ -29,19 +29,18 @@ attribute_groups:
         doc: Комментарий.
         canBeNull: true
     - displayOrder:
-        type: VARCHAR(5)
+        type: INT
         canBeNull: true
         doc: Порядок отображения групп аттрибутов в представлении.
     - creationDate___:
         type: TIMESTAMP
-        canBeNull: true
         defaultValue: CURRENT_TIMESTAMP
     - modificationDate___:
         type: TIMESTAMP
         canBeNull: true        
     - whoInserted___:
         type: VARCHAR(100)
-        canBeNull: true        
+        defaultValue: '''Administrator'''
     - whoModified___:
         type: VARCHAR(100)
         canBeNull: true 
