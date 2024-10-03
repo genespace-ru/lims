@@ -31,14 +31,28 @@ DELETE FROM attribute_resources;
 <#assign DOUBLE = 2 /> 
 <#assign STRING = 3 /> 
 
-<#-- добавить VEP как ресурс и здесь указать соответствующий ID -->
-<#assign VEP = 1>
+<#assign VEP = 57>
 
-<@ATTRIBUTE 1, GR_COMMON, 1, "Uploaded_variation", "перевод", 
-"Identifier of uploaded variant",
-"Перевод",   
+<@ATTRIBUTE 101, GR_COMMON, 1, "Uploaded_variation", "Загруженный вариант", 
+"Identifier of uploaded variant", 
+"Идентификатор загруженного варианта",   
 "SNV", "query", INT />   
-<@RESOURCE 1, 1, VEP />
+<@RESOURCE 57, 1, VEP />
 
+<@ATTRIBUTE 102, GR_COMMON, 2, "Location", "Локация", 
+"Location of variant in standard coordinate format (chr:start or chr:start-end)", 
+"Местоположение варианта в стандартном координатном формате (chr:start или chr:start-end)", 
+"SNV", "query", STRING />   
+<@RESOURCE 57, 1, VEP />
 
-<#-- можно для каждой группы начинать ID с новой сотни -->
+<@ATTRIBUTE 103, GR_COMMON, 3, "Allele", "Аллель", 
+"The variant allele used to calculate the consequence", 
+"Аллель варианта, использованный для расчета последствия", 
+"SNV", "query", STRING />   
+<@RESOURCE 57, 1, VEP />
+
+<@ATTRIBUTE 104, GR_COMMON, 4, "Consequence", "Последствие", 
+"Consequence type", 
+"Тип последствия", 
+"SNV", "query", STRING />   
+<@RESOURCE 57, 1, VEP />

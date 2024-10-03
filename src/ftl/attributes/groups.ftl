@@ -9,7 +9,7 @@ DELETE FROM attribute_groups;
 1 - Common
 2 - Gene
 3 - ClinVar
-4 - gnomAD 3``
+4 - gnomAD 3
 5 - gnomAD 4
 6 - ExAC
 7 - Other frequencies
