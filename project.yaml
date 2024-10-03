@@ -41,6 +41,7 @@ lims:
   - sequencing_data
   - samples
   - sample_templates
+  - sample_types
   - snv_
   - snv_history
   - snv_transcripts_
@@ -58,6 +59,7 @@ lims:
   - test-hematology/analyses
   - test-hematology/devices
   - test-hematology/sample_templates
+  - test-hematology/sample_types
   - test-hematology/workflows
   - test-hematology/test_data
   - attributes/attributes

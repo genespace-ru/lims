@@ -15,10 +15,7 @@ samples:
         type: VARCHAR(100)
     - type:
         type: VARCHAR(50)
-    - template_id:
-        type: KEYTYPE
-        reference: sample_templates
-        canBeNull: true
+        doc: Тип данных 
     - plate:
         type: VARCHAR(100)
         canBeNull: true
@@ -55,18 +52,23 @@ samples:
     - metadata:
         type: TEXT
         canBeNull: true
+    - template_id:
+        type: KEYTYPE
+        reference: sample_templates
+        canBeNull: true
     - creationDate___:
         type: TIMESTAMP
-        canBeNull: true        
+        defaultValue: CURRENT_TIMESTAMP
     - modificationDate___:
         type: TIMESTAMP
         canBeNull: true        
     - whoInserted___:
         type: VARCHAR(100)
-        canBeNull: true        
+        defaultValue: '''Administrator'''
     - whoModified___:
         type: VARCHAR(100)
         canBeNull: true 
+
   queries:
   - All records:
       type: 1D

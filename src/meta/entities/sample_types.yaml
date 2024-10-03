@@ -1,9 +1,9 @@
-sample_templates:
+sample_types:
   type: dictionary
   primaryKey: ID
-  displayName: Sample templates
-  doc: Шаблон для описания свойств образца. Содержит описание набора аттрибутов, которые используются для описания образца.
-
+  displayName: Sample type
+  doc: Типы образцов. Например, метагеномика, онкопанель и т.п. Может быть привязана к типу реактивов.  
+  
   scheme:
     columns:
     - ID:
@@ -14,9 +14,11 @@ sample_templates:
     - description:
         type: TEXT
         canBeNull: true
-    - data:
-        type: TEXT
-        doc: Шаблон для описания свойств образца данных (в разработке @todo).
+    - template:
+        type: KEYTYPE
+        reference: sample_templates
+        canBeNull: true
+        doc: Шаблон для описания мета-данных для соответствующего типа данных секвенирования.
     - comment:
         type: TEXT
         canBeNull: true
@@ -38,7 +40,6 @@ sample_templates:
       type: 1D
       invisible: true
       roles: '@AllRoles'
-      layout: '{"quickType":"select"}'
       operations:
       - Insert
       - Edit
@@ -52,14 +53,14 @@ sample_templates:
               st.data AS "Template",
               st.comment AS "Comment;<quick visible='false' />",
               <@COMMON_WHO_FIELDS 'st' />
-            FROM sample_templates st
-            ORDER BY st.title
+            FROM sample_types st
+            LEFT JOIN sample_templates template ON template.id = st.template
+            ORDER BY st.name
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
             SELECT id, name FROM sample_templates ORDER BY name
-            
   operations:
   - Insert:
       roles: [Administrator]

@@ -1,7 +1,8 @@
 DELETE FROM sample_templates;
-<#macro sample_template id, name, description>
-INSERT INTO sample_templates(id, name, description, data, creationdate___, whoinserted___) 
-            values(${id}, ${name?str}, ${description?str}, 'stub', current_timestamp, 'Administator');
+
+<#macro TEMPLATE id, title, description, comment="null">
+INSERT INTO sample_templates(id, title, description, comment, data) 
+            values(${id}, ${title?str}, ${description?str}, ${comment}, 'заглушка');
 </#macro>
 
-<@sample_template 1, "stub template", "Заглушка." />
+<@TEMPLATE 1, "Онкоданные", "Шаблон для описания свойств образца онкоданных (заглушка)." />
