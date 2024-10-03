@@ -39,6 +39,7 @@ lims:
   - resource_recommendations
   - samples
   - sequencing_data
+  - samples
   - sample_templates
   - snv_
   - snv_history

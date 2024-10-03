@@ -37,13 +37,13 @@ DELETE FROM attribute_resources;
 "Identifier of uploaded variant", 
 "Идентификатор загруженного варианта",   
 "SNV", "query", INT />   
-<@RESOURCE 57, 1, VEP />
+<@RESOURCE "1010", 101, VEP />
 
 <@ATTRIBUTE 102, GR_COMMON, 2, "Location", "Локация", 
 "Location of variant in standard coordinate format (chr:start or chr:start-end)", 
-"Расположение варианта в стандартном формате координат (chr:start или chr:start-end)",   
-"SNV", "query", INT />   
-<@RESOURCE 57, 2, VEP />
+"Местоположение варианта в стандартном координатном формате (chr:start или chr:start-end)", 
+"SNV", "query", STRING />   
+<@RESOURCE "1020", 102, VEP />
 
 <@ATTRIBUTE 103, GR_COMMON, 3, "Allele", "Аллель", 
 "The variant allele used to calculate the consequence", 
@@ -175,7 +175,7 @@ DELETE FROM attribute_resources;
 "ClinVar clinical significance of the dbSNP variant", 
 "Клиническая значимость варианта в ClinVar", 
 "SNV", "query", STRING />   
-<@RESOURCE 57, 1, VEP />
+<@RESOURCE "1030", 103, VEP />
 
 <@ATTRIBUTE 302, GR_ClinVar, 2, "ClinVar_CLNREVSTAT", "Ревизионный статус", 
 "CLNREVSTAT field from clinvar.vcf.gz", 
@@ -463,4 +463,4 @@ DELETE FROM attribute_resources;
 "HGVS coding sequence name", 
 "Имя HGVS кодирующей последовательности", 
 "SNV", "query", STRING />   
-<@RESOURCE 57, 1, VEP />
+<@RESOURCE "1040", 104, VEP />
