@@ -27,10 +27,12 @@ DELETE FROM attribute_resources;
 <#assign GR_Other       = 11>
 <#assign GR_Custom      = 12>
 
-<#assign INT = 1 /> 
+<#assign INT    = 1 /> 
+<#assign DOUBLE = 2 /> 
+<#assign STRING = 3 /> 
 
 <#-- добавить VEP как ресурс и здесь указать соответствующий ID -->
-<#assign VEP= 1>
+<#assign VEP = 1>
 
 <@ATTRIBUTE 1, GR_COMMON, 1, "Uploaded_variation", "перевод", 
 "Identifier of uploaded variant",

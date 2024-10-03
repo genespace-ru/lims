@@ -31,9 +31,10 @@
 
     <!-- For tests -->
     <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>[2.1.210,)</version>
+      <groupId>com.developmentontheedge.be5</groupId>
+      <artifactId>be5-test-base</artifactId>
+      <version>0.4.0</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -42,6 +43,13 @@
       <version>[4.12,)</version>
       <scope>test</scope>
     </dependency>	
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>[5.14.1,)</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- Sample dependency on BE5 module -->
     <dependency>
