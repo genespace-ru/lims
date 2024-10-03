@@ -85,8 +85,8 @@ samples:
               s.type AS "Type",
               s.plate AS "Plate",
               s.well AS "Well",
-              s.index_plate AS "Index Plate;<quick visible='false'/>",
-              s.index_well AS "Index Plate;<quick visible='false' />",
+              s.index_plate AS "Index plate;<quick visible='false'/>",
+              s.index_well AS "Index well;<quick visible='false' />",
               s.I7_index_id AS "I7 index;<quick visible='false' />",
               s.index1 AS "Index1;<quick visible='false' />",
               s.I5_index_id AS "I5 index;<quick visible='false' />",
@@ -129,7 +129,7 @@ samples:
               s.plate AS "Plate",
               s.well AS "Well",
               s.index_plate AS "Index Plate;<quick visible='false'/>",
-              s.index_well AS "Index Plate;<quick visible='false' />",
+              s.index_well AS "Index well;<quick visible='false' />",
               s.I7_index_id AS "I7 index;<quick visible='false' />",
               s.index1 AS "Index1;<quick visible='false' />",
               s.I5_index_id AS "I5 index;<quick visible='false' />",
@@ -151,6 +151,7 @@ samples:
                    INNER JOIN runs r ON rs.run_id = r.ID AND r.project_id = <parameter:___prjID />
                 LEFT JOIN sample_templates st ON st.id = s.template_id
             ORDER BY s.name
+  
   operations:
   - Insert:
       roles: [Administrator]

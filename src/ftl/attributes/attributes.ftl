@@ -37,22 +37,22 @@ DELETE FROM attribute_resources;
 "Identifier of uploaded variant", 
 "Идентификатор загруженного варианта",   
 "SNV", "query", INT />   
-<@RESOURCE 57, 1, VEP />
+<@RESOURCE "1010", 101, VEP />
 
 <@ATTRIBUTE 102, GR_COMMON, 2, "Location", "Локация", 
 "Location of variant in standard coordinate format (chr:start or chr:start-end)", 
 "Местоположение варианта в стандартном координатном формате (chr:start или chr:start-end)", 
 "SNV", "query", STRING />   
-<@RESOURCE 57, 1, VEP />
+<@RESOURCE "1020", 102, VEP />
 
 <@ATTRIBUTE 103, GR_COMMON, 3, "Allele", "Аллель", 
 "The variant allele used to calculate the consequence", 
 "Аллель варианта, использованный для расчета последствия", 
 "SNV", "query", STRING />   
-<@RESOURCE 57, 1, VEP />
+<@RESOURCE "1030", 103, VEP />
 
 <@ATTRIBUTE 104, GR_COMMON, 4, "Consequence", "Последствие", 
 "Consequence type", 
 "Тип последствия", 
 "SNV", "query", STRING />   
-<@RESOURCE 57, 1, VEP />
+<@RESOURCE "1040", 104, VEP />
