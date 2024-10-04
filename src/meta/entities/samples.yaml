@@ -11,11 +11,20 @@ samples:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - name:
-        type: VARCHAR(100)
     - type:
         type: VARCHAR(50)
         doc: Тип данных 
+    - title:
+        type: VARCHAR(100)
+    - description:
+        type: TEXT
+        canBeNull: true
+    - metadata:
+        type: TEXT
+        canBeNull: true
+    - comment:
+        type: TEXT
+        canBeNull: true
     - plate:
         type: VARCHAR(100)
         canBeNull: true
@@ -39,22 +48,6 @@ samples:
         canBeNull: true
     - index2:
         type: VARCHAR(100)
-        canBeNull: true
-    - description:
-        type: TEXT
-        canBeNull: true
-    - file_path:
-        type: VARCHAR(300)
-        canBeNull: true
-    - file_size:
-        type: INT
-        canBeNull: true
-    - metadata:
-        type: TEXT
-        canBeNull: true
-    - template_id:
-        type: KEYTYPE
-        reference: sample_templates
         canBeNull: true
     - creationDate___:
         type: TIMESTAMP
@@ -83,8 +76,8 @@ samples:
             SELECT 
               s.id AS "ID" ,
               s.id AS "___sampleID" ,
-              s.name AS "Name",
-              s.type AS "Type",
+              s.title AS "Name",
+              s.type AS "Title",
               s.plate AS "Plate",
               s.well AS "Well",
               s.index_plate AS "Index plate;<quick visible='false'/>",

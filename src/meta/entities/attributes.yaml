@@ -87,6 +87,7 @@ attributes:
   - All records:
       type: 1D
       roles: '@AllRoles'
+      layout: '{"quickType":"select"}'
       operations:
       - Insert
       - Edit
@@ -94,18 +95,31 @@ attributes:
       - Filter
       code: |2-
             SELECT 
-              w.id AS "ID",
-              w.name AS "Name",
-              w.description AS "Description",
-              w.data AS "Definition",
-              <@COMMON_WHO_FIELDS 'w' />
-            FROM workflows w
-            ORDER BY w.name
+              a.id AS "ID",
+              a.entity AS "Entity;<quick visible='false' />",
+              
+              ag.id AS "___groupID",
+              ag.title AS "Group",
+              '<link table="attribute_groups" queryName="All records" using="___groupID" columns="ID" />' AS ";Group",
+              a.title || '<br/>' || a.title_ru  "Title",
+              a.description || '<br/>' || a.description_ru AS "Description",
+
+              a.type AS "Type;<quick visible='false' />",          
+              a.storage AS "Storage;<quick visible='false' />",          
+              a.level AS "Level;<quick visible='true' />",          
+              a.urlMask AS "URL mask;<quick visible='false' />",          
+              a.comment AS "Comment;<quick visible='true' />",
+
+              <@COMMON_WHO_FIELDS 'a' />
+            FROM attributes a
+            LEFT JOIN attribute_groups ag ON ag.id = a.groupID
+            ORDER BY ag.displayOrder, a.displayOrder 
+            
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, name FROM workflows ORDER BY name
+            SELECT id, title FROM attributes ORDER BY title
   operations:
   - Insert:
       roles: [Administrator]
