@@ -27,6 +27,7 @@ lims:
   - devices
   - device_types
   - device_statuses
+  - file_info
   - file_types
   - pathogenicity
   - pathogenicity_authority
@@ -59,6 +60,7 @@ lims:
   - test-hematology/systemsettings
   - test-hematology/analyses
   - test-hematology/devices
+  - test-hematology/file_info
   - test-hematology/file_types
   - test-hematology/samples
   - test-hematology/sample_templates

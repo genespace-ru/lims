@@ -60,7 +60,7 @@ file_types:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, title FROM file_types at ORDER BY title
+            SELECT id, suffix FROM file_types ft ORDER BY suffix
   
   operations:
   - Insert:

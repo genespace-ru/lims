@@ -1,0 +1,143 @@
+file_info:
+  type: genericCollection
+  primaryKey: ID
+  displayName: Files
+  doc: Информация о файлах с данными и результатами
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - fileName:
+        type: VARCHAR(255)
+    - mimeType:
+        type: VARCHAR(100)
+        canBeNull: true
+        reference: mimeTypes
+        defaultValue: '''application/octet-stream'''
+    - fileType:
+        type: KEYTYPE
+        reference: file_types
+        canBeNull: true
+    - path:
+        type: VARCHAR(255)
+        doc: Полный путь до файла, относительно проекта.
+    - size:
+        type: INT
+        doc: Размер файла в байтах.
+    - project:
+        type: KEYTYPE
+        reference: projects
+        doc: Проект, которому принадлежит файл.
+    - entity:
+        type: VARCHAR(255)
+        canBeNull: true
+        doc: Сущность, с которой связан файл (sample, project).
+    - entityID:
+        type: KEYTYPE
+        canBeNull: true
+        doc: Идентификатор сущности, с которой связан файл.
+    - comment:
+        type: VARCHAR(255)
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT
+              fi.id AS "ID" ,
+              fi.path AS "Path;<quick visible='true'/>",
+              fi.fileName AS "File",
+              fi.size AS "Size",
+              fi.mimeType AS "MimeType;<quick visible='false'/>",
+              
+              p.ID AS "___prjID",
+              p.name AS "Project;<quick visible='true'/>",
+              '<link table="projects" queryName="All records" using="___prj" columns="ID" />' AS ";Project",
+              
+              COALESCE(
+                  '<a href="#!table/' || fi.entity || '/All records/ID=' || fi.entityID || '">' ||  
+                  fi.entity || '/' || s.title || '</a>', '') AS "Sample",
+              fi.comment AS "Description;<quick visible='true' />",
+              <@COMMON_WHO_FIELDS 's' />
+            FROM file_info fi
+            LEFT JOIN projects p ON p.ID = fi.project 
+            LEFT JOIN samples s ON s.ID = fi.entityID
+            WHERE fi.project = <parameter:___prjID />
+            ORDER BY p.name, fi.fileName             
+                          
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, path FROM file_info ORDER BY path
+
+  - ForProjectCard:
+      type: 1D
+      invisible: true
+      layout: '{"hideTitle":"true", "quickType":"select"}'
+      roles: '@AllRolesExceptGuest'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |-
+            SELECT 
+              fi.id AS "ID" ,
+              fi.path AS "Path;<quick visible='true'/>",
+              fi.fileName AS "File",
+              fi.size AS "Size",
+              fi.mimeType AS "MimeType;<quick visible='false'/>",
+              
+              COALESCE(
+                  '<a href="#!table/' || fi.entity || '/All records/ID=' || fi.entityID || '">' ||  
+                  fi.entity || '/' || s.title || '</a>', '') AS "Sample",
+              fi.comment AS "Description;<quick visible='true' />",
+              <@COMMON_WHO_FIELDS 's' />
+            FROM file_info fi
+            LEFT JOIN samples s ON s.ID = fi.entityID
+            WHERE fi.project = <parameter:___prjID />
+            ORDER BY fi.fileName
+  
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
