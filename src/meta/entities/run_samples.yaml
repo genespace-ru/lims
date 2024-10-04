@@ -15,6 +15,27 @@ run_samples:
     - sample_id:
         type: KEYTYPE
         reference: samples
+    - plate:
+        type: VARCHAR(100)
+        canBeNull: true
+    - well:
+        type: VARCHAR(100)
+        canBeNull: true
+    - index_plate_well:
+        type: VARCHAR(100)
+        canBeNull: true
+    - I7_index_id:
+        type: VARCHAR(100)
+        canBeNull: true
+    - index1:
+        type: VARCHAR(100)
+        canBeNull: true
+    - I5_index_id:
+        type: VARCHAR(100)
+        canBeNull: true
+    - index2:
+        type: VARCHAR(100)
+        canBeNull: true
     - creationDate___:
         type: TIMESTAMP
         canBeNull: true        

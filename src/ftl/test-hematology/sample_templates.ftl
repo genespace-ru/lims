@@ -5,4 +5,4 @@ INSERT INTO sample_templates(id, title, description, comment, data)
             values(${id}, ${title?str}, ${description?str}, ${comment}, 'заглушка');
 </#macro>
 
-<@TEMPLATE 1, "Онкоданные", "Шаблон для описания свойств образца онкоданных (заглушка)." />
+<@TEMPLATE 1, "Кровь, онкология", "Шаблон для описания свойств образца онкоданных (заглушка)." />

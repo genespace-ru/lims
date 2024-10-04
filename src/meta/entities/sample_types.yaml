@@ -2,7 +2,7 @@ sample_types:
   type: dictionary
   primaryKey: ID
   displayName: Sample type
-  doc: Типы образцов. Например, метагеномика, онкопанель и т.п. Может быть привязана к типу реактивов.  
+  doc: Типы образцов. Например, метагеномика, кровь, опухоль и т.п.  
   
   scheme:
     columns:
@@ -18,7 +18,7 @@ sample_types:
         type: KEYTYPE
         reference: sample_templates
         canBeNull: true
-        doc: Шаблон для описания мета-данных для соответствующего типа данных секвенирования.
+        doc: Шаблон для описания мета-данных для соответствующего типа образцов.
     - comment:
         type: TEXT
         canBeNull: true

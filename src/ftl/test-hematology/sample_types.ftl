@@ -5,4 +5,4 @@ INSERT INTO sample_types(id, title, description, template, comment)
             values(${id}, ${title?str}, ${description?str}, ${template}, ${comment});
 </#macro>
 
-<@TYPE 1, "Oncopanel 1", "Онкопанель для тагетного секвенирования.", 1 />
+<@TYPE 1, "Кровь, онкология", "Кровь пациента.", 1 />
