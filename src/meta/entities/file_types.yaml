@@ -1,0 +1,79 @@
+file_types:
+  type: dictionary
+  primaryKey: ID
+  displayName: Типы файлов
+  doc: Типы  файлов с данными и результатами.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - suffix:
+        type: VARCHAR(100)
+        doc: Тип файла.
+    - icon:
+        type: VARCHAR(200)
+        canBeNull: true
+        doc: Иконка для отображения типа файлов.
+    - description:
+        type: TEXT
+        canBeNull: true
+    - comment:
+        type: TEXT
+        canBeNull: true
+        doc: Комментарий.
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRoles'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      code: |2-
+            SELECT 
+              ft.id AS "ID",
+              ft.suffix AS "Title (suffix)",
+              ft.icon AS "Icon",
+              ft.description AS "Description",
+              ft.comment AS "Comment",
+              <@COMMON_WHO_FIELDS 'ft' />
+            FROM file_types ft
+            ORDER BY ft.suffix
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, title FROM file_types at ORDER BY title
+  
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
