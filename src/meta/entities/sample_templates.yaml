@@ -58,7 +58,7 @@ sample_templates:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, name FROM sample_templates ORDER BY name
+            SELECT id, title FROM sample_templates ORDER BY title
             
   operations:
   - Insert:

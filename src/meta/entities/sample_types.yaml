@@ -50,17 +50,19 @@ sample_types:
               st.id AS "ID",
               st.title AS "Title",
               st.description AS "Description",
-              st.data AS "Template",
+              template.id AS "___templateID",
+              template.title AS "Template",
+              '<link table="sample_templates" queryName="All records" using="___templateID" columns="ID" />' AS ";Template",
               st.comment AS "Comment;<quick visible='false' />",
               <@COMMON_WHO_FIELDS 'st' />
             FROM sample_types st
             LEFT JOIN sample_templates template ON template.id = st.template
-            ORDER BY st.name
+            ORDER BY st.title
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, name FROM sample_templates ORDER BY name
+            SELECT id, title FROM sample_templates ORDER BY title
   operations:
   - Insert:
       roles: [Administrator]
