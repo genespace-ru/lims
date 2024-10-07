@@ -66,7 +66,7 @@ DELETE FROM attribute_resources;
 <@ATTRIBUTE_VEP 105, GR_COMMON, 5, "VARIANT_CLASS", "Класс варианта", 
 "SO variant class", 
 "Класс варианта по SO",   
-"SNV", "query", INT />   
+"SNV", "query", INT /> 
 
 <@ATTRIBUTE_VEP 106, GR_COMMON, 6, "IMPACT", "Влияние", 
 "Subjective impact classification of consequence type", 
@@ -88,6 +88,21 @@ DELETE FROM attribute_resources;
 "Флаги качества транскрипта",   
 "SNV", "query", INT />   
 
+<@ATTRIBUTE_VEP 110, GR_COMMON, 10, "SYMBOL", "Символ гена", 
+"Gene symbol (e.g. HGNC)", 
+"Символ гена (например, HGNC)", 
+"Transcript", "query", STRING />
+
+<@ATTRIBUTE_VEP 111, GR_COMMON, 11, "SYMBOL_SOURCE", "Источник символа гена", 
+"Source of gene symbol", 
+"Источник символа гена", 
+"Transcript", "query", STRING />
+
+<@ATTRIBUTE_VEP 112, GR_COMMON, 12, "HGNC_ID", "HGNC идентификатор", 
+"Stable identifier of HGNC gene symbol", 
+"Стабильный идентификатор символа гена HGNC", 
+"Transcript", "query", STRING />
+
 <@ATTRIBUTE_VEP 201, GR_GENE, 1, "Gene", "Ген", 
 "Stable ID of affected gene", 
 "Устойчивый идентификатор затронутого гена",   
@@ -96,7 +111,7 @@ DELETE FROM attribute_resources;
 <@ATTRIBUTE_VEP 202, GR_GENE, 2, "Feature", "Функция", 
 "Stable ID of feature", 
 "Устойчивый идентификатор функции",   
-"transcript", "query", INT />   
+"SNV", "query", INT />   
 
 <@ATTRIBUTE_VEP 203, GR_GENE, 3, "Feature_type", "Тип функции", 
 "Type of feature - Transcript, RegulatoryFeature or MotifFeature", 
@@ -131,17 +146,7 @@ DELETE FROM attribute_resources;
 <@ATTRIBUTE_VEP 209, GR_GENE, 9, "Codons", "Кодоны", 
 "Reference and variant codon sequence", 
 "Справочная и измененная последовательность кодонов",   
-"SNV", "query", INT />   
-
-<@ATTRIBUTE_VEP 210, GR_GENE, 10, "Extra", "Дополнительно", 
-"Additional gene-related attributes", 
-"Дополнительные атрибуты, связанные с геном",   
-"SNV", "query", INT />   
-
-<@ATTRIBUTE_VEP 211, GR_GENE, 11, "IMPACT", "Влияние", 
-"Subjective impact classification of consequence type", 
-"Субъективная классификация влияния типа последствий",   
-"SNV", "query", INT />   
+"SNV", "query", INT />    
 
 <@ATTRIBUTE_VEP 212, GR_GENE, 12, "HGVSc", "HGVS cDNA", 
 "HGVS coding sequence name", 
@@ -186,77 +191,192 @@ DELETE FROM attribute_resources;
 <@ATTRIBUTE_VEP 403, GR_gnomAD_3, 3, "gnomADe_AMR_AF", "Частота gnomAD exomes Америка", 
 "Frequency of existing variant in gnomAD exomes American population", 
 "Частота существующего варианта в американской популяции exomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 404, GR_gnomAD_3, 4, "gnomADe_ASJ_AF", "Частота gnomAD exomes ашкенази", 
+<@ATTRIBUTE_VEP 404, GR_gnomAD_3, 4, "gnomADe_ASJ_AF", "Частота gnomAD exomes Ашкенази евреи", 
 "Frequency of existing variant in gnomAD exomes Ashkenazi Jewish population", 
-"Частота существующего варианта в ашкеназской еврейской популяции exomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"Частота существующего варианта в ашкенази еврейской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
 
 <@ATTRIBUTE_VEP 405, GR_gnomAD_3, 5, "gnomADe_EAS_AF", "Частота gnomAD exomes Восточная Азия", 
 "Frequency of existing variant in gnomAD exomes East Asian population", 
-"Частота существующего варианта в популяции Восточной Азии exomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"Частота существующего варианта в восточноазиатской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
 
 <@ATTRIBUTE_VEP 406, GR_gnomAD_3, 6, "gnomADe_FIN_AF", "Частота gnomAD exomes Финляндия", 
 "Frequency of existing variant in gnomAD exomes Finnish population", 
 "Частота существующего варианта в финской популяции exomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 407, GR_gnomAD_3, 7, "gnomADe_NFE_AF", "Частота gnomAD exomes Северная Европа", 
+<@ATTRIBUTE_VEP 407, GR_gnomAD_3, 7, "gnomADe_NFE_AF", "Частота gnomAD exomes не финские европейцы", 
 "Frequency of existing variant in gnomAD exomes Non-Finnish European population", 
-"Частота существующего варианта в популяции Северной Европы (не-Финляндия) exomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"Частота существующего варианта в не финских европейских популяциях exomes gnomAD", 
+"SNV", "query", DOUBLE />
 
 <@ATTRIBUTE_VEP 408, GR_gnomAD_3, 8, "gnomADe_OTH_AF", "Частота gnomAD exomes другие", 
-"Frequency of existing variant in gnomAD exomes Other populations", 
-"Частота существующего варианта в других популяциях exomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"Frequency of existing variant in gnomAD exomes other combined populations", 
+"Частота существующего варианта в других объединенных популяциях exomes gnomAD", 
+"SNV", "query", DOUBLE />
 
 <@ATTRIBUTE_VEP 409, GR_gnomAD_3, 9, "gnomADe_SAS_AF", "Частота gnomAD exomes Южная Азия", 
 "Frequency of existing variant in gnomAD exomes South Asian population", 
-"Частота существующего варианта в популяции Южной Азии exomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"Частота существующего варианта в южноазиатской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 501, GR_gnomAD_4, 1, "gnomADg_AF", "Частота gnomAD genomes", 
+<@ATTRIBUTE_VEP 410, GR_gnomAD_3, 10, "gnomADg_AF", "Частота gnomAD genomes", 
 "Frequency of existing variant in gnomAD genomes combined population", 
 "Частота существующего варианта в объединенной популяции genomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 502, GR_gnomAD_4, 2, "gnomADg_AFR_AF", "Частота gnomAD genomes Африка", 
+<@ATTRIBUTE_VEP 411, GR_gnomAD_3, 11, "gnomADg_AFR_AF", "Частота gnomAD genomes Африка", 
 "Frequency of existing variant in gnomAD genomes African/American population", 
 "Частота существующего варианта в африканской/американской популяции genomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 503, GR_gnomAD_4, 3, "gnomADg_AMR_AF", "Частота gnomAD genomes Америка", 
+<@ATTRIBUTE_VEP 412, GR_gnomAD_3, 12, "gnomADg_AMI_AF", "Частота gnomAD genomes Амши", 
+"Frequency of existing variant in gnomAD genomes Amish population", 
+"Частота существующего варианта в популяции амши genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 413, GR_gnomAD_3, 13, "gnomADg_AMR_AF", "Частота gnomAD genomes Америка", 
 "Frequency of existing variant in gnomAD genomes American population", 
 "Частота существующего варианта в американской популяции genomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 504, GR_gnomAD_4, 4, "gnomADg_EAS_AF", "Частота gnomAD genomes Восточная Азия", 
+<@ATTRIBUTE_VEP 414, GR_gnomAD_3, 14, "gnomADg_ASJ_AF", "Частота gnomAD genomes Ашкенази евреи", 
+"Frequency of existing variant in gnomAD genomes Ashkenazi Jewish population", 
+"Частота существующего варианта в ашкенази еврейской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 415, GR_gnomAD_3, 15, "gnomADg_EAS_AF", "Частота gnomAD genomes Восточная Азия", 
 "Frequency of existing variant in gnomAD genomes East Asian population", 
 "Частота существующего варианта в восточноазиатской популяции genomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 505, GR_gnomAD_4, 5, "gnomADg_FIN_AF", "Частота gnomAD genomes Финляндия", 
+<@ATTRIBUTE_VEP 416, GR_gnomAD_3, 16, "gnomADg_FIN_AF", "Частота gnomAD genomes Финляндия", 
 "Frequency of existing variant in gnomAD genomes Finnish population", 
 "Частота существующего варианта в финской популяции genomes gnomAD", 
-"SNV", "query", DOUBLE />   
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 506, GR_gnomAD_4, 6, "gnomADg_NFE_AF", "Частота gnomAD genomes Европа", 
-"Frequency of existing variant in gnomAD genomes non-Finnish European population", 
-"Частота существующего варианта в нефинской европейской популяции genomes gnomAD", 
-"SNV", "query", DOUBLE />   
+<@ATTRIBUTE_VEP 417, GR_gnomAD_3, 17, "gnomADg_MID_AF", "Частота gnomAD genomes Средний Восток", 
+"Frequency of existing variant in gnomAD genomes Mid-eastern population", 
+"Частота существующего варианта в популяции Среднего Востока genomes gnomAD", 
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 507, GR_gnomAD_4, 7, "gnomADg_OTH_AF", "Частота gnomAD genomes Другое", 
-"Frequency of existing variant in gnomAD genomes other populations", 
-"Частота существующего варианта в других популяциях genomes gnomAD", 
-"SNV", "query", DOUBLE />   
+<@ATTRIBUTE_VEP 418, GR_gnomAD_3, 18, "gnomADg_NFE_AF", "Частота gnomAD genomes не финские европейцы", 
+"Frequency of existing variant in gnomAD genomes Non-Finnish European population", 
+"Частота существующего варианта в не финских европейских популяциях genomes gnomAD", 
+"SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 508, GR_gnomAD_4, 8, "gnomADg_SAS_AF", "Частота gnomAD genomes Южная Азия", 
+<@ATTRIBUTE_VEP 419, GR_gnomAD_3, 19, "gnomADg_OTH_AF", "Частота gnomAD genomes другие", 
+"Frequency of existing variant in gnomAD genomes other combined populations", 
+"Частота существующего варианта в других объединенных популяциях genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 420, GR_gnomAD_3, 20, "gnomADg_SAS_AF", "Частота gnomAD genomes Южная Азия", 
 "Frequency of existing variant in gnomAD genomes South Asian population", 
 "Частота существующего варианта в южноазиатской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 401, GR_gnomAD_4, 1, "gnomADe_AF", "Частота gnomAD exomes", 
+"Frequency of existing variant in gnomAD exomes combined population", 
+"Частота существующего варианта в объединенной популяции exomes gnomAD", 
 "SNV", "query", DOUBLE />   
+
+<@ATTRIBUTE_VEP 402, GR_gnomAD_4, 2, "gnomADe_AFR_AF", "Частота gnomAD exomes Африка", 
+"Frequency of existing variant in gnomAD exomes African/American population", 
+"Частота существующего варианта в африканской/американской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />   
+
+<@ATTRIBUTE_VEP 403, GR_gnomAD_4, 3, "gnomADe_AMR_AF", "Частота gnomAD exomes Америка", 
+"Frequency of existing variant in gnomAD exomes American population", 
+"Частота существующего варианта в американской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 404, GR_gnomAD_4, 4, "gnomADe_ASJ_AF", "Частота gnomAD exomes Ашкенази евреи", 
+"Frequency of existing variant in gnomAD exomes Ashkenazi Jewish population", 
+"Частота существующего варианта в ашкенази еврейской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 405, GR_gnomAD_4, 5, "gnomADe_EAS_AF", "Частота gnomAD exomes Восточная Азия", 
+"Frequency of existing variant in gnomAD exomes East Asian population", 
+"Частота существующего варианта в восточноазиатской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 406, GR_gnomAD_4, 6, "gnomADe_FIN_AF", "Частота gnomAD exomes Финляндия", 
+"Frequency of existing variant in gnomAD exomes Finnish population", 
+"Частота существующего варианта в финской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 407, GR_gnomAD_4, 7, "gnomADe_NFE_AF", "Частота gnomAD exomes не финские европейцы", 
+"Frequency of existing variant in gnomAD exomes Non-Finnish European population", 
+"Частота существующего варианта в не финских европейских популяциях exomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 408, GR_gnomAD_4, 8, "gnomADe_OTH_AF", "Частота gnomAD exomes другие", 
+"Frequency of existing variant in gnomAD exomes other combined populations", 
+"Частота существующего варианта в других объединенных популяциях exomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 409, GR_gnomAD_4, 9, "gnomADe_SAS_AF", "Частота gnomAD exomes Южная Азия", 
+"Frequency of existing variant in gnomAD exomes South Asian population", 
+"Частота существующего варианта в южноазиатской популяции exomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 410, GR_gnomAD_4, 10, "gnomADg_AF", "Частота gnomAD genomes", 
+"Frequency of existing variant in gnomAD genomes combined population", 
+"Частота существующего варианта в объединенной популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 411, GR_gnomAD_4, 11, "gnomADg_AFR_AF", "Частота gnomAD genomes Африка", 
+"Frequency of existing variant in gnomAD genomes African/American population", 
+"Частота существующего варианта в африканской/американской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 412, GR_gnomAD_4, 12, "gnomADg_AMI_AF", "Частота gnomAD genomes Амши", 
+"Frequency of existing variant in gnomAD genomes Amish population", 
+"Частота существующего варианта в популяции амши genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 413, GR_gnomAD_4, 13, "gnomADg_AMR_AF", "Частота gnomAD genomes Америка", 
+"Frequency of existing variant in gnomAD genomes American population", 
+"Частота существующего варианта в американской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 414, GR_gnomAD_4, 14, "gnomADg_ASJ_AF", "Частота gnomAD genomes Ашкенази евреи", 
+"Frequency of existing variant in gnomAD genomes Ashkenazi Jewish population", 
+"Частота существующего варианта в ашкенази еврейской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 415, GR_gnomAD_4, 15, "gnomADg_EAS_AF", "Частота gnomAD genomes Восточная Азия", 
+"Frequency of existing variant in gnomAD genomes East Asian population", 
+"Частота существующего варианта в восточноазиатской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 416, GR_gnomAD_4, 16, "gnomADg_FIN_AF", "Частота gnomAD genomes Финляндия", 
+"Frequency of existing variant in gnomAD genomes Finnish population", 
+"Частота существующего варианта в финской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 417, GR_gnomAD_4, 17, "gnomADg_MID_AF", "Частота gnomAD genomes Средний Восток", 
+"Frequency of existing variant in gnomAD genomes Mid-eastern population", 
+"Частота существующего варианта в популяции Среднего Востока genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 418, GR_gnomAD_4, 18, "gnomADg_NFE_AF", "Частота gnomAD genomes не финские европейцы", 
+"Frequency of existing variant in gnomAD genomes Non-Finnish European population", 
+"Частота существующего варианта в не финских европейских популяциях genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 419, GR_gnomAD_4, 19, "gnomADg_OTH_AF", "Частота gnomAD genomes другие", 
+"Frequency of existing variant in gnomAD genomes other combined populations", 
+"Частота существующего варианта в других объединенных популяциях genomes gnomAD", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 420, GR_gnomAD_4, 20, "gnomADg_SAS_AF", "Частота gnomAD genomes Южная Азия", 
+"Frequency of existing variant in gnomAD genomes South Asian population", 
+"Частота существующего варианта в южноазиатской популяции genomes gnomAD", 
+"SNV", "query", DOUBLE />
 
 <@ATTRIBUTE_VEP 601, GR_ExAC, 1, "MAX_AF", "Максимальная частота аллеля", 
 "Maximum observed allele frequency in 1000 Genomes, ESP and ExAC/gnomAD", 
@@ -388,27 +508,37 @@ DELETE FROM attribute_resources;
 "Предсказание и/или оценка PolyPhen",   
 "SNV", "query", STRING />   
 
-<@ATTRIBUTE_VEP "1001", GR_Protein_add, 1, "HGVSc", "HGVS кодовая последовательность", 
-"HGVS coding sequence name", 
-"Имя кодовой последовательности HGVS",   
-"transcript", "query", STRING />   
+<@ATTRIBUTE_VEP 912, GR_Protein, 19, "MOTIF_NAME", "Название мотива", 
+"The stable identifier of a transcription factor binding profile (TFBP) aligned at this position", 
+"Стабильный идентификатор профиля связывания транскрипционного фактора (TFBP), выровненного на этой позиции", 
+"SNV", "query", STRING />
 
-<@ATTRIBUTE_VEP "1002", GR_Protein_add, 1, "HGVSp", "HGVS белковая последовательность", 
-"HGVS protein sequence name", 
-"Имя белковой последовательности HGVS",   
-"SNV", "query", STRING />   
+<@ATTRIBUTE_VEP 913, GR_Protein, 20, "MOTIF_POS", "Позиция в мотиве", 
+"The relative position of the variation in the aligned TFBP", 
+"Относительная позиция вариации в выровненном TFBP", 
+"SNV", "query", INTEGER />
 
-<@ATTRIBUTE_VEP "1003", GR_Protein_add, 1, "HGVS_OFFSET", "Сдвиг HGVS", 
-"Indicates by how many bases the HGVS notations for this variant have been shifted", 
-"Указывает, на сколько оснований сдвинуты обозначения HGVS для этого варианта",   
-"transcript", "query", INT />   
+<@ATTRIBUTE_VEP 914, GR_Protein, 21, "HIGH_INF_POS", "Флаг высокой информативности", 
+"A flag indicating if the variant falls in a high information position of the TFBP", 
+"Флаг, указывающий, что вариация попадает в высокоинформативную область TFBP", 
+"SNV", "query", STRING />
+
+<@ATTRIBUTE_VEP 915, GR_Protein, 22, "MOTIF_SCORE_CHANGE", "Изменение оценки мотива", 
+"The difference in motif score of the reference and variant sequences for the TFBP", 
+"Разница в оценке мотива для референсной и вариантной последовательностей TFBP", 
+"SNV", "query", DOUBLE />
+
+<@ATTRIBUTE_VEP 916, GR_Protein, 23, "TRANSCRIPTION_FACTORS", "Транскрипционные факторы", 
+"List of transcription factors which bind to the transcription factor binding profile", 
+"Список транскрипционных факторов, связывающихся с профилем связывания транскрипционного фактора", 
+"SNV", "query", STRING />
 
 <@ATTRIBUTE_VEP "1004", GR_Protein_add, 1, "CLIN_SIG", "Клиническая значимость", 
 "ClinVar clinical significance of the dbSNP variant", 
 "Клиническая значимость варианта dbSNP из ClinVar",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP "1005", GR_Protein_add, 1, "SOMATIC", "Соматический статус", 
+<@ATTRIBUTE_VEP "1005", GR_Protein_add, 2, "SOMATIC", "Соматический статус", 
 "Somatic status of existing variant", 
 "Соматический статус существующего варианта",   
 "SNV", "query", STRING />   
@@ -432,8 +562,3 @@ DELETE FROM attribute_resources;
 "SO terms of overlapped miRNA secondary structure feature(s)", 
 "SO термины для перекрывающихся особенностей вторичной структуры miRNA", 
 "SNV", "query", STRING />   
-
-<@ATTRIBUTE_VEP "1105", GR_Other, 5, "HGVSc", "HGVS кодирующая последовательность", 
-"HGVS coding sequence name", 
-"Имя HGVS кодирующей последовательности", 
-"transcript", "query", STRING />  
