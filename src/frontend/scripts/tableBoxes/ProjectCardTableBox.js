@@ -15,7 +15,7 @@ const ProjectCardTableBox = ({ value }) => {
     { title: "Образцы", url: "#!table/samples/ForProjectCard/___prjID=" + project.ID.value },
     { title: "Контроль", url: "#!table/projects/ToDo/___prjID=" + project.ID.value },
     { title: "Анализы", url: "#!table/analyses/ForProjectCard/___prjID=" + project.ID.value },
-    { title: "Файлы", url: "#!table/attachments/ForProjectCard/___prjID=" + project.ID.value },
+    { title: "Файлы", url: "#!table/file_info/ForProjectCard/___prjID=" + project.ID.value },
   ];
 
   return (

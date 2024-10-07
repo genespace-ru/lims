@@ -418,37 +418,37 @@ DELETE FROM attribute_resources;
 "Частота существующего варианта в объединенной Южно-Азиатской популяции 1000 Геномов", 
 "SNV", "query", DOUBLE />   
 
-<@ATTRIBUTE_VEP 901, GR_Protein, 1, "BIOTYPE", "Тип транскрипта", 
+<@ATTRIBUTE_VEP 801, GR_Protein, 1, "BIOTYPE", "Тип транскрипта", 
 "Biotype of transcript or regulatory feature", 
 "Тип транскрипта или регуляторной особенности", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 902, GR_Protein, 2, "CANONICAL", "Канонический транскрипт", 
+<@ATTRIBUTE_VEP 802, GR_Protein, 2, "CANONICAL", "Канонический транскрипт", 
 "Indicates if transcript is canonical for this gene", 
 "Указывает, является ли транскрипт каноническим для этого гена", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 903, GR_Protein, 3, "MANE_SELECT", "Транскрипт MANE Select", 
+<@ATTRIBUTE_VEP 803, GR_Protein, 3, "MANE_SELECT", "Транскрипт MANE Select", 
 "MANE Select (Matched Annotation from NCBI and EMBL-EBI) Transcript", 
 "Транскрипт MANE Select (Сопоставленная аннотация от NCBI и EMBL-EBI)", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 904, GR_Protein, 4, "MANE_PLUS_CLINICAL", "Транскрипт MANE Plus Clinical", 
+<@ATTRIBUTE_VEP 804, GR_Protein, 4, "MANE_PLUS_CLINICAL", "Транскрипт MANE Plus Clinical", 
 "MANE Plus Clinical (Matched Annotation from NCBI and EMBL-EBI) Transcript", 
 "Транскрипт MANE Plus Clinical (Сопоставленная аннотация от NCBI и EMBL-EBI)", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 905, GR_Protein, 5, "TSL", "Уровень поддержки транскрипта", 
+<@ATTRIBUTE_VEP 805, GR_Protein, 5, "TSL", "Уровень поддержки транскрипта", 
 "Transcript support level", 
 "Уровень поддержки транскрипта", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 906, GR_Protein, 6, "PHENO", "Фенотип", 
+<@ATTRIBUTE_VEP 806, GR_Protein, 6, "PHENO", "Фенотип", 
 "Indicates if existing variant(s) is associated with a phenotype, disease or trait; multiple values correspond to multiple variants", 
 "Указывает, связаны ли существующие варианты с фенотипом, заболеванием или признаком; несколько значений соответствуют нескольким вариантам", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 907, GR_Protein, 7, "PUBMED", "ID публикации PubMed", 
+<@ATTRIBUTE_VEP 807, GR_Protein, 7, "PUBMED", "ID публикации PubMed", 
 "Pubmed ID(s) of publications that cite existing variant", 
 "ID публикаций PubMed, которые ссылаются на существующий вариант", 
 "transcript", "query", STRING />   
