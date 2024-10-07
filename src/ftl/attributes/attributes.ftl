@@ -71,7 +71,7 @@ DELETE FROM attribute_resources;
 <@ATTRIBUTE_VEP 106, GR_COMMON, 6, "IMPACT", "Влияние", 
 "Subjective impact classification of consequence type", 
 "Субъективная классификация влияния типа последствий",   
-"SNV", "query", INT />   
+"Transcript", "query", INT />   
 
 <@ATTRIBUTE_VEP 107, GR_COMMON, 7, "DISTANCE", "Дистанция", 
 "Shortest distance from variant to transcript", 
@@ -156,7 +156,7 @@ DELETE FROM attribute_resources;
 <@ATTRIBUTE_VEP 213, GR_GENE, 13, "HGVSp", "HGVS protein", 
 "HGVS protein sequence name", 
 "Имя последовательности HGVS белка",   
-"SNV", "query", INT />   
+"transcript", "query", INT />   
 
 <@ATTRIBUTE_VEP 214, GR_GENE, 14, "HGVS_OFFSET", "Смещение HGVS", 
 "Indicates by how many bases the HGVS notations for this variant have been shifted", 
@@ -418,117 +418,112 @@ DELETE FROM attribute_resources;
 "Частота существующего варианта в объединенной Южно-Азиатской популяции 1000 Геномов", 
 "SNV", "query", DOUBLE />   
 
-<@ATTRIBUTE_VEP 801, GR_Protein, 1, "BIOTYPE", "Тип транскрипта", 
+<@ATTRIBUTE_VEP 901, GR_Protein, 1, "BIOTYPE", "Тип транскрипта", 
 "Biotype of transcript or regulatory feature", 
 "Тип транскрипта или регуляторной особенности", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 802, GR_Protein, 2, "CANONICAL", "Канонический транскрипт", 
+<@ATTRIBUTE_VEP 902, GR_Protein, 2, "CANONICAL", "Канонический транскрипт", 
 "Indicates if transcript is canonical for this gene", 
 "Указывает, является ли транскрипт каноническим для этого гена", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 803, GR_Protein, 3, "MANE_SELECT", "Транскрипт MANE Select", 
+<@ATTRIBUTE_VEP 903, GR_Protein, 3, "MANE_SELECT", "Транскрипт MANE Select", 
 "MANE Select (Matched Annotation from NCBI and EMBL-EBI) Transcript", 
 "Транскрипт MANE Select (Сопоставленная аннотация от NCBI и EMBL-EBI)", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 804, GR_Protein, 4, "MANE_PLUS_CLINICAL", "Транскрипт MANE Plus Clinical", 
+<@ATTRIBUTE_VEP 904, GR_Protein, 4, "MANE_PLUS_CLINICAL", "Транскрипт MANE Plus Clinical", 
 "MANE Plus Clinical (Matched Annotation from NCBI and EMBL-EBI) Transcript", 
 "Транскрипт MANE Plus Clinical (Сопоставленная аннотация от NCBI и EMBL-EBI)", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 805, GR_Protein, 5, "TSL", "Уровень поддержки транскрипта", 
+<@ATTRIBUTE_VEP 905, GR_Protein, 5, "TSL", "Уровень поддержки транскрипта", 
 "Transcript support level", 
 "Уровень поддержки транскрипта", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 806, GR_Protein, 6, "PHENO", "Фенотип", 
+<@ATTRIBUTE_VEP 906, GR_Protein, 6, "PHENO", "Фенотип", 
 "Indicates if existing variant(s) is associated with a phenotype, disease or trait; multiple values correspond to multiple variants", 
 "Указывает, связаны ли существующие варианты с фенотипом, заболеванием или признаком; несколько значений соответствуют нескольким вариантам", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 807, GR_Protein, 7, "PUBMED", "ID публикации PubMed", 
+<@ATTRIBUTE_VEP 907, GR_Protein, 7, "PUBMED", "ID публикации PubMed", 
 "Pubmed ID(s) of publications that cite existing variant", 
 "ID публикаций PubMed, которые ссылаются на существующий вариант", 
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 901, GR_Protein, 8, "APPRIS", "APPRIS", 
-"Annotates alternatively spliced transcripts as primary or alternate based on a range of computational methods", 
-"Аннотации альтернативно спliced транскриптов как первичных или альтернативных на основе ряда вычислительных методов",   
-"transcript", "query", STRING />   
-
-<@ATTRIBUTE_VEP 902, GR_Protein, 9, "CCDS", "CCDS", 
+<@ATTRIBUTE_VEP 908, GR_Protein, 9, "CCDS", "CCDS", 
 "Indicates if transcript is a CCDS transcript", 
 "Указывает, является ли транскрипт транскриптом CCDS",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 903, GR_Protein, 10, "ENSP", "Protein identifier", 
+<@ATTRIBUTE_VEP 909, GR_Protein, 10, "ENSP", "Protein identifier", 
 "Protein identifier", 
 "Идентификатор белка",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 904, GR_Protein, 11, "SWISSPROT", "UniProtKB/Swiss-Prot accession", 
+<@ATTRIBUTE_VEP 910, GR_Protein, 11, "SWISSPROT", "UniProtKB/Swiss-Prot accession", 
 "UniProtKB/Swiss-Prot accession", 
 "Идентификатор UniProtKB/Swiss-Prot",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 905, GR_Protein, 12, "TREMBL", "UniProtKB/TrEMBL accession", 
+<@ATTRIBUTE_VEP 911, GR_Protein, 12, "TREMBL", "UniProtKB/TrEMBL accession", 
 "UniProtKB/TrEMBL accession", 
 "Идентификатор UniProtKB/TrEMBL",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 906, GR_Protein, 13, "UNIPARC", "UniParc accession", 
+<@ATTRIBUTE_VEP 912, GR_Protein, 13, "UNIPARC", "UniParc accession", 
 "UniParc accession", 
 "Идентификатор UniParc",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 907, GR_Protein, 14, "UNIPROT_ISOFORM", "Direct mappings to UniProtKB isoforms", 
+<@ATTRIBUTE_VEP 913, GR_Protein, 14, "UNIPROT_ISOFORM", "Direct mappings to UniProtKB isoforms", 
 "Direct mappings to UniProtKB isoforms", 
 "Прямые сопоставления с изоформами UniProtKB",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 908, GR_Protein, 15, "SOURCE", "Source of transcript", 
+<@ATTRIBUTE_VEP 914, GR_Protein, 15, "SOURCE", "Source of transcript", 
 "Source of transcript", 
 "Источник транскрипта",   
 "SNV", "query", STRING />   
 
-<@ATTRIBUTE_VEP 909, GR_Protein, 16, "GENE_PHENO", "Gene-phenotype association", 
+<@ATTRIBUTE_VEP 915, GR_Protein, 16, "GENE_PHENO", "Gene-phenotype association", 
 "Indicates if gene is associated with a phenotype, disease or trait", 
 "Указывает, связан ли ген с фенотипом, заболеванием или признаком",   
 "transcript", "query", STRING />   
 
-<@ATTRIBUTE_VEP 910, GR_Protein, 17, "SIFT", "SIFT prediction and/or score", 
+<@ATTRIBUTE_VEP 916, GR_Protein, 17, "SIFT", "SIFT prediction and/or score", 
 "SIFT prediction and/or score", 
 "Предсказание и/или оценка SIFT",   
 "SNV", "query", STRING />   
 
-<@ATTRIBUTE_VEP 911, GR_Protein, 18, "PolyPhen", "PolyPhen prediction and/or score", 
+<@ATTRIBUTE_VEP 917, GR_Protein, 18, "PolyPhen", "PolyPhen prediction and/or score", 
 "PolyPhen prediction and/or score", 
 "Предсказание и/или оценка PolyPhen",   
 "SNV", "query", STRING />   
 
-<@ATTRIBUTE_VEP 912, GR_Protein, 19, "MOTIF_NAME", "Название мотива", 
+<@ATTRIBUTE_VEP 918, GR_Protein, 19, "MOTIF_NAME", "Название мотива", 
 "The stable identifier of a transcription factor binding profile (TFBP) aligned at this position", 
 "Стабильный идентификатор профиля связывания транскрипционного фактора (TFBP), выровненного на этой позиции", 
 "SNV", "query", STRING />
 
-<@ATTRIBUTE_VEP 913, GR_Protein, 20, "MOTIF_POS", "Позиция в мотиве", 
+<@ATTRIBUTE_VEP 919, GR_Protein, 20, "MOTIF_POS", "Позиция в мотиве", 
 "The relative position of the variation in the aligned TFBP", 
 "Относительная позиция вариации в выровненном TFBP", 
 "SNV", "query", INTEGER />
 
-<@ATTRIBUTE_VEP 914, GR_Protein, 21, "HIGH_INF_POS", "Флаг высокой информативности", 
+<@ATTRIBUTE_VEP 920, GR_Protein, 21, "HIGH_INF_POS", "Флаг высокой информативности", 
 "A flag indicating if the variant falls in a high information position of the TFBP", 
 "Флаг, указывающий, что вариация попадает в высокоинформативную область TFBP", 
 "SNV", "query", STRING />
 
-<@ATTRIBUTE_VEP 915, GR_Protein, 22, "MOTIF_SCORE_CHANGE", "Изменение оценки мотива", 
+<@ATTRIBUTE_VEP 921, GR_Protein, 22, "MOTIF_SCORE_CHANGE", "Изменение оценки мотива", 
 "The difference in motif score of the reference and variant sequences for the TFBP", 
 "Разница в оценке мотива для референсной и вариантной последовательностей TFBP", 
 "SNV", "query", DOUBLE />
 
-<@ATTRIBUTE_VEP 916, GR_Protein, 23, "TRANSCRIPTION_FACTORS", "Транскрипционные факторы", 
+<@ATTRIBUTE_VEP 922, GR_Protein, 23, "TRANSCRIPTION_FACTORS", "Транскрипционные факторы", 
 "List of transcription factors which bind to the transcription factor binding profile", 
 "Список транскрипционных факторов, связывающихся с профилем связывания транскрипционного фактора", 
 "SNV", "query", STRING />
@@ -562,3 +557,8 @@ DELETE FROM attribute_resources;
 "SO terms of overlapped miRNA secondary structure feature(s)", 
 "SO термины для перекрывающихся особенностей вторичной структуры miRNA", 
 "SNV", "query", STRING />   
+
+<@ATTRIBUTE_VEP 1105, GR_Other, 5, "APPRIS", "APPRIS", 
+"Annotates alternatively spliced transcripts as primary or alternate based on a range of computational methods", 
+"Аннотации альтернативно спliced транскриптов как первичных или альтернативных на основе ряда вычислительных методов",   
+"transcript", "query", STRING />   
