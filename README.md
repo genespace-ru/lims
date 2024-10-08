@@ -1,6 +1,30 @@
-# Sample Be5 application
+# LIMS - Laboratory Information Management System
 
-Sample project based on https://github.com/DevelopmentOnTheEdge/be5
+Это проект для автоматизации процедур массового анализа результатов секвенирования для массовых рутинных задач (тагетное секвенирование, онкологические данные, мета-геномика и т.п.).
+
+Для анализа данных используются сценарии [nextflow](https://www.nextflow.io/).
+
+Проект построен на основе технологии BeanExplorer version 5 (be5) - https://github.com/DevelopmentOnTheEdge/be5
+
+С проектом связаны еще 2 подпроекта:
+- [lims-docs](https://github.com/genespace-ru/lims-docs) - документация по проекту (структура базы данных, диаграммы и т.п.).
+Пока это в основном для разработчика.
+- [lims-test-hemotology](https://github.com/genespace-ru/lims-test-hemotology) - тестовые данные. 
+
+# Установка и запуск проекта локально
+
+- Создайте базу данных, например lims с пользователем lims, в PostgreSQL. Для этого можно использовать pgAdmin 4.
+  
+- Настроить файл для соединения с базой данных - [connectionProfiles.local.yaml](https://raw.githubusercontent.com/genespace-ru/lims/refs/heads/main/src/connectionProfiles.local.yaml)
+В проекте уже есть несколько соединений, которые можно использовать, например:
+<code>
+connectionProfiles:
+  profiles:
+    test_local:
+      connectionUrl: jdbc:postgresql://localhost:5434/lims
+      username: lims
+      password: lims
+</code>
 
 # Quick start
 
