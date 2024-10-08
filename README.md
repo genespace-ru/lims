@@ -1,6 +1,65 @@
-# Sample Be5 application
+# LIMS - Laboratory Information Management System
 
-Sample project based on https://github.com/DevelopmentOnTheEdge/be5
+Это проект для автоматизации процедур массового анализа результатов секвенирования для массовых рутинных задач (тагетное секвенирование, онкологические данные, мета-геномика и т.п.).
+
+Для анализа данных используются сценарии [nextflow](https://www.nextflow.io/).
+
+Проект построен на основе технологии BeanExplorer version 5 (be5) - https://github.com/DevelopmentOnTheEdge/be5
+
+С проектом связаны еще 2 подпроекта:
+- [lims-docs](https://github.com/genespace-ru/lims-docs) - документация по проекту (структура базы данных, диаграммы и т.п.).
+Пока это в основном для разработчика.
+- [lims-test-hemotology](https://github.com/genespace-ru/lims-test-hemotology) - тестовые данные. 
+
+## Установка проекта локально
+
+1. Создайте базу данных, например lims с пользователем lims, в PostgreSQL. Для этого можно использовать pgAdmin 4.
+
+2. Настроить файл для соединения с базой данных - [connectionProfiles.local.yaml](https://raw.githubusercontent.com/genespace-ru/lims/refs/heads/main/src/connectionProfiles.local.yaml)
+В проекте уже есть несколько соединений, которые можно использовать, например:
+```
+connectionProfiles:
+  profiles:
+    test_local:
+      connectionUrl: jdbc:postgresql://localhost:5434/lims
+      username: lims
+      password: lims
+```
+
+3. указать используемую строку соединения в файле <code>lims/src/profile.local</code>, например:
+test_local
+</code>
+<br/> Важно - файл <code>lims/src/profile.local</code> у каждого разработчика свой и не вносится в репозиторий.
+
+4. Создайте таблицы приложения в пустой базе данных lims
+```
+mvn be5:create-db
+```
+
+5. Установите зависимости для фронтенда
+```sh
+npm install
+```
+
+## Запуск проекта локально
+
+1. Запуск сервера
+```
+mvn jetty:run -Djetty.http.port=8200```
+
+6.
+7. Фронтенд собирается в src/main/webapp/
+```sh
+//установить зависимости
+npm install
+//Режим разработки
+npm start
+//На своей машине быстрее собрать незжатый 
+npm run build
+//На сервере собирается
+npm run build-min
+
+6
 
 # Quick start
 
