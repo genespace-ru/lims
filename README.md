@@ -27,9 +27,10 @@ connectionProfiles:
 ```
 
 3. указать используемую строку соединения в файле <code>lims/src/profile.local</code>, например:
+```
 test_local
-</code>
-<br/> Важно - файл <code>lims/src/profile.local</code> у каждого разработчика свой и не вносится в репозиторий.
+```
+Важно - файл <code>lims/src/profile.local</code> у каждого разработчика свой и не вносится в репозиторий.
 
 4. Создайте таблицы приложения в пустой базе данных lims
 ```
@@ -41,69 +42,36 @@ mvn be5:create-db
 npm install
 ```
 
+6. Для обновления yaml проекта без перезапуска настройте dev.yaml    
+[Быстрое обновление dev.yaml](https://github.com/DevelopmentOnTheEdge/be5/wiki/%D0%91%D1%8B%D1%81%D1%82%D1%80%D0%BE%D0%B5-%D0%BE%D0%B1%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%B8%D0%B5-dev.yaml)
+
+
 ## Запуск проекта локально
 
-1. Запуск сервера
+1. Запуск сервера: ```mvn jetty:run -Djetty.http.port=8200```
+2. Запуск фронтенда: ```npm start```
+3. Интерфейс в браузере: http://localhost:8888
+
+## Полезные комманды
+
+```mvn be5:sync -DBE5_FORCE_UPDATE=true```
+<br/>Обновляет структуру базы данных по файлам yaml. 
+
+```mvn be5:data -DBE5_SCRIPT=attributes/attributes```
+<br/>Выполняет заданный скрипт, здесь attributes/attributes.ftl
+<br/>Важно:
+- скрипт имеет расширение ```.ftl```, но оно при запуске не указывается,
+- скрипт должен быть указан в проекте (```project.yaml```):
 ```
-mvn jetty:run -Djetty.http.port=8200```
-
-6.
-7. Фронтенд собирается в src/main/webapp/
-```sh
-//установить зависимости
-npm install
-//Режим разработки
-npm start
-//На своей машине быстрее собрать незжатый 
-npm run build
-//На сервере собирается
-npm run build-min
-
-6
-
-# Quick start
-
-Download and run mvn install
-- https://github.com/DevelopmentOnTheEdge/xmltest
-- https://github.com/DevelopmentOnTheEdge/beanexplorer
-- https://github.com/DevelopmentOnTheEdge/be-sql
-- https://github.com/DevelopmentOnTheEdge/be5
-
-- config connection profile in file: [src/connectionProfiles.local.yaml](https://github.com/QProgS/testBe5app/blob/master/src/connectionProfiles.local.yaml) 
-- create file src/profile.local with name of connection, for example: "test_local"
-- create database
-```sh
-mvn be5:create-db
-или если нужно только обновить
-mvn be5:sync
+  scripts:
+  - Post-db
+  - dictionaries
+  - test-hematology/users
+  - test-hematology/project
+...
 ```
 
-Фронтенд собирается в src/main/webapp/
-```sh
-//установить зависимости
-npm install
-//Режим разработки
-npm start
-//На своей машине быстрее собрать незжатый 
-npm run build
-//На сервере собирается
-npm run build-min
-```
-Можно также взять готовый фронтенд из https://github.com/DevelopmentOnTheEdge/be5-react/tree/master/dist/compressed
-Просто запустите main метод
-```java
-public class Be5TestAppMain
-{
-    public static void main(String... args)
-    {
-        new EmbeddedJetty().run();
-    }
-}
-```
-Или 
-```sh
-mvn clean install jetty:run -Djetty.http.port=8200
-```
+ 
 
 ### Включить режим разарботки под линуксом (в корневом каталоге)
 ```sh
