@@ -21,7 +21,6 @@ DELETE FROM attribute_resources;
        level, storage, type, comment, dictionary, rule, displayIfEmpty, urlMask)
     VALUES( ${id}, 'snv_',  ${group}, ${order}, ${title?str}, ${title_ru?str}, ${description?str}, ${description_ru?str}, 
     ${level?str}, ${storage?str}, ${type}, ${comment}, ${dictionary}, ${rule}, ${displayIfEmpty}, ${urlMask} );
-
     INSERT INTO attribute_resources(id, attribute, resource)
     VALUES(${id}0, ${id}, ${VEP});
 </#macro>
