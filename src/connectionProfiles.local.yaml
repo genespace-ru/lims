@@ -12,6 +12,10 @@ connectionProfiles:
       connectionUrl: jdbc:postgresql://localhost:5432/lims
       username: lims
       password: lims
+    ITest_32:
+      connectionUrl: jdbc:postgresql://localhost:5432/lims
+      username: lims
+      password: lims
     dockerBuildDev:
       connectionUrl: jdbc:postgresql://docker:5433/lims
       username: lims
