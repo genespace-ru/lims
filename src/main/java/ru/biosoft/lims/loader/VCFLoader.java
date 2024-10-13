@@ -6,6 +6,16 @@ import java.util.logging.Logger;
 
 /**
  * VCFLoader loads SNV from VCFv4.2 file into corresponding database table.
+ *
+ * Not parsed fields:
+ * 
+ * 1.2.8 Sample field format
+ * ##SAMPLE=<ID=S_ID,Genomes=G1_ID;G2_ID; ...;GK_ID,Mixture=N1;N2; ...;NK,Description=S1;S2; ...;SK>
+ * 
+ * 1.2.9 Pedigree field format
+ * ##PEDIGREE=<Name_0=G0-ID,Name_1=G1-ID,...,Name_N=GN-ID>
+ * or a link to a database:
+ * ##pedigreeDB=URL
  */
 public class VCFLoader extends LoaderSupport
 {
@@ -32,11 +42,6 @@ public class VCFLoader extends LoaderSupport
 	protected void insertMeta(String section, String value)
 	{
 		db.updateRaw("INSERT INTO " + metaTableName + "(section, value) VALUES(?, ?)", section, value);
-	}
-
-	protected void insertFilter(String value, String id, String description)
-	{
-		db.updateRaw("INSERT INTO " + metaTableName + "(section, value, id, description) VALUES('FILTER', ?, ?, ?)", value, id, description);
 	}
 	
 	protected void processLine(String line)
@@ -87,10 +92,16 @@ public class VCFLoader extends LoaderSupport
 	 */
 	protected String getValue(String line, String key, boolean optional) throws Exception
 	{
-		int start = line.indexOf(key+'=') + key.length() + 1;
-		if( start == -1 && ! optional)
-			throw new Exception("Field format error, key=" + key +" is missing.");
+		int start = line.indexOf(key+'=');
+		if( start == -1 )
+		{
+			if ( ! optional)
+				throw new Exception("Field format error, key=" + key +" is missing.");
+			else
+				return "null";
+		}
 		
+		start += key.length() + 1;
 		int end;
 		if( line.charAt(start) == '"' )
 		{
@@ -115,21 +126,91 @@ public class VCFLoader extends LoaderSupport
 		String field = getField(line);
 		String value = line.substring(3+field.length()).trim(); 
 		
+		// 1.2.1 File format
 		if( "fileformat".equalsIgnoreCase(field) )
 		{
 			insertMeta(field, value);
 			return;
 		}
 
-		//##FILTER=<ID=PASS,Description="All filters passed">
+		// 1.2.2 Information field format
+		// INFO fields should be described as follows (first four keys are required, source and version are recommended):
+		// ##INFO=<ID=ID,Number=number,Type=type,Description="description",Source="source",Version="version">
+		if( "INFO".equalsIgnoreCase(field) )
+		{
+			String id          = getValue(value, "ID",     false); 
+			String number      = getValue(value, "Number", false); 
+			String type        = getValue(value, "Type",   false); 
+			String description = getValue(value, "Description", false); 
+
+			db.updateRaw("INSERT INTO " + metaTableName + "(section, value, id, number, type, description) " +
+			              "VALUES('INFO', ?, ?, ?, ?, ?)", value, id, number, type, description);
+			return;
+		}
+		
+		// 1.2.3 Filter field format
+		// ##FILTER=<ID=ID,Description="description">		
 		if( "FILTER".equalsIgnoreCase(field) )
 		{
 			String id = getValue(value, "ID", false); 
 			String description = getValue(value, "Description", false); 
 
-			insertFilter(value, id, description);
+			db.updateRaw("INSERT INTO " + metaTableName + "(section, value, id, description) VALUES('FILTER', ?, ?, ?)", value, id, description);
+			return;
+		}
+
+		// 1.2.4 Individual format field format
+		// ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+		// fields specified in the FORMAT field should be described as follows:
+		// ##FORMAT=<ID=ID,Number=number,Type=type,Description="description">
+		// Possible Types for FORMAT fields are: Integer, Float, Character, and String 
+		if( "FORMAT".equalsIgnoreCase(field) )
+		{
+			String id          = getValue(value, "ID",     false); 
+			String number      = getValue(value, "Number", false); 
+			String type        = getValue(value, "Type",   false); 
+			String description = getValue(value, "Description", false); 
+
+			db.updateRaw("INSERT INTO " + metaTableName + "(section, value, id, number, type, description) " +
+			              "VALUES('FORMAT', ?, ?, ?, ?, ?)", value, id, number, type, description);
+			return;
 		}
 		
+		// 1.2.5 Alternative allele field format
+		// Symbolic alternate alleles for imprecise structural variants:
+		// ##ALT=<ID=type,Description="description">
+		if( "ALT".equalsIgnoreCase(field) )
+		{
+			String id = getValue(value, "ID", false); 
+			String description = getValue(value, "Description", false); 
+
+			db.updateRaw("INSERT INTO " + metaTableName + "(section, value, id, description) VALUES('ALT', ?, ?, ?)", value, id, description);
+			return;
+		}
+
+		// 1.2.6 Assembly field format
+		// Breakpoint assemblies for structural variations may use an external file:
+		// ##assembly=url
+		if( "assembly".equalsIgnoreCase(field) )
+		{
+			insertMeta(field, value);
+			return;
+		}
+		
+		// 1.2.7 Contig field format
+		// ##contig=<ID=ctg1,URL=ftp://somewhere.org/assembly.fa,...>		
+		if( "contig".equalsIgnoreCase(field) )
+		{
+			String id = getValue(value, "ID", false); 
+			String url = getValue(value, "URL", true); 
+			
+			db.updateRaw("INSERT INTO " + metaTableName + "(section, value, id, url) " +
+			              "VALUES('contig', ?, ?, ?)", value, id, url);
+			return;
+		}
+
+		// other tags:
+		insertMeta(field, value);
 	}
 	
 	protected void processHeader(String line) throws Exception	{}

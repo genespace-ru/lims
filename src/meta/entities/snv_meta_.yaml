@@ -32,7 +32,7 @@ snv_meta_:
         type: VARCHAR(2)
         canBeNull: true 
         doc: Число значений в поле.
-    - length:
-        type: INT
+    - url:
+        type: VARCHAR(200)
         canBeNull: true 
-        doc: Длина контига для поля ##contig
+        doc: URL для контига.
