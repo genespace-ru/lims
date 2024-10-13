@@ -33,6 +33,11 @@ public class VCFLoader extends LoaderSupport
 	{
 		db.updateRaw("INSERT INTO " + metaTableName + "(section, value) VALUES(?, ?)", section, value);
 	}
+
+	protected void insertFilter(String value, String id, String description)
+	{
+		db.updateRaw("INSERT INTO " + metaTableName + "(section, value, id, description) VALUES('FILTER', ?, ?, ?)", value, id, description);
+	}
 	
 	protected void processLine(String line)
 	{
@@ -74,6 +79,37 @@ public class VCFLoader extends LoaderSupport
 		return line.substring(2, end);
 	}
 	
+	/**
+	 * Returns key value.
+	 * Expected format:
+	 * <code><[...,]key=["]value["][,...]>
+	 * ##fieldName=...</code>
+	 */
+	protected String getValue(String line, String key, boolean optional) throws Exception
+	{
+		int start = line.indexOf(key+'=') + key.length() + 1;
+		if( start == -1 && ! optional)
+			throw new Exception("Field format error, key=" + key +" is missing.");
+		
+		int end;
+		if( line.charAt(start) == '"' )
+		{
+			start++;
+			end = line.indexOf('"', start+1);
+		}
+		else
+		{
+			end = line.indexOf(',', start+1);
+			if( end == -1 )
+				end = line.indexOf('>', start+1);
+		}
+		if( end == -1 )
+			throw new Exception("Field end undefined, key=" + key +".");
+
+		return line.substring(start, end);
+	}
+	
+	
 	protected void processMeta(String line) throws Exception
 	{
 		String field = getField(line);
@@ -84,6 +120,16 @@ public class VCFLoader extends LoaderSupport
 			insertMeta(field, value);
 			return;
 		}
+
+		//##FILTER=<ID=PASS,Description="All filters passed">
+		if( "FILTER".equalsIgnoreCase(field) )
+		{
+			String id = getValue(value, "ID", false); 
+			String description = getValue(value, "Description", false); 
+
+			insertFilter(value, id, description);
+		}
+		
 	}
 	
 	protected void processHeader(String line) throws Exception	{}
