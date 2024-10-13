@@ -37,6 +37,13 @@ public class VCFLoaderTest extends DbTest
     @Order(2) 
     public void checkLoad() throws Exception
     {
-        loader.load(file, PROJECT, SAMPLE);
+        try 
+        {
+        	loader.load(file, PROJECT, SAMPLE);
+        }
+        catch(Exception t)
+        {
+        	throw t;
+        }
     }
 }

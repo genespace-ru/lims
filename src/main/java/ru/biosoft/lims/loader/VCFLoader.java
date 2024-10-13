@@ -7,12 +7,16 @@ import java.util.logging.Logger;
 
 /**
  * VCFLoader loads SNV from VCFv4.2 file into corresponding database table.
+ * 
+ * Two tables are created:
+ * 1) vcf_<sample_name> (snv_ table is used as template) - stores SNV data
+ * 2) vcf_meta_<sample_name> (snv_memta_ table is used as template) - stores metadata
  *
  * Limitations:
  * 
  * 1) Only one sample is supported
  * 
- * 2) Not parsed fields:
+ * 2) Not parsed meta for fields:
  * 
  * 1.2.8 Sample field format
  * ##SAMPLE=<ID=S_ID,Genomes=G1_ID;G2_ID; ...;GK_ID,Mixture=N1;N2; ...;NK,Description=S1;S2; ...;SK>
@@ -21,6 +25,8 @@ import java.util.logging.Logger;
  * ##PEDIGREE=<Name_0=G0-ID,Name_1=G1-ID,...,Name_N=GN-ID>
  * or a link to a database:
  * ##pedigreeDB=URL
+ * 
+ * 3) INFO fields is not parsed.
  */
 public class VCFLoader extends LoaderSupport
 {
@@ -39,13 +45,23 @@ public class VCFLoader extends LoaderSupport
 	{
 		snvTableName  = "snv_"      + sample;
 		metaTableName = "snv_meta_" + sample;
-		
-		db.updateRaw("DROP TABLE IF EXISTS " + snvTableName);
-		db.updateRaw("DROP TABLE IF EXISTS " + metaTableName);
-		db.updateRaw("CREATE TABLE " + snvTableName  + " (LIKE snv_      INCLUDING defaults INCLUDING constraints INCLUDING indexes)");
-		db.updateRaw("CREATE TABLE " + metaTableName + " (LIKE snv_meta_ INCLUDING defaults INCLUDING constraints INCLUDING indexes)");
+
+		createTables("snv_", sample);
+		createTables("snv_meta_", sample);
 	}
 
+	protected void createTables(String template, String sample)
+	{
+		String tableName = template + sample;
+
+		db.updateRaw("DROP TABLE IF EXISTS " + tableName);
+		db.updateRaw("CREATE TABLE " + tableName  + " (LIKE " + template + " INCLUDING defaults INCLUDING constraints INCLUDING indexes)");
+
+		db.updateRaw("DROP SEQUENCE IF EXISTS " + tableName  + "_seq");
+		db.updateRaw("CREATE SEQUENCE " + tableName  + "_seq AS integer");
+		db.updateRaw("ALTER TABLE " + tableName  + " ALTER COLUMN ID SET DEFAULT " + "nextval('" + tableName  + "_seq'::regclass)" );	
+	}
+	
 	protected void insertMeta(String section, String value)
 	{
 		db.updateRaw("INSERT INTO " + metaTableName + "(section, value) VALUES(?, ?)", section, value);
@@ -266,5 +282,51 @@ public class VCFLoader extends LoaderSupport
 			throw new Exception("Incorrect header line, only one sample is supported.");
 	}
 	
-	protected void processSNV(String line) throws Exception		{}
+	protected void processSNV(String line) throws Exception		
+	{
+		StringTokenizer tokens = new StringTokenizer(line, "\t");
+		
+		String chrom = tokens.nextToken();
+		String pos 	 = tokens.nextToken();
+		String id 	 = tokens.nextToken();
+		String ref 	 = tokens.nextToken();
+		String alt 	 = tokens.nextToken();
+		String qual	 = tokens.nextToken();
+		String filter= tokens.nextToken();
+		String info	 = tokens.nextToken();
+		String format= tokens.nextToken();
+		String sample = tokens.nextToken();
+
+		String json = buildJson(format, sample);
+
+		db.updateRaw("INSERT INTO " + snvTableName + 
+				"(vcf_chrom, vcf_pos, vcf_id, vcf_ref, vcf_alt, vcf_qual, vcf_filter, " +
+				" vcf_info, vcf_format, attributes) " +
+	              "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, to_json(?::json) )", 
+	              chrom, Integer.parseInt(pos), id, ref, alt, Double.parseDouble(qual), filter, info, format, json);
+	}
+
+	protected String buildJson(String format, String sample)
+	{
+		StringTokenizer keys   = new StringTokenizer(format, ":");
+		StringTokenizer values = new StringTokenizer(sample, ":");
+		
+		StringBuffer json = new StringBuffer("{");
+		
+		while( keys.hasMoreTokens() )
+		{
+			json.append("\"");
+			json.append(keys.nextToken());
+			json.append("\":\"");
+			json.append(values.nextToken());
+			
+			if( keys.hasMoreTokens() )
+				json.append("\", ");
+			else
+				json.append("\" }");
+		}
+		
+		return json.toString();
+	}
+
 }
