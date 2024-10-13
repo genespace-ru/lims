@@ -1,0 +1,38 @@
+snv_meta_:
+  type: table
+  primaryKey: ID
+  displayName: SNV meta
+  doc: |-
+    Мета информация по ключам для VCF файла с SNV. Для каждого образца создается отдельная таблица,
+    где название образца является суффиксом в названии таблицы.
+    Например: snv_meta_sample1.
+    Ограничение - один VCF файл должен содержать данные только для одного образца.
+
+  scheme:
+    columns:
+    - section:
+        type: VARCHAR(50)
+        doc: Название секции или поля. Например':' INFO, FORMAT, contig
+    - value:     
+        type: VARCHAR(300)
+        doc: Значение секции, неразобранное на части.
+    - ID:
+        type: VARCHAR(50)
+        canBeNull: true 
+        doc: Название ключа, например':' PASS, GT
+    - description:     
+        type: VARCHAR(200)
+        canBeNull: true 
+        doc: Описание данные в ключе.
+    - type:     
+        type: ENUM('Integer', 'Float', 'Flag', 'Character', 'String')
+        canBeNull: true 
+        doc: Тип данных в поле ##INFO.
+    - number:
+        type: VARCHAR(2)
+        canBeNull: true 
+        doc: Число значений в поле.
+    - length:
+        type: INT
+        canBeNull: true 
+        doc: Длина контига для поля ##contig

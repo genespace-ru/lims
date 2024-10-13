@@ -12,7 +12,8 @@ import com.developmentontheedge.be5.database.DbService;
 public abstract class LoaderSupport implements Loader 
 {
     @Inject 
-    private DbService db;
+    protected DbService db;
+    protected int lineNumber = 1;
 
     public String getProjectDir()
     {
@@ -61,15 +62,23 @@ public abstract class LoaderSupport implements Loader
 	 */
 	public void load(File file, String project, String sample) throws IOException
 	{
-    	try( BufferedReader br = new BufferedReader(new FileReader(file)) ) 
+		preload(file, project, sample);
+		
+		try( BufferedReader br = new BufferedReader(new FileReader(file)) ) 
     	{
     	    String line;
     	    while( (line = br.readLine()) != null ) 
     	    {
     	    	processLine(line);
+    	    	lineNumber++;
     	    }
     	}
     }
+
+	/**
+	 * Makes needed initializations, for example create the needed database table.
+	 */
+	protected void preload(File file, String project, String sample) {}
 
 	/**
 	 * Processes file content line by line.
