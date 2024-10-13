@@ -72,24 +72,16 @@ public class VCFLoader extends LoaderSupport
 		try
 		{
 			if( line.startsWith("##") )
-			{
 				processMeta(line);
-				return;
-			}
-		
-			if( line.startsWith("#") )
-			{
+			else if( line.startsWith("#") )
 				processHeader(line);
-				return;
-			}
-		
-			processSNV(line);
+			else
+				processSNV(line);
 		}
 		catch(Throwable t)
 		{
 			log.log(Level.SEVERE, "VCF parsing error: " + t + System.lineSeparator() +
-				"line: " + lineNumber + System.lineSeparator() + 
-				line);
+				"line: " + lineNumber + System.lineSeparator() + line);
 		}
 	}
 
@@ -142,8 +134,7 @@ public class VCFLoader extends LoaderSupport
 
 		return line.substring(start, end);
 	}
-	
-	
+		
 	protected void processMeta(String line) throws Exception
 	{
 		String field = getField(line);
