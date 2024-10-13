@@ -27,6 +27,9 @@ import java.util.logging.Logger;
  * ##pedigreeDB=URL
  * 
  * 3) INFO fields is not parsed.
+ * 
+ * Comment in code refer to VCF specification
+ * https://samtools.github.io/hts-specs/VCFv4.2.pdf
  */
 public class VCFLoader extends LoaderSupport
 {

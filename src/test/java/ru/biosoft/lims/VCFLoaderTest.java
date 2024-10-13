@@ -43,7 +43,8 @@ public class VCFLoaderTest extends DbTest
         }
         catch(Exception t)
         {
-        	throw t;
+            // for debugging
+            throw t;
         }
     }
 }
