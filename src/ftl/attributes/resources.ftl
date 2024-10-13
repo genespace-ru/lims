@@ -294,3 +294,13 @@ DELETE FROM resource_recommendations;
 <@RESOURCE 58, "program", "deepvariant", "",
 "Variant caller  на основе глубокого обучения, который выполняет выровненные чтения."
 "https://github.com/google/deepvariant", "" />
+
+<@RESOURCE 59, "format", "VCF", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<#macro RESOURCE id, type, title, version, description, url, license, comment="null">
+    INSERT INTO resources(id, type, title, version, description, url, license, comment) 
+    VALUES( ${id}, ${type?str}, ${title?str}, ${version?str}, ${description?str}, ${url?str}, ${license?str}, ${comment});
+</#macro>
+

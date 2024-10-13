@@ -6,6 +6,10 @@ snv_:
     Список найденных SNV. Для каждого образца создается отдельная таблица,
     где название образца является суффиксом в названии таблицы.
     Например: snv_sample1.
+    Поля vcf_(chrom, pos, id, ref, alt, qual, filter, info) являются обязательными
+    полями VCF v.4.2 (https://samtools.github.io/hts-specs/VCFv4.2.pdf).
+    Их подробное описание смотри в спецификации VCFv4.2.
+    Ограничение - один VCF файл должен содержать данные только для одного образца.
 
   scheme:
     columns:
@@ -13,17 +17,41 @@ snv_:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - VEP_ID:
+    - vcf_chrom:
         type: VARCHAR(50)
+        doc: Хромосома.
+    - vcf_pos:
+        type: INT
+        doc: Позиция на хромосоме.
+    - vcf_id:
+        type: VARCHAR(200)
+        canBeNull: true 
+        doc: Список идентификаторов, разделитель - ;
+    - vcf_ref:
+        type: VARCHAR(50)
+        doc: Основания ( A,C,G,T,N) в референсном геноме.
+    - vcf_alt: 
+        type: VARCHAR(50)
+        doc: Альтернативные основания.
+    - vcf_qual:
+        type: DECIMAL(4,1)
+        canBeNull: true
+        doc: Качество, Phred-scaled quality score for the assertion made in ALT.
+    - vcf_filter:
+        type: VARCHAR(50)
+        doc: Статус, PASS - если поизиция прошла все фильтры.
+    - vcf_info: 
+        type: JSON
+        canBeNull: true
+        doc: Дополнительная информация в формате ключ-значение.
+    - vcf_format:         
+        type: VARCHAR(1000)
+        doc: Формат для поля генотип.                 
+    - attributes:
+        type: JSON 
         canBeNull: true        
-        doc: Идентификатор SNV в VEP файле.
-    - location:
-        type: VARCHAR(50)
-        doc: |- 
-          Расположение SNV в стандартном формате (chr:start or chr:start-end)
-    - allele:
-        type: VARCHAR(10)
-        doc: Вариант, исопльзуемы для рассчета последствий SNV.
+        doc: Все аттрибуты (VCF info, format; VEP annotation и другие).
+
     - pathogenicity:
         type: INT
         reference: pathogenicity
@@ -34,10 +62,6 @@ snv_:
         reference: pathogenicity_authority
         canBeNull: true        
         doc: Автор или рекоммендации, по которой проставлена патогенность.
-    - attributes:
-        type: JSON 
-        canBeNull: true        
-        doc: Значения аттрибутов в формате JSON (название аттрибута - значение).
     - isAttached:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''

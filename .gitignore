@@ -1,6 +1,7 @@
 .settings
 src/profile.local
 package-lock.json 
+pom.xml_java21
 
 /.project
 /target
