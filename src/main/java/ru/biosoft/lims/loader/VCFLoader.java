@@ -1,13 +1,18 @@
 package ru.biosoft.lims.loader;
 
 import java.io.File;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  * VCFLoader loads SNV from VCFv4.2 file into corresponding database table.
  *
- * Not parsed fields:
+ * Limitations:
+ * 
+ * 1) Only one sample is supported
+ * 
+ * 2) Not parsed fields:
  * 
  * 1.2.8 Sample field format
  * ##SAMPLE=<ID=S_ID,Genomes=G1_ID;G2_ID; ...;GK_ID,Mixture=N1;N2; ...;NK,Description=S1;S2; ...;SK>
@@ -19,6 +24,8 @@ import java.util.logging.Logger;
  */
 public class VCFLoader extends LoaderSupport
 {
+    public static final String[] titles = new String[] {"#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"};
+
     public static final Logger log = Logger.getLogger(VCFLoader.class.getName());
 
 	public String getFormat()			{ return "VCF"; }
@@ -213,7 +220,51 @@ public class VCFLoader extends LoaderSupport
 		insertMeta(field, value);
 	}
 	
-	protected void processHeader(String line) throws Exception	{}
+	/*
+	 * 1.3 Header line syntax
+	 * The header line names the 8 fixed, mandatory columns. These columns are as follows:
+	 * 1. #CHROM
+	 * 2. POS
+	 * 3. ID
+	 * 4. REF
+	 * 5. ALT
+	 * 6. QUAL
+	 * 7. FILTER
+	 * 8. INFO
+	 * 
+     * The header line is tab-delimited.
+     * 
+     * If genotype data is present in the file, these are followed by a FORMAT column header, then an arbitrary number
+     * of sample IDs. 
+	 * 
+	 * Limitations: only one sample is supported!
+	 * 
+	 * Example:
+	 * #CHROM	POS	       ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	            default
+     * chr1		46258772	.	GA	G	0		RefCall	.		GT:GQ:DP:AD:VAF:PL	0/0:35:15:13,2:0.133333:0,35,55
+	 */
+	protected void processHeader(String line) throws Exception	
+	{
+		// check titles
+		StringTokenizer tokens = new StringTokenizer(line, "\t");
+		
+		for(int i=0; i<titles.length; i++)
+		{
+			if( ! tokens.hasMoreTokens() )
+				throw new Exception("Incorrect header line, it should contains 9 fields.");
+			
+			String token = tokens.nextToken();
+			if( !titles[i].equals(token) )
+				throw new Exception("Incorrect header line, expected field " + titles[i] + ", but was " + token + ".");
+		}
+
+		if( ! tokens.hasMoreTokens() )
+			throw new Exception("Incorrect header line, it should contains 9 fields.");
+		String token = tokens.nextToken();
+
+		if( tokens.hasMoreTokens() )
+			throw new Exception("Incorrect header line, only one sample is supported.");
+	}
 	
 	protected void processSNV(String line) throws Exception		{}
 }
