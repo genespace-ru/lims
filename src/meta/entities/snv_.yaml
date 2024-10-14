@@ -88,6 +88,17 @@ snv_:
       code: |2-
         SELECT 
             s.id AS "___ID",
+            
+            '<img src="icons/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '">' ||
+            
+            '<img src="icons/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке.">' || 
+
+            '<img src="icons/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.isHidden='yes' THEN 'включить' ELSE 'не включать' END) || ' SNV в отчет.">' 
+            AS "Actions;<nosort/>",
+            
             s.vcf_chrom || ':' || s.vcf_pos AS "Location",
             s.vcf_ref || '>' || s.vcf_alt AS "Replacement",
             s.attributes->>'GT' AS "Genotype",
