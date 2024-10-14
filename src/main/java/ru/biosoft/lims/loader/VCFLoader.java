@@ -289,15 +289,15 @@ public class VCFLoader extends LoaderSupport
         String filter= tokens.nextToken();
         String info  = tokens.nextToken();
         String format= tokens.nextToken();
-        String sample = tokens.nextToken();
+        String sample= tokens.nextToken();
 
         String json = buildJson(format, sample);
 
         db.updateRaw("INSERT INTO " + snvTableName + 
-                "(vcf_chrom, vcf_pos, vcf_id, vcf_ref, vcf_alt, vcf_qual, vcf_filter, " +
-                " vcf_info, vcf_format, attributes) " +
-                  "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, to_json(?::json) )", 
-                  chrom, Integer.parseInt(pos), id, ref, alt, Double.parseDouble(qual), filter, info, format, json);
+                     "(vcf_chrom, vcf_pos, vcf_id, vcf_ref, vcf_alt, vcf_qual, vcf_filter, " +
+                     " vcf_info, vcf_format, attributes) " +
+                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, to_json(?::json) )", 
+                     chrom, Integer.parseInt(pos), id, ref, alt, Double.parseDouble(qual), filter, info, format, json);
     }
 
     protected String buildJson(String format, String sample)

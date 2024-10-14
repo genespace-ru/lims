@@ -78,5 +78,25 @@ snv_:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''
         doc: Нужно ли включать SNV в отчет.
-     
+
+  queries:
+  - All records:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      operations:
+      code: |2-
+        SELECT 
+            s.id AS "___ID",
+            s.vcf_chrom || ':' || s.vcf_pos AS "Location",
+            s.vcf_ref || '>' || s.vcf_alt AS "Replacement",
+            s.attributes->>'GT' AS "Genotype",
+            COALESCE(s.attributes->>'DP' || ' (' || (s.attributes->>'AD') || ')', '') "Read depth (Ref,Alt)",
+            ROUND(CAST(s.attributes->>'VAF' AS DECIMAL), 2)*100 AS "Variant allele fraction, %;<quick visible='true' />",
+            s.vcf_qual AS "Quality;<quick visible='true' />",
+            s.vcf_filter AS "Filter;<quick visible='true' />",
+            s.vcf_id AS "IDs;<quick visible='false' />",
+            s.vcf_info AS "Info;<quick visible='false' />",
+            s.attributes AS "Attributes;<quick visible='false' />"
+        FROM snv_sample1 s
         
