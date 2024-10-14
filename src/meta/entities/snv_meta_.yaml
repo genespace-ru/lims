@@ -14,7 +14,7 @@ snv_meta_:
         type: VARCHAR(50)
         doc: Название секции или поля. Например':' INFO, FORMAT, contig
     - value:     
-        type: VARCHAR(300)
+        type: VARCHAR(10000)
         doc: Значение секции, неразобранное на части.
     - ID:
         type: VARCHAR(50)

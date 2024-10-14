@@ -41,7 +41,7 @@ snv_:
         type: VARCHAR(50)
         doc: Статус, PASS - если поизиция прошла все фильтры.
     - vcf_info: 
-        type: VARCHAR(500)
+        type: TEXT
         canBeNull: true
         doc: Дополнительная информация в формате ключ-значение.
     - vcf_format:         
