@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -11,9 +14,11 @@ import com.developmentontheedge.be5.database.DbService;
 
 public abstract class LoaderSupport implements Loader 
 {
+    protected Logger log = Logger.getLogger(Loader.class.getName());
+    int lineNumber = 1;
+    
     @Inject 
     protected DbService db;
-    protected int lineNumber = 1;
 
     public String getProjectDir()
     {
@@ -95,5 +100,44 @@ public abstract class LoaderSupport implements Loader
 	/**
 	 * Processes file content line by line.
 	 */
-	abstract protected void processLine(String line);
+    protected void processLine(String line)
+    {
+        try
+        {
+            if( line.startsWith("##") )
+                processMeta(line);
+            else if( line.startsWith("#") )
+                processHeader(line);
+            else
+                processRow(line);
+        }
+        catch(Throwable t)
+        {
+            log.log(Level.SEVERE, getFormat() + "v" + getVersion() +
+                "parsing error: " + t + System.lineSeparator() +
+                "line: " + lineNumber + System.lineSeparator() + line);
+        }
+    }
+
+    protected void processMeta(String line)   throws Exception {}
+    protected void processHeader(String line) throws Exception {}
+    protected void processRow(String line)    throws Exception {}
+	
+    protected StringTokenizer processHeader(String line, String[] titles, int fieldsNumber) throws Exception  
+    {
+        // check titles
+        StringTokenizer tokens = new StringTokenizer(line, "\t");
+        
+        for(int i=0; i<titles.length; i++)
+        {
+            if( ! tokens.hasMoreTokens() )
+                throw new Exception("Incorrect header line, it should contains " + fieldsNumber + " fields.");
+            
+            String token = tokens.nextToken();
+            if( !titles[i].equals(token) )
+                throw new Exception("Incorrect header line, expected field " + titles[i] + ", but was " + token + ".");
+        }
+
+        return tokens;
+    }
 }

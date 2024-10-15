@@ -33,11 +33,40 @@ public class VEPLoader extends LoaderSupport
                     "VEP data are linked to existing VCF data.");
             
         createTableFromTemplate("snv_transcripts_", transcriptTableName);
-    
-        System.out.println("ok");
     }
-    
-    protected void processLine(String line)
-    {}
+
+    /**
+     * The default output format ("VEP" format when downloading from the web interface) is a 14 column tab-delimited file. Empty values are denoted by '-'. 
+     * 
+     * The output columns are:
+     *
+     * <ol>
+     * <li> Uploaded variation - as chromosome_start_alleles
+     * <li> Location - in standard coordinate format (chr:start or chr:start-end)
+     * <li> Allele - the variant allele used to calculate the consequence
+     * <li> Gene - Ensembl stable ID of affected gene
+     * <li> Feature - Ensembl stable ID of feature
+     * <li> Feature type - type of feature. Currently one of Transcript, RegulatoryFeature, MotifFeature.
+     * <li> Consequence - consequence type of this variant
+     * <li> Position in cDNA - relative position of base pair in cDNA sequence
+     * <li> Position in CDS - relative position of base pair in coding sequence
+     * <li> Position in protein - relative position of amino acid in protein
+     * <li> Amino acid change - only given if the variant affects the protein-coding sequence
+     * <li> Codon change - the alternative codons with the variant base in upper case
+     * <li> Co-located variation - identifier of any existing variants. Switch on with --check_existing
+     * <li> Extra - this column contains extra information as key=value pairs separated by ";", see below.
+     * </li>
+     *
+     * Example:
+     * #Uploaded_variation Location    Allele  Gene    Feature Feature_type    Consequence cDNA_position   CDS_position    Protein_position    Amino_acids Codons  Existing_variation  Extra
+     * 
+     */
+    public static final String[] titles = new String[] {"#Uploaded_variation", "Location", "Allele", "Gene", "Feature", "Feature_type", "Consequence",
+            "cDNA_position", "CDS_position", "Protein_position", "Amino_acids", "Codons", "Existing_variation", "Extra"};
+
+    protected void processHeader(String line) throws Exception  
+    {
+        processHeader(line, titles, 14);
+    }
     
 }

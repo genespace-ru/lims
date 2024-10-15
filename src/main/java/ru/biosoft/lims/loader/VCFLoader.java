@@ -33,8 +33,6 @@ import java.util.logging.Logger;
  */
 public class VCFLoader extends LoaderSupport
 {
-    public static final String[] titles = new String[] {"#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"};
-
     public static final Logger log = Logger.getLogger(VCFLoader.class.getName());
 
     public String getFormat()           { return "VCF"; }
@@ -52,30 +50,12 @@ public class VCFLoader extends LoaderSupport
         createTableFromTemplate("snv_", sample);
         createTableFromTemplate("snv_meta_", sample);
     }
-    
+
     protected void insertMeta(String section, String value)
     {
         db.updateRaw("INSERT INTO " + metaTableName + "(section, value) VALUES(?, ?)", section, value);
     }
     
-    protected void processLine(String line)
-    {
-        try
-        {
-            if( line.startsWith("##") )
-                processMeta(line);
-            else if( line.startsWith("#") )
-                processHeader(line);
-            else
-                processSNV(line);
-        }
-        catch(Throwable t)
-        {
-            log.log(Level.SEVERE, "VCF parsing error: " + t + System.lineSeparator() +
-                "line: " + lineNumber + System.lineSeparator() + line);
-        }
-    }
-
     /**
      * Returns fieldName.
      * Expected format:
@@ -241,23 +221,13 @@ public class VCFLoader extends LoaderSupport
      * #CHROM   POS        ID   REF ALT QUAL    FILTER  INFO    FORMAT              default
      * chr1     46258772    .   GA  G   0       RefCall .       GT:GQ:DP:AD:VAF:PL  0/0:35:15:13,2:0.133333:0,35,55
      */
+    public static final String[] titles = new String[] {"#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"};
     protected void processHeader(String line) throws Exception  
     {
-        // check titles
-        StringTokenizer tokens = new StringTokenizer(line, "\t");
-        
-        for(int i=0; i<titles.length; i++)
-        {
-            if( ! tokens.hasMoreTokens() )
-                throw new Exception("Incorrect header line, it should contains 9 fields.");
-            
-            String token = tokens.nextToken();
-            if( !titles[i].equals(token) )
-                throw new Exception("Incorrect header line, expected field " + titles[i] + ", but was " + token + ".");
-        }
+        StringTokenizer tokens = processHeader(line, titles, 9);
 
         if( ! tokens.hasMoreTokens() )
-            throw new Exception("Incorrect header line, it should contains 9 fields.");
+            throw new Exception("Incorrect header line, it should contain 1 sample, 9 fields.");
         String token = tokens.nextToken();
 
         if( tokens.hasMoreTokens() )
