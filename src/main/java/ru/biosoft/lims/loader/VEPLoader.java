@@ -25,21 +25,19 @@ public class VEPLoader extends LoaderSupport
     public String getFormatFirstLine()  { return "## ENSEMBL VARIANT EFFECT PREDICTOR v112.0"; }
 
     protected String snvTableName;
-    protected String transcriptTableName;
-    protected Map<String, QRec> snvAttributes = new HashMap();    
-    protected Map<String, QRec> transcriptAttributes = new HashMap();
-    protected Map<String, String> transcriptDiff = new HashMap();
+    protected String featureTableName;
+    protected Map<String, QRec>   snvAttributes     = new HashMap<>();    
+    protected Map<String, QRec>   featureAttributes = new HashMap<>();
+    protected Map<String, String> featureDiff       = new HashMap<>();
 
     protected Map<String, String> snvValues; 
     protected Map<String, String> currentValues; 
-   
-    protected final int STATE_NEW_SNV = 1; 
-    protected int state = STATE_NEW_SNV;
+    protected String snvID;
     
     protected void preload(File file, String project, String sample) 
     {
         snvTableName        = "snv_"      + sample;
-        transcriptTableName = "snv_transcripts_" + sample;
+        featureTableName = "snv_transcripts_" + sample;
 
         Object result = db.one("SELECT tablename FROM pg_tables WHERE tablename=?", snvTableName); 
         if( result == null )
@@ -47,7 +45,7 @@ public class VEPLoader extends LoaderSupport
                     "SNV table '" + snvTableName + "' should alreade exists." + System.lineSeparator() +
                     "VEP data are linked to existing VCF data.");
             
-        createTableFromTemplate("snv_transcripts_", transcriptTableName);
+        createTableFromTemplate("snv_transcripts_", featureTableName);
         
         preloadAttributes();
     }
@@ -64,7 +62,7 @@ public class VEPLoader extends LoaderSupport
             if( "SNV".equals(level) )
                 snvAttributes.put(key, rec);
             else if( "transcript".equals(level) )
-                transcriptAttributes.put(key, rec);
+                featureAttributes.put(key, rec);
         }
     }
     
@@ -125,15 +123,31 @@ public class VEPLoader extends LoaderSupport
                 currentValues.put(titles[i], token);
         }
         
-        int pos = getLocation(currentValues);
-        String chrom = currentValues.get("chrom");
-        
-        String snvID = db.oneString("SELECT id FROM " + snvTableName + " WHERE vcf_chrom=? AND vcf_pos=?", chrom, pos);
-        if( snvID == null )
-            throw new NullPointerException("VEP file contains SNV " + currentValues.get("UPLOADED_VARIATION") + 
-                                            "->" + chrom + "_" + pos + ", that is missing in SNV table " + snvTableName + ".");  
+        String uv = "Uploaded_variation";
+        if( snvValues == null ||  !snvValues.get(uv).equals(currentValues.get(uv)) )
+        {
+            snvValues = currentValues;
+            insertSnv();
+        }
+
+        insertFeature();
     }
 
+    protected void insertSnv()
+    {
+        int pos = getLocation(currentValues);
+        String chrom = currentValues.get("chrom");
+
+        snvID = db.oneString("SELECT id FROM " + snvTableName + " WHERE vcf_chrom=? AND vcf_pos=?", chrom, pos);
+        if( snvID == null )
+            throw new NullPointerException("VEP file contains SNV " + currentValues.get("Uploaded_variation") + 
+                                            "->" + chrom + "_" + pos + ", that is missing in SNV table " + snvTableName + ".");  
+        
+    }
+
+    protected void insertFeature()
+    {}
+    
     /*
      * VCF
      * #CHROM  POS         REF   ALT

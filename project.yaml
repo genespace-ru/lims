@@ -46,8 +46,8 @@ lims:
   - sample_types
   - snv_
   - snv_meta_
+  - snv_features_
   - snv_history
-  - snv_transcripts_
   - snv_transcripts_history
   - workflows
   - uploads
