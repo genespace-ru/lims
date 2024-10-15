@@ -221,7 +221,7 @@ public class VCFLoader extends LoaderSupport
      * #CHROM   POS        ID   REF ALT QUAL    FILTER  INFO    FORMAT              default
      * chr1     46258772    .   GA  G   0       RefCall .       GT:GQ:DP:AD:VAF:PL  0/0:35:15:13,2:0.133333:0,35,55
      */
-    public static final String[] titles = new String[] {"#CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"};
+    public static final String[] titles = new String[] {"CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"};
     protected void processHeader(String line) throws Exception  
     {
         StringTokenizer tokens = processHeader(line, titles, 9);
@@ -234,7 +234,7 @@ public class VCFLoader extends LoaderSupport
             throw new Exception("Incorrect header line, only one sample is supported.");
     }
     
-    protected void processSNV(String line) throws Exception     
+    protected void processRow(String line) throws Exception     
     {
         StringTokenizer tokens = new StringTokenizer(line, "\t");
         

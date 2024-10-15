@@ -125,6 +125,8 @@ public abstract class LoaderSupport implements Loader
 	
     protected StringTokenizer processHeader(String line, String[] titles, int fieldsNumber) throws Exception  
     {
+        line = line.substring(1); // trim leading #
+        
         // check titles
         StringTokenizer tokens = new StringTokenizer(line, "\t");
         
