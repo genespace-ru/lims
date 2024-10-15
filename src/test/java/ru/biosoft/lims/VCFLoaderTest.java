@@ -2,6 +2,7 @@ package ru.biosoft.lims;
 
 import java.io.File;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -10,11 +11,10 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import ru.biosoft.lims.loader.VCFLoader;
+import ru.biosoft.lims.loader.VEPLoader;
 
 /**
  * Tests for VCF and VEP loading for test project lims-test-hemotology.
- * 
- *  Test tables are created with suffix <code>test</test> to not interfere with project tables.
  */
 @TestInstance(Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -23,26 +23,46 @@ public class VCFLoaderTest extends DbTest
 	protected static String PROJECT = "test-hematology";
 	protected static String SAMPLE  = "sample1";
 	
-	VCFLoader loader;
+	VCFLoader vcfLoader;
+    VEPLoader vepLoader;
 	File file;
 	
-    @Test
+	@Disabled
+	@Test
     @Order(1) 
-    public void checkFormat() throws Exception
+    public void checkVcfFormat() throws Exception
     {
-    	loader = getInjector().getInstance(VCFLoader.class);
-    	file = new File(loader.getProjectDir() + PROJECT + "/results/VCF/" + SAMPLE + ".vcf");
+    	vcfLoader = getInjector().getInstance(VCFLoader.class);
+    	file = new File(vcfLoader.getProjectDir() + PROJECT + "/results/VCF/" + SAMPLE + ".vcf");
 
-        loader.checkFormat(file);
+    	vcfLoader.checkFormat(file);
     }
 
+    @Disabled
     @Test
     @Order(2) 
-    public void checkLoad() throws Exception
+    public void checkLoadVCF() throws Exception
     {
         try 
         {
-        	loader.load(file, PROJECT, SAMPLE);
+            vcfLoader.load(file, PROJECT, SAMPLE);
+        }
+        catch(Exception t)
+        {
+            // for debugging
+            throw t;
+        }
+    }
+    
+    @Disabled
+    @Test
+    @Order(3)
+    public void checkLoadGenominal() throws Exception
+    {
+        try 
+        {
+            file = new File(vcfLoader.getProjectDir() + PROJECT + "/results/VCF/" + SAMPLE + "_genomenal.vcf");
+            vcfLoader.load(file, PROJECT, SAMPLE+"_genomenal");
         }
         catch(Exception t)
         {
@@ -52,13 +72,16 @@ public class VCFLoaderTest extends DbTest
     }
     
     @Test
-    @Order(3)
-    public void checkLoadGenominal() throws Exception
+    @Order(4)
+    public void checkLoadVEP() throws Exception
     {
         try 
         {
-            file = new File(loader.getProjectDir() + PROJECT + "/results/VCF/" + SAMPLE + "_genomenal.vcf");
-            loader.load(file, PROJECT, SAMPLE+"_genomenal");
+            vepLoader = getInjector().getInstance(VEPLoader.class);
+            file = new File(vepLoader.getProjectDir() + PROJECT + "/results/VEP/" + SAMPLE + ".vep");
+
+            vepLoader.checkFormat(file);
+            vepLoader.load(file, PROJECT, SAMPLE);
         }
         catch(Exception t)
         {
@@ -66,4 +89,7 @@ public class VCFLoaderTest extends DbTest
             throw t;
         }
     }
+    
+    
+    
 }

@@ -51,6 +51,18 @@ public abstract class LoaderSupport implements Loader
 		throw new Exception("First line in file " + file.getCanonicalPath() + " should be '" + getFormatFirstLine() + "'.");
 	}
 
+    protected void createTableFromTemplate(String template, String sample)
+    {
+        String tableName = template + sample;
+
+        db.updateRaw("DROP TABLE IF EXISTS " + tableName);
+        db.updateRaw("CREATE TABLE " + tableName  + " (LIKE " + template + " INCLUDING defaults INCLUDING constraints INCLUDING indexes)");
+
+        db.updateRaw("DROP SEQUENCE IF EXISTS " + tableName  + "_seq");
+        db.updateRaw("CREATE SEQUENCE " + tableName  + "_seq AS integer");
+        db.updateRaw("ALTER TABLE " + tableName  + " ALTER COLUMN ID SET DEFAULT " + "nextval('" + tableName  + "_seq'::regclass)" );   
+    }
+	
 	/**
 	 * Returns first line for the corresponding file format.
 	 */

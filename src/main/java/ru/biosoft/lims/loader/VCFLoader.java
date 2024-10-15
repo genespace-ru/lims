@@ -49,20 +49,8 @@ public class VCFLoader extends LoaderSupport
         snvTableName  = "snv_"      + sample;
         metaTableName = "snv_meta_" + sample;
 
-        createTables("snv_", sample);
-        createTables("snv_meta_", sample);
-    }
-
-    protected void createTables(String template, String sample)
-    {
-        String tableName = template + sample;
-
-        db.updateRaw("DROP TABLE IF EXISTS " + tableName);
-        db.updateRaw("CREATE TABLE " + tableName  + " (LIKE " + template + " INCLUDING defaults INCLUDING constraints INCLUDING indexes)");
-
-        db.updateRaw("DROP SEQUENCE IF EXISTS " + tableName  + "_seq");
-        db.updateRaw("CREATE SEQUENCE " + tableName  + "_seq AS integer");
-        db.updateRaw("ALTER TABLE " + tableName  + " ALTER COLUMN ID SET DEFAULT " + "nextval('" + tableName  + "_seq'::regclass)" );   
+        createTableFromTemplate("snv_", sample);
+        createTableFromTemplate("snv_meta_", sample);
     }
     
     protected void insertMeta(String section, String value)

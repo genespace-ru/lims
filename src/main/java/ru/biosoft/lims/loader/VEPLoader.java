@@ -21,4 +21,23 @@ public class VEPLoader extends LoaderSupport
     protected String snvTableName;
     protected String transcriptTableName;
     
+    protected void preload(File file, String project, String sample) 
+    {
+        snvTableName        = "snv_"      + sample;
+        transcriptTableName = "snv_transcripts_" + sample;
+
+        Object result = db.one("SELECT tablename FROM pg_tables WHERE tablename=?", snvTableName); 
+        if( result == null )
+            throw new NullPointerException(
+                    "SNV table '" + snvTableName + "' should alreade exists." + System.lineSeparator() +
+                    "VEP data are linked to existing VCF data.");
+            
+        createTableFromTemplate("snv_transcripts_", transcriptTableName);
+    
+        System.out.println("ok");
+    }
+    
+    protected void processLine(String line)
+    {}
+    
 }
