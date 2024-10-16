@@ -47,7 +47,7 @@ module.exports = {
       test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
       exclude: /(node_modules|bower_components)/,
       loader: "url-loader",
-      options: {limit:"10000",mimetype:"image/svg+xml"}
+      options: {limit:"10000",mimetype:"image/svg+xml",outputPath: 'icons/',publicPath: 'icons/'}
     },
     {
       test: /\.(jpg|jpeg|gif|png|ico)$/,
