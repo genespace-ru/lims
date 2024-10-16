@@ -44,10 +44,11 @@ module.exports = {
       options: {limit:"10000",mimetype:"application/octet-stream"}
     },
     {
-      test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+      /*test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,*/
+      test: /\.svg$/,
       exclude: /(node_modules|bower_components)/,
       loader: "url-loader",
-      options: {limit:"10000",mimetype:"image/svg+xml",outputPath: 'icons/',publicPath: 'icons/'}
+      options: {limit:"10000",mimetype:"image/svg+xml",name:"icons/[name].[ext]"}
     },
     {
       test: /\.(jpg|jpeg|gif|png|ico)$/,
