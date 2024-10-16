@@ -2,8 +2,10 @@ package ru.biosoft.lims.loader;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,11 +26,21 @@ public class VEPLoader extends LoaderSupport
     public String getVersion()          { return "112.0"; }
     public String getFormatFirstLine()  { return "## ENSEMBL VARIANT EFFECT PREDICTOR v112.0"; }
 
+    
+    /** Map of known SNV attributes loaded from the database. */
+    protected Map<String, QRec>   attributesMap = new HashMap<>();    
+    
+    /** Set of all attribute names used in the loaded VEP file. */
+    protected Set<String> attrSet = new HashSet<>();         
+    
+    /** Set of all attribute names used in the loaded VEP file that are missing in the database. */
+    protected Set<String> missingSet = new HashSet<>();         
+    
+    /** Set of attribute names used in SNV features, they vary between records for the same SNV. */
+    protected Set<String> featureSet = new HashSet<>();         
+
     protected String snvTableName;
     protected String featureTableName;
-    protected Map<String, QRec>   snvAttributes     = new HashMap<>();    
-    protected Map<String, QRec>   featureAttributes = new HashMap<>();
-    protected Map<String, String> featureDiff       = new HashMap<>();
 
     protected Map<String, String> snvValues; 
     protected Map<String, String> currentValues; 
@@ -58,11 +70,8 @@ public class VEPLoader extends LoaderSupport
         {
             String key   = rec.getString("title");
             String level = rec.getString("level");
-            
-            if( "SNV".equals(level) )
-                snvAttributes.put(key, rec);
-            else if( "transcript".equals(level) )
-                featureAttributes.put(key, rec);
+
+            attributesMap.put(key, rec);
         }
     }
     
@@ -123,30 +132,85 @@ public class VEPLoader extends LoaderSupport
                 currentValues.put(titles[i], token);
         }
         
+        processExtra();
+        
         String uv = "Uploaded_variation";
         if( snvValues == null ||  !snvValues.get(uv).equals(currentValues.get(uv)) )
         {
             snvValues = currentValues;
-            insertSnv();
+
+            int pos = getLocation(currentValues);
+            String chrom = currentValues.get("chrom");
+            snvID = db.oneString("SELECT id FROM " + snvTableName + " WHERE vcf_chrom=? AND vcf_pos=?", chrom, pos);
+            if( snvID == null )
+                throw new NullPointerException("VEP file contains SNV " + currentValues.get("Uploaded_variation") + 
+                                                "->" + chrom + "_" + pos + ", that is missing in SNV table " + snvTableName + ".");  
+            
+            insertSnv(Integer.parseInt(snvID));
         }
 
-        insertFeature();
+        insertFeature(snvID);
     }
 
-    protected void insertSnv()
+    protected void processExtra()
     {
-        int pos = getLocation(currentValues);
-        String chrom = currentValues.get("chrom");
-
-        snvID = db.oneString("SELECT id FROM " + snvTableName + " WHERE vcf_chrom=? AND vcf_pos=?", chrom, pos);
-        if( snvID == null )
-            throw new NullPointerException("VEP file contains SNV " + currentValues.get("Uploaded_variation") + 
-                                            "->" + chrom + "_" + pos + ", that is missing in SNV table " + snvTableName + ".");  
+        String extra = currentValues.get("Extra");
+        StringTokenizer tokens = new StringTokenizer(extra,";");
         
+        while(tokens.hasMoreTokens())
+        {
+            String field = tokens.nextToken();
+            int ind = field.indexOf('=');
+            String key = field.substring(0, ind);
+            String value = field.substring(ind+1);
+            currentValues.put(key, value);
+        }
+        
+        currentValues.remove("Extra");
+    }
+    
+    protected void insertSnv(int snvID)
+    {
+
+        String json = db.oneString("SELECT attributes FROM " + snvTableName + " WHERE id=?", snvID);
+        json = json.substring(0, json.length()-1); // remove } in the end
+        
+        json = json + buildJson(false) + "}";
+        
+        db.updateRaw("UPDATE " + snvTableName + " SET attributes=to_json(?::json) WHERE id=?", json, snvID);  
     }
 
-    protected void insertFeature()
+    protected void insertFeature(String snvID)
     {}
+    
+    protected String buildJson(boolean isFeature)
+    {
+        StringBuffer json = new StringBuffer();
+        
+        for(String key : currentValues.keySet() )
+        {
+            attrSet.add(key);
+            
+            QRec attr = attributesMap.get(key);
+            String level = null;
+            if( attr == null )
+                missingSet.add(key);
+            else
+                level = attr.getString("level");
+            
+            // unknown attribute add both SNV and feature
+            if( attr == null || level.equals("SNV") != isFeature )
+            {
+                json.append(", \"");
+                json.append(key);
+                json.append("\":\"");
+                json.append(currentValues.get(key));
+                json.append("\"");
+            }
+        }
+        
+        return json.toString();
+    }
     
     /*
      * VCF
