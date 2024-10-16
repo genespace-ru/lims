@@ -14,15 +14,14 @@ snv_features_:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - SNV:
+    - snv:
         type: INT
         reference: snv_
         doc: ссылка на SNV, к которой относится данный транскрипт
     - feature:
         type: VARCHAR(50)
         doc: |-
-          Идентификатор особенности (идентификатор транскрипта или регуляторной особенности.
-          Примеры\: ENST00000713839 - Transcript, ENSR00000411055 - RegulatoryFeature
+          Тип особенности (Transcript, RegulatoryFeature и т.п.).
     - attributes:
         type: JSON 
         canBeNull: true        

@@ -2,16 +2,14 @@ package ru.biosoft.lims.loader;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.logging.Level;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import com.developmentontheedge.be5.database.QRec;
-import com.developmentontheedge.be5.query.services.QueriesService;
 
 /**
  * VEPLoader links and loads VEP data snv_{sample} and snv_transcript_{sample} database tables.
@@ -31,25 +29,36 @@ public class VEPLoader extends LoaderSupport
     protected Map<String, QRec>   attributesMap = new HashMap<>();    
     
     /** Set of all attribute names used in the loaded VEP file. */
-    protected Set<String> attrSet = new HashSet<>();         
+    protected Set<String> attrSet = new TreeSet<>();         
     
     /** Set of all attribute names used in the loaded VEP file that are missing in the database. */
-    protected Set<String> missingSet = new HashSet<>();         
+    protected Set<String> missingSet = new TreeSet<>();         
     
     /** Set of attribute names used in SNV features, they vary between records for the same SNV. */
-    protected Set<String> featureSet = new HashSet<>();         
+    protected Set<String> featureSet = new TreeSet<>();         
 
     protected String snvTableName;
     protected String featureTableName;
 
     protected Map<String, String> snvValues; 
     protected Map<String, String> currentValues; 
+
+    // current SNV
     protected String snvID;
+    protected String chrom;
+    protected int pos;
     
+    protected void postload()
+    {
+        System.out.println("All attributes: " + attrSet);
+        System.out.println("Missing in DB: "  + missingSet);
+        System.out.println("Feature attributes: "  + featureSet);
+    }
+
     protected void preload(File file, String project, String sample) 
     {
-        snvTableName        = "snv_"      + sample;
-        featureTableName = "snv_transcripts_" + sample;
+        snvTableName     = "snv_"          + sample;
+        featureTableName = "snv_features_" + sample;
 
         Object result = db.one("SELECT tablename FROM pg_tables WHERE tablename=?", snvTableName); 
         if( result == null )
@@ -57,7 +66,7 @@ public class VEPLoader extends LoaderSupport
                     "SNV table '" + snvTableName + "' should alreade exists." + System.lineSeparator() +
                     "VEP data are linked to existing VCF data.");
             
-        createTableFromTemplate("snv_transcripts_", featureTableName);
+        createTableFromTemplate("snv_features_", sample);
         
         preloadAttributes();
     }
@@ -69,8 +78,6 @@ public class VEPLoader extends LoaderSupport
         for(QRec rec: list)
         {
             String key   = rec.getString("title");
-            String level = rec.getString("level");
-
             attributesMap.put(key, rec);
         }
     }
@@ -124,7 +131,7 @@ public class VEPLoader extends LoaderSupport
     {
         StringTokenizer tokens = new StringTokenizer(line, "\t");
     
-        currentValues = new HashMap();
+        currentValues = new HashMap<>();
         for(int i=0; i<titles.length; i++)
         {
             String token = tokens.nextToken();
@@ -139,8 +146,7 @@ public class VEPLoader extends LoaderSupport
         {
             snvValues = currentValues;
 
-            int pos = getLocation(currentValues);
-            String chrom = currentValues.get("chrom");
+            parseLocation(currentValues);
             snvID = db.oneString("SELECT id FROM " + snvTableName + " WHERE vcf_chrom=? AND vcf_pos=?", chrom, pos);
             if( snvID == null )
                 throw new NullPointerException("VEP file contains SNV " + currentValues.get("Uploaded_variation") + 
@@ -171,7 +177,6 @@ public class VEPLoader extends LoaderSupport
     
     protected void insertSnv(int snvID)
     {
-
         String json = db.oneString("SELECT attributes FROM " + snvTableName + " WHERE id=?", snvID);
         json = json.substring(0, json.length()-1); // remove } in the end
         
@@ -181,7 +186,15 @@ public class VEPLoader extends LoaderSupport
     }
 
     protected void insertFeature(String snvID)
-    {}
+    {
+        if( snvID == null ) // SNV is not in VCF, skip it
+            return;
+        
+        String json = "{" + buildJson(true).substring(1) + "}";
+        
+        db.updateRaw("INSERT INTO " + featureTableName + "(snv, feature, attributes) VALUES(?, ?, to_json(?::json))",
+                      Integer.parseInt(snvID), currentValues.get("Feature_type"), json);  
+    }
     
     protected String buildJson(boolean isFeature)
     {
@@ -208,6 +221,17 @@ public class VEPLoader extends LoaderSupport
                 json.append("\"");
             }
         }
+
+        // compare snvValues and currentValues to find feature fields
+        if( isFeature && snvValues != currentValues )
+        {
+            for(String key : currentValues.keySet() )
+            {
+                if( !snvValues.containsKey(key) || 
+                    !snvValues.get(key).equals(currentValues.get(key)) )
+                    featureSet.add(key);
+            }
+        }
         
         return json.toString();
     }
@@ -225,13 +249,13 @@ public class VEPLoader extends LoaderSupport
      * chr10_87960877_-/T    chr10:87960876-87960877     T
      * chr11_108227733_AA/-  chr11:108227733-108227734   
      */    
-    protected int getLocation(Map<String, String> values)
+    protected void parseLocation(Map<String, String> values)
     {
         String variation = values.get("Uploaded_variation"); 
         StringTokenizer tokens = new StringTokenizer(variation, "_/");
         
-        String chrom = tokens.nextToken();
-        int pos      = Integer.parseInt(tokens.nextToken());
+        chrom = tokens.nextToken();
+        pos      = Integer.parseInt(tokens.nextToken());
         String ref   = tokens.nextToken();
         String alt   = tokens.nextToken();
         
@@ -246,9 +270,6 @@ public class VEPLoader extends LoaderSupport
             if( alt.charAt(i) == '-' )
                 pos--;
         }
-        
-        values.put("chrom",    chrom);
-        
-        return pos;
     }
+
 }

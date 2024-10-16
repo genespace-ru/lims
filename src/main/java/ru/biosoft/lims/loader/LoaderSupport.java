@@ -90,14 +90,21 @@ public abstract class LoaderSupport implements Loader
     	    	lineNumber++;
     	    }
     	}
-    }
+
+        postload();
+	}
 
 	/**
 	 * Makes needed initializations, for example create the needed database table.
 	 */
 	protected void preload(File file, String project, String sample) {}
 
-	/**
+    /**
+     * Compltes the load process, print statistics etc.
+     */
+    protected void postload() {}
+
+    /**
 	 * Processes file content line by line.
 	 */
     protected void processLine(String line)
