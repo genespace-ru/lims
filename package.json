@@ -4,10 +4,10 @@
   "main": "src/frontend/scripts/main.js",
   "scripts": {
     "ws": "ws -d dist/uncompressed",
-    "start": "SET NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server --host 127.0.0.1 --progress --profile --colors",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server --host 127.0.0.1 --progress --profile --colors",
     "start2": "webpack-dev-server --host 127.0.0.1 --progress --profile --colors",
     "build": "webpack --config webpack.production.config.js --progress --profile --colors --env.build --mode development",
-    "build-min": "SET NODE_OPTIONS=--openssl-legacy-provider && webpack --config webpack.production.config.js --progress --profile --colors --env.build --env.min",
+    "build-min": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --config webpack.production.config.js --progress --profile --colors --env.build --env.min",
     "test": "jest",
     "watch": "npm test -- --watch",
     "coverage": "npm test -- --coverage",
