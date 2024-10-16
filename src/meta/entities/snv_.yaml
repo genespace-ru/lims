@@ -88,9 +88,10 @@ snv_:
       code: |2-
         SELECT 
             s.id AS "___ID",
-            
+          
+            '<a href="#!form/snv_/All records/ToggleAttached/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '">' ||
+            ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '"></a>' ||
             
             '<img src="/static/images/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
             ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке.">' || 
