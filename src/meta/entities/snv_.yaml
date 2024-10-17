@@ -83,39 +83,50 @@ snv_:
   - All records:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
-      layout: '{"quickType":"select"}'
+      layout: '{"quickType":"select","hideOperations":["ToggleAttached","ToggleHidden","ToggleIncludeInReport"]}'
+      invisible: true      
       operations:
+      - ToggleAttached
+      - ToggleHidden
+      - ToggleIncludeInReport
       code: |2-
         SELECT 
             s.id AS "___ID",
           
             '<a href="#!form/snv_/All records/ToggleAttached/ID=' || CAST(s.id AS CHAR) || '">' ||
-            '<img src="icons/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
+            '<img src="/static/images/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
             ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '"></a>' ||
             
-            '<img src="icons/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке.">' || 
+            '<a href="#!form/snv_/All records/ToggleHidden/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<img src="/static/images/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке."></a>' || 
 
-            '<img src="icons/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.isHidden='yes' THEN 'включить' ELSE 'не включать' END) || ' SNV в отчет.">' 
+            '<a href="#!form/snv_/All records/ToggleIncludeInReport/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.includeInReport='yes' THEN 'не включать' ELSE 'включить' END) || ' SNV в отчет."></a>' 
             AS "Actions;<nosort/>",
             
             s.vcf_chrom || ':' || s.vcf_pos AS "Location",
             s.vcf_ref || '>' || s.vcf_alt AS "Replacement",
             s.attributes->>'GT' AS "Genotype",
             COALESCE(s.attributes->>'DP' || ' (' || (s.attributes->>'AD') || ')', '') "Read depth (Ref,Alt)",
-            --ROUND(CAST(s.attributes->>'VAF' AS DECIMAL), 2)*100 AS "Variant allele fraction, %;<quick visible='true' />",
-            s.attributes->>'VAF' AS "Variant allele fraction, %;<quick visible='true' />",
+            CASE WHEN s.attributes->>'VAF' LIKE '%,%' THEN null
+            ELSE ROUND(CAST(s.attributes->>'VAF' AS DECIMAL)*100, 0) END 
+              AS "Variant allele fraction, %;<quick visible='true' />",
             s.vcf_qual AS "Quality;<quick visible='true' />",
             s.vcf_filter AS "Filter;<quick visible='true' />",
             s.vcf_id AS "IDs;<quick visible='false' />",
             s.vcf_info AS "Info;<quick visible='false' />",
             
-            (CASE WHEN s.attributes->>'Uploaded_variation' IS NOT null THEN '+' ELSE '' END) 
-            AS "VEP annotation;<quick visible='true' />",
+            (CASE WHEN s.attributes->>'Uploaded_variation' IS NOT null THEN 'VEP' ELSE '' END) 
+            AS "Annotation;<quick visible='true' />",
+
+            '<a href="#!table/snv_/SNV card/_tcloneid_=' || <parameter:_tcloneid_ /> || 
+            '/_snvid_=' || s.ID || '">Card</>' AS "Подробно",  
             
             s.attributes AS "Attributes;<quick visible='false' />"
-        FROM snv_sample1 s
+        FROM snv_<parameter:_tcloneid_ /> s
+        ORDER BY s.isAttached DESC, s.id
         
   - SNV card:
       type: 1D_unknown
@@ -127,12 +138,34 @@ snv_:
             ag.id,
             ag.title,
             ag.title_ru,
-            ag.displayOrder,
             ag.viewName,
-            <parameter:snvID/> AS "snvID"
+            <parameter:_tcloneid_/> AS "sample",
+            <parameter:_snvid_/> AS "snv"
+            <if parameter="_notempty_">, 'yes' AS "notempty" </if>
         FROM attribute_groups ag
+        ORDER BY CAST(ag.displayOrder AS DECIMAL)
 
   - SNV tab:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      layout: '{"hideTitle":"true"}'
+      operations:
+      code: |2-
+        SELECT
+            a.id,
+            a.title,
+            a.title_ru,
+            a.urlMask,
+            s.attributes->>(a.title) AS "Value"
+        FROM attributes a 
+        JOIN attribute_groups ag ON a.groupID = ag.ID
+        JOIN snv_<parameter:_tcloneid_/> s ON s.ID=<parameter:_snvid_/>
+        WHERE (1=1)
+          <if parameter="_groupid_">  AND ag.ID = <parameter:_groupid_/> </if>
+          <if parameter="_notempty_"> AND s.attributes->>(a.title) IS NOT NULL </if>
+        ORDER BY CAST(ag.displayOrder AS DECIMAL), a.displayOrder
+
+  - SNV tab2:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       operations:
@@ -143,11 +176,30 @@ snv_:
             a.title_ru,
             a.displayOrder,
             a.urlMask,
-            <parameter:snvID/> AS "snvID"
+            s.attributes->>(a.title) AS "Value"
         FROM attributes a 
-        LEFT JOIN attribute_groups ag ON a.groupID = ag.ID
-        WHERE ag.ID = <parameter:groupID/>
-        ORDER BY a.displayOrder
-        
-             
+        JOIN attribute_groups ag ON a.groupID = ag.ID
+        JOIN snv_<parameter:_tcloneid_/> s ON s.ID=<parameter:_snvid_/>
+
+        WHERE (1=1)
+          <if parameter="_groupid_">
+              AND ag.ID = <parameter:_groupid_/>
+          </if>
+        ORDER BY ag.displayOrder, a.displayOrder
                 
+  operations:
+  - ToggleAttached:
+      type: Groovy
+      records: 1
+      roles: '@AllRolesExceptGuest'
+      file: operations.ToggleAttached.groovy
+  - ToggleHidden:
+      type: Groovy
+      records: 1
+      roles: '@AllRolesExceptGuest'
+      file: operations.ToggleHidden.groovy
+  - ToggleIncludeInReport:
+      type: Groovy
+      records: 1
+      roles: '@AllRolesExceptGuest'
+      file: operations.ToggleIncludeInReport.groovy

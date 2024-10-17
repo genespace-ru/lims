@@ -20,8 +20,9 @@ import ru.biosoft.lims.loader.VEPLoader;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class VCFLoaderTest extends DbTest
 {
-	protected static String PROJECT = "test-hematology";
-	protected static String SAMPLE  = "sample1";
+	protected static String PROJECT    = "test-hematology";
+	protected static String SAMPLE     = "sample1";
+    protected static String SAMPLE_ID  = "1";
 	
 	VCFLoader vcfLoader;
     VEPLoader vepLoader;
@@ -45,7 +46,7 @@ public class VCFLoaderTest extends DbTest
     {
         try 
         {
-            vcfLoader.load(file, PROJECT, SAMPLE);
+            vcfLoader.load(file, PROJECT, SAMPLE_ID);
         }
         catch(Exception t)
         {
@@ -81,7 +82,7 @@ public class VCFLoaderTest extends DbTest
             file = new File(vepLoader.getProjectDir() + PROJECT + "/results/VEP/" + SAMPLE + ".vep");
 
             vepLoader.checkFormat(file);
-            vepLoader.load(file, PROJECT, SAMPLE);
+            vepLoader.load(file, PROJECT, SAMPLE_ID);
         }
         catch(Exception t)
         {

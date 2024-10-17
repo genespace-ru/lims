@@ -6,7 +6,7 @@
     "ws": "ws -d dist/uncompressed",
     "start": "set NODE_OPTIONS=--openssl-legacy-provider && webpack-dev-server --host 127.0.0.1 --progress --profile --colors",
     "start2": "webpack-dev-server --host 127.0.0.1 --progress --profile --colors",
-    "build": "webpack --config webpack.production.config.js --progress --profile --colors --env.build --mode development",
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --config webpack.production.config.js --progress --profile --colors --env.build --mode development",
     "build-min": "set NODE_OPTIONS=--openssl-legacy-provider && webpack --config webpack.production.config.js --progress --profile --colors --env.build --env.min",
     "test": "jest",
     "watch": "npm test -- --watch",
