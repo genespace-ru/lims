@@ -102,7 +102,7 @@ snv_:
 
             '<a href="#!form/snv_/All records/ToggleIncludeInReport/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.includeInReport='yes' THEN 'включить' ELSE 'не включать' END) || ' SNV в отчет."></a>' 
+            ( CASE WHEN s.includeInReport='yes' THEN 'не включать' ELSE 'включить' END) || ' SNV в отчет."></a>' 
             AS "Actions;<nosort/>",
             
             s.vcf_chrom || ':' || s.vcf_pos AS "Location",

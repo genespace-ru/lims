@@ -27,6 +27,10 @@ import '../icons/list_24_no.svg';
 import '../icons/list_20_no.svg';
 import '../icons/list_16_no.svg';
 
+import '../icons/list_24_yes.svg';
+import '../icons/list_20_yes.svg';
+import '../icons/list_16_yes.svg';
+
 import '../icons/hide_24_no.svg';
 import '../icons/hide_20_no.svg';
 import '../icons/hide_16_no.svg';
