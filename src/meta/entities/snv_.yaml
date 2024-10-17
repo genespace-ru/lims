@@ -83,7 +83,7 @@ snv_:
   - All records:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
-      layout: '{"quickType":"select"}'
+      layout: '{"quickType":"select","hideOperations":["ToggleAttached"]}'
       operations:
       - ToggleAttached
       code: |2-
@@ -98,7 +98,7 @@ snv_:
             ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке.">' || 
 
             '<img src="icons/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.isHidden='yes' THEN 'включить' ELSE 'не включать' END) || ' SNV в отчет.">' 
+            ( CASE WHEN s.includeInReport='yes' THEN 'включить' ELSE 'не включать' END) || ' SNV в отчет.">' 
             AS "Actions;<nosort/>",
             
             s.vcf_chrom || ':' || s.vcf_pos AS "Location",
