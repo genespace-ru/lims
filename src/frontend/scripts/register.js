@@ -22,6 +22,7 @@ import 'be5-react/src/css/main.css';
 import './tableBoxes/ProjectCardTableBox';
 import './tableBoxes/ProjectTabTableBox';
 import './tableBoxes/RunTabTableBox';
+import './tableBoxes/SnvCard';
 
 import '../icons/list_24_no.svg';
 import '../icons/list_20_no.svg';

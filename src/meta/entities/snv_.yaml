@@ -104,11 +104,50 @@ snv_:
             s.vcf_ref || '>' || s.vcf_alt AS "Replacement",
             s.attributes->>'GT' AS "Genotype",
             COALESCE(s.attributes->>'DP' || ' (' || (s.attributes->>'AD') || ')', '') "Read depth (Ref,Alt)",
-            ROUND(CAST(s.attributes->>'VAF' AS DECIMAL), 2)*100 AS "Variant allele fraction, %;<quick visible='true' />",
+            --ROUND(CAST(s.attributes->>'VAF' AS DECIMAL), 2)*100 AS "Variant allele fraction, %;<quick visible='true' />",
+            s.attributes->>'VAF' AS "Variant allele fraction, %;<quick visible='true' />",
             s.vcf_qual AS "Quality;<quick visible='true' />",
             s.vcf_filter AS "Filter;<quick visible='true' />",
             s.vcf_id AS "IDs;<quick visible='false' />",
             s.vcf_info AS "Info;<quick visible='false' />",
+            
+            (CASE WHEN s.attributes->>'Uploaded_variation' IS NOT null THEN '+' ELSE '' END) 
+            AS "VEP annotation;<quick visible='true' />",
+            
             s.attributes AS "Attributes;<quick visible='false' />"
         FROM snv_sample1 s
         
+  - SNV card:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      layout: '{"tableBox":"SnvCard", "mode":"named", "hideTitle":"true"}'
+      invisible: true      
+      code: |2-
+        SELECT 
+            ag.id,
+            ag.title,
+            ag.title_ru,
+            ag.displayOrder,
+            ag.viewName,
+            <parameter:snvID/> AS "snvID"
+        FROM attribute_groups ag
+
+  - SNV tab:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      operations:
+      code: |2-
+        SELECT
+            a.id,
+            a.title,
+            a.title_ru,
+            a.displayOrder,
+            a.urlMask,
+            <parameter:snvID/> AS "snvID"
+        FROM attributes a 
+        LEFT JOIN attribute_groups ag ON a.groupID = ag.ID
+        WHERE ag.ID = <parameter:groupID/>
+        ORDER BY a.displayOrder
+        
+             
+                

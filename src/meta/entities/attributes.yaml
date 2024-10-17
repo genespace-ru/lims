@@ -63,8 +63,8 @@ attributes:
         doc: Нужно ли показывать значение этого аттрибута в представлении, если оно пустое.
         defaultValue: '''no'''
     - displayOrder:
-        type: VARCHAR(5)
-        canBeNull: true
+        type: INT
+        defaultValue: 99
         doc: Порядок отображения значения аттрибута в представлении.
     - urlMask:
         type: VARCHAR(100)
