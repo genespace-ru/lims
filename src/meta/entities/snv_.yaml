@@ -85,6 +85,7 @@ snv_:
       roles: '@AllRolesExceptGuest'
       layout: '{"quickType":"select"}'
       operations:
+      - ToggleAttached
       code: |2-
         SELECT 
             s.id AS "___ID",
@@ -111,4 +112,10 @@ snv_:
             s.vcf_info AS "Info;<quick visible='false' />",
             s.attributes AS "Attributes;<quick visible='false' />"
         FROM snv_sample1 s
-        
+  operations:
+  - ToggleAttached:
+      type: Groovy
+      records: 1
+      invisible: true
+      roles: '@AllRolesExceptGuest'
+      file: operations.ToggleAttached.groovy       
