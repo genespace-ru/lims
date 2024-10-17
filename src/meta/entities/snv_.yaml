@@ -96,11 +96,13 @@ snv_:
             '<img src="/static/images/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
             ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '"></a>' ||
             
+            '<a href="#!form/snv_/All records/ToggleHidden/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке.">' || 
+            ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке."></a>' || 
 
+            '<a href="#!form/snv_/All records/ToggleIncludeInReport/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.includeInReport='yes' THEN 'включить' ELSE 'не включать' END) || ' SNV в отчет.">' 
+            ( CASE WHEN s.includeInReport='yes' THEN 'включить' ELSE 'не включать' END) || ' SNV в отчет."></a>' 
             AS "Actions;<nosort/>",
             
             s.vcf_chrom || ':' || s.vcf_pos AS "Location",
