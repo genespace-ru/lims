@@ -116,6 +116,5 @@ snv_:
   - ToggleAttached:
       type: Groovy
       records: 1
-      invisible: true
       roles: '@AllRolesExceptGuest'
       file: operations.ToggleAttached.groovy       
