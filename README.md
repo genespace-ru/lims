@@ -98,4 +98,23 @@ mvn be5:generate-doc -DBE5_DOC_PATH=../lims-docs/source
 make.html
 ```
 
+## Восстановление базы из дампа на продуктивном сервере
 
+```sh
+docker run -v ./lims:/lims -it --rm postgres:16 pg_restore -f /lims/lims-10-18.sql /lims/lims-10-18
+```
+
+```sh
+ssh -L 5435:localhost:5435 iap
+```
+
+На сервере
+```sh
+docker exec -it postgres-lims bash
+dropdb -h localhost -U lims  lims
+createdb --encoding='utf-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' --template=template0 -h localhost -U lims lims
+```
+
+```sh
+psql -h localhost -p 5435 -U lims -d lims < Downloads/lims/lims-10-18.sql 
+```
