@@ -89,6 +89,42 @@ samples:
             LEFT JOIN sample_types st ON st.id = s.typeID
             INNER JOIN run_samples rs ON rs.sample_id = s.ID
             ORDER BY s.title
+
+  - SNV:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      code: |2-
+            SELECT 
+              s.id AS "ID" ,
+              s.id AS "___sampleID" ,
+
+              '<sql>SELECT DISTINCT 
+                  '<a href="#!table/projects/All records/ID=' || prj.ID || '">' ||  
+                  prj.name || '</a>' AS "Project"
+                  FROM projects prj
+                  INNER JOIN runs r ON r.project_id = prj.ID
+                  INNER JOIN run_samples rs ON rs.run_id = r.ID AND rs.sample_id = <var:___sampleID />
+              </sql>' AS "Project;<quick visible='false' />",
+              '<sql>SELECT DISTINCT 
+                  '<a href="#!table/runs/All records/ID=' || r.ID || '">' ||  
+                  r.name || '</a>' AS "Run"
+                  FROM runs r
+                  INNER JOIN run_samples rs ON rs.run_id = r.ID AND rs.sample_id = <var:___sampleID />
+              </sql>' AS "Run;<quick visible='false' />",
+              
+              s.title AS "Title",
+              st.ID AS "___typeID",
+              st.title AS "Type;<quick visible='true'/>",
+              '<link table="sample_types" queryName="All records" using="___typeID" columns="ID" />' AS ";Type",
+
+              s.description AS "Description;<quick visible='true' />",
+              s.comment AS "Description;<quick visible='true' />",
+              <@COMMON_WHO_FIELDS 's' />
+            FROM samples s
+            LEFT JOIN sample_types st ON st.id = s.typeID
+            ORDER BY s.title
+    
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'

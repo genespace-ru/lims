@@ -149,7 +149,7 @@ snv_:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       layout: '{"hideTitle":"true"}'
-      operations:
+      invisible: true      
       code: |2-
         SELECT
             a.id,
@@ -168,7 +168,7 @@ snv_:
   - SNV tab2:
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
-      operations:
+      invisible: true      
       code: |2-
         SELECT
             a.id,
