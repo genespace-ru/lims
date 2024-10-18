@@ -104,7 +104,9 @@ snv_:
             '<a href="#!form/snv_/All records/ToggleIncludeInReport/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
             ( CASE WHEN s.includeInReport='yes' THEN 'не включать' ELSE 'включить' END) || ' SNV в отчет."></a>' 
-            AS "Actions;<nosort/>",
+              AS "Actions",
+           '<css class="ws-nowrap" />;<nosort/>' 
+              AS ";Actions",
             
             s.vcf_chrom || ':' || s.vcf_pos AS "Location",
             s.vcf_ref || '>' || s.vcf_alt AS "Replacement",
