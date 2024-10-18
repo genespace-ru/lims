@@ -49,6 +49,7 @@ lims:
   - snv_features_
   - snv_history
   - snv_transcripts_history
+  - task_info
   - workflows
   - uploads
   - nf_workflows
@@ -66,8 +67,9 @@ lims:
   - test-hematology/samples
   - test-hematology/sample_templates
   - test-hematology/sample_types
-  - test-hematology/workflows
+  - test-hematology/task_info
   - test-hematology/test_data
+  - test-hematology/workflows
   - attributes/attributes
   - attributes/groups
   - attributes/resources

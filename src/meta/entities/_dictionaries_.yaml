@@ -8,7 +8,7 @@ _dictionaries_:
   - All records:
       type: '1D_unknown'
       roles: '@AllRoles'
-      code: |2-
+      code: |-
             <@DICTIONARY_REF 'attributes', 'Аттрибуты', 
                 'Аттрибуты (свойства) SNV, CNV или другой сущности.' />
             UNION <@DICTIONARY_REF 'attribute_groups', 'Аттрибуты - группы', 
@@ -26,5 +26,8 @@ _dictionaries_:
             
             UNION <@DICTIONARY_REF 'file_types', 'Файлы - типы данных', 
                 'Типы  файлов с данными и результатами.' />
+
+            UNION <@DICTIONARY_REF 'task_info', 'Задачи - типы', 
+                'Типы  задач для анализа данных.' />
             
             ORDER BY 1 

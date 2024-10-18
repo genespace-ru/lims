@@ -1,0 +1,87 @@
+task_info:
+  type: dictionary
+  primaryKey: ID
+  displayName: Task info
+  doc: |-
+    Информация о типах задач (импорт, контроль качества и т.п.).
+    Pending: Формат и хранение аттрибутов для запуска задачи.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - title:
+        type: VARCHAR(20)
+        doc: Название задачи.
+    - description:
+        type: TEXT
+        doc: Описание задачи, может быть текст HTML.
+        canBeNull: true
+    - comment:
+        type: TEXT
+        doc: Комментарий.
+        canBeNull: true
+    - params:
+        type: JSON 
+        canBeNull: true        
+        doc: |- 
+          Описание параметров для запуска, чтобы из них можно было автоматически 
+          сформировать форму для ввода параметров. 
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+
+  queries:
+  
+  - All records:
+      type: 1D
+      roles: '@AllRoles'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      code: |2-
+            SELECT 
+              ti.id AS "ID",
+              ti.title AS "Title",
+              ti.description AS "Description",
+              ti.comment AS "Comment",
+              ti.params AS "Parameters;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'ti' />
+            FROM task_info ti
+            ORDER BY ti.title
+            
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, title FROM task_info ti ORDER BY title
+  
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+ 
