@@ -93,15 +93,15 @@ snv_:
         SELECT 
             s.id AS "___ID",
           
-            '<a href="#!form/snv_/All records/ToggleAttached/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<a href="#!form/snv_/All records/ToggleAttached/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
             ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '"></a>' ||
             
-            '<a href="#!form/snv_/All records/ToggleHidden/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<a href="#!form/snv_/All records/ToggleHidden/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
             ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке."></a>' || 
 
-            '<a href="#!form/snv_/All records/ToggleIncludeInReport/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<a href="#!form/snv_/All records/ToggleIncludeInReport/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
             '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
             ( CASE WHEN s.includeInReport='yes' THEN 'не включать' ELSE 'включить' END) || ' SNV в отчет."></a>' 
             AS "Actions;<nosort/>",

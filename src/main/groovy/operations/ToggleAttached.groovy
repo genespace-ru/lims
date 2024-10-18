@@ -7,11 +7,18 @@ public class ToogleAttached extends GOperationSupport
     @Override
     public void invoke(Object parameters) throws Exception
     {
-        db.update( """UPDATE snv_sample1 
+        db.update( """UPDATE snv_${ context.params._tcloneid_ ? context.params._tcloneid_ : "" }
                         SET isAttached = CASE WHEN isAttached = 'yes' THEN 'no' ELSE 'yes' END 
                       WHERE ID = ?""", 
             context.params.ID as Long )        
 
-        redirectToTable( "snv_", "All records", [:] )
+        if( context.params._tcloneid_  )
+        {
+            redirectToTable( "snv_", "All records", [ "_tcloneid_": context.params._tcloneid_ ] )
+        }
+        else
+        {
+            redirectToTable( "snv_", "All records", [:] )
+        }
     }
 }
