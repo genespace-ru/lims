@@ -1,8 +1,10 @@
-task_runs:
+workflow_runs:
   type: table
   primaryKey: ID
-  displayName: Tasks
-  doc: Информация о запущенных и выполненных задачах.
+  displayName: Workflows
+  doc: |-
+    Информация о запущенных и выполненных сценариях анализа.
+    Каждый сценарий состоит из набора задач.
 
   scheme:
     columns:
@@ -13,33 +15,28 @@ task_runs:
     - project:
         type: KEYTYPE
         reference: projects
-        doc: Проект, для которого была запущена задача.
+        doc: Проект, для которого был запущен сценарий.
     - sample:
         type: KEYTYPE
         reference: samples
         canBeNull: true
-        doc: Образец, для которого была запущена задача.
-    - workflow:
+        doc: Образец, для которого был запущен сценарий.
+    - workflow_info: 
         type: KEYTYPE
-        reference: workflow_runs
+        reference: workflow_info
         canBeNull: true
-        doc: Сценарий, в рамках которого была запущена задача.
-    - task_info: 
-        type: KEYTYPE
-        reference: task_info
-        canBeNull: true
-        doc: Информация о задаче (классе).
+        doc: Информация о сценарии.
     - start:
         type: TIMESTAMP
         canBeNull: true
-        doc: Время запуска задачи.
+        doc: Время запуска сценария.
     - end:
         type: TIMESTAMP
         canBeNull: true
-        doc: Время окончания задачи.
+        doc: Время окончания сценария.
     - status:
         type: ENUM('in_progress', 'completed', 'scheduled', 'error')
-        doc: Статус выполнения задачи.
+        doc: Статус выполнения сценария.
     - params:
         type: JSON 
         canBeNull: true        
@@ -71,24 +68,20 @@ queries:
       type: 1D
       roles: '@AllRoles'
       layout: '{"quickType":"select"}'
-      operations:
-      - Insert
-      - Edit
-      - Delete
       code: |2-
             SELECT 
-              tr.id AS "ID",
-              tr.title AS "Title",
-              tr.description AS "Description",
-              tr.comment AS "Comment",
-              tr.params AS "Parameters;<quick visible='false' />",
-              <@COMMON_WHO_FIELDS 'ti' />
-            FROM task_runs tr
-            ORDER BY tr.creationDate___ DESC
+              wr.id AS "ID",
+              wr.title AS "Title",
+              wr.description AS "Description",
+              wr.comment AS "Comment",
+              wr.params AS "Parameters;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'wr' />
+            FROM workflow_runs wr
+            ORDER BY wr.creationDate___ DESC
             
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, title FROM task_runs tr ORDER BY title
+            SELECT id, title FROM workflow_runs wr ORDER BY title
           

@@ -27,6 +27,8 @@ _dictionaries_:
             UNION <@DICTIONARY_REF 'file_types', 'Файлы - типы данных', 
                 'Типы  файлов с данными и результатами.' />
 
+            UNION <@DICTIONARY_REF 'workflow_info', 'Сценарии - типы', 
+                'Типы  сценариев для анализа данных.' />
             UNION <@DICTIONARY_REF 'task_info', 'Задачи - типы', 
                 'Типы  задач для анализа данных.' />
             

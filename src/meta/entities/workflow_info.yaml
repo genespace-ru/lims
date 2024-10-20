@@ -1,12 +1,15 @@
-task_info:
+workflow_info:
   type: dictionary
   primaryKey: ID
-  displayName: Task info
+  displayName: Workflow info
   doc: |-
-    Информация о типах задач (импорт, контроль качества и т.п.).
+    Информация о типах сценариев.
+    На данный момент сценарий - это файло со сценарием Nextflow.
     Pending: 
-    - формат и хранение аттрибутов для запуска задачи
-    - иконка для представления задачи.
+    - формат и хранение аттрибутов для запуска задачи.
+    - иконка для представления сценария
+    - граф для представления задач в сценарии
+    - поддержка WDL.
 
   scheme:
     columns:
@@ -14,12 +17,16 @@ task_info:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
+    - file_info:
+        type: KEYTYPE
+        reference: file_info
+        doc: Файл со сценарием данных.
     - title:
         type: VARCHAR(20)
-        doc: Название задачи.
+        doc: Название сценария.
     - description:
         type: TEXT
-        doc: Описание задачи, может быть текст HTML.
+        doc: Описание сценания, может быть текст HTML.
         canBeNull: true
     - comment:
         type: TEXT
@@ -56,20 +63,20 @@ task_info:
       - Delete
       code: |2-
             SELECT 
-              ti.id AS "ID",
-              ti.title AS "Title",
-              ti.description AS "Description",
-              ti.comment AS "Comment",
-              ti.params AS "Parameters;<quick visible='false' />",
-              <@COMMON_WHO_FIELDS 'ti' />
-            FROM task_info ti
-            ORDER BY ti.title
+              wi.id AS "ID",
+              wi.title AS "Title",
+              wi.description AS "Description",
+              wi.comment AS "Comment",
+              wi.params AS "Parameters;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'wi' />
+            FROM workflow_info wi
+            ORDER BY wi.title
             
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, title FROM task_info ti ORDER BY title
+            SELECT id, title FROM workflow_info wi ORDER BY title
   
   operations:
   - Insert:

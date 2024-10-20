@@ -11,6 +11,10 @@ samples:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
+    - project:
+        type: KEYTYPE
+        reference: projects
+        doc: Проект, которому принадлежит данный образец.
     - typeID:
         type: KEYTYPE
         reference: sample_types

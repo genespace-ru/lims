@@ -6,6 +6,12 @@ DELETE FROM task_info;
 </#macro>
 
 
-<@TASK_INFO 1, "import VCF", "Загружает данные в VCFv4.2 формате." />
+<@TASK_INFO 1, "Create project", "Созадает пустой проект." />
 
-<@TASK_INFO 2, "import VEP", "Загружает данные в VEPv112 формате." />
+<@TASK_INFO 2, "Import Нанофор-СПС", "Импортирует данные секвенироания Нанофор-СПС." />
+
+<@TASK_INFO 3, "Import fastq", "Загружает отдельный образец в формате fastq." />
+
+<@TASK_INFO 4, "import VCF", "Загружает данные в VCFv4.2 формате." />
+
+<@TASK_INFO 5, "import VEP", "Загружает данные в VEPv112 формате." />
