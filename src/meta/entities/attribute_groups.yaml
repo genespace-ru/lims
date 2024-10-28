@@ -32,6 +32,10 @@ attribute_groups:
         type: INT
         canBeNull: true
         doc: Порядок отображения групп аттрибутов в представлении.
+    - viewName:
+        type: VARCHAR(100)
+        canBeNull: true
+        doc: Название view (из snv_.yaml) для отображения этой группы свойств.        
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

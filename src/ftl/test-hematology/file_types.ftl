@@ -23,3 +23,5 @@ INSERT INTO file_types(id, suffix, description, comment)
 
 <@TYPE 30, ".vcf", "Данные генотипирования." />
 <@TYPE 31, ".vep", "Данные аннотирования SNV программой VEP." />
+
+<@TYPE 100, ".nf", "Сценарий Nextflow." />

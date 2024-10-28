@@ -1,0 +1,96 @@
+workflow_info:
+  type: dictionary
+  primaryKey: ID
+  displayName: Workflow info
+  doc: |-
+    Информация о типах сценариев.
+    На данный момент сценарий - это файло со сценарием Nextflow.
+    Pending: 
+    - формат и хранение аттрибутов для запуска задачи.
+    - иконка для представления сценария
+    - граф для представления задач в сценарии
+    - поддержка WDL.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - file_info:
+        type: KEYTYPE
+        reference: file_info
+        doc: Файл со сценарием данных.
+    - title:
+        type: VARCHAR(20)
+        doc: Название сценария.
+    - description:
+        type: TEXT
+        doc: Описание сценания, может быть текст HTML.
+        canBeNull: true
+    - comment:
+        type: TEXT
+        doc: Комментарий.
+        canBeNull: true
+    - params:
+        type: JSON 
+        canBeNull: true        
+        doc: |- 
+          Описание параметров для запуска, чтобы из них можно было автоматически 
+          сформировать форму для ввода параметров. 
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+
+  queries:
+  
+  - All records:
+      type: 1D
+      roles: '@AllRoles'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      code: |2-
+            SELECT 
+              wi.id AS "ID",
+              wi.title AS "Title",
+              wi.description AS "Description",
+              wi.comment AS "Comment",
+              wi.params AS "Parameters;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'wi' />
+            FROM workflow_info wi
+            ORDER BY wi.title
+            
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, title FROM workflow_info wi ORDER BY title
+  
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+ 

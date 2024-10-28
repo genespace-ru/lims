@@ -11,7 +11,7 @@ resources:
         autoIncrement: true
         primaryKey: true
     - type:
-        type: ENUM('database', 'program', 'recommendation', 'other')
+        type: ENUM('database', 'program', 'recommendation', 'format', 'other')
         doc: Тип ресурса.
     - title:
         type: VARCHAR(100)

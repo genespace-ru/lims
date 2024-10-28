@@ -1,0 +1,94 @@
+task_runs:
+  type: table
+  primaryKey: ID
+  displayName: Tasks
+  doc: Информация о запущенных и выполненных задачах.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - project:
+        type: KEYTYPE
+        reference: projects
+        doc: Проект, для которого была запущена задача.
+    - sample:
+        type: KEYTYPE
+        reference: samples
+        canBeNull: true
+        doc: Образец, для которого была запущена задача.
+    - workflow:
+        type: KEYTYPE
+        reference: workflow_runs
+        canBeNull: true
+        doc: Сценарий, в рамках которого была запущена задача.
+    - task_info: 
+        type: KEYTYPE
+        reference: task_info
+        canBeNull: true
+        doc: Информация о задаче (классе).
+    - start:
+        type: TIMESTAMP
+        canBeNull: true
+        doc: Время запуска задачи.
+    - end:
+        type: TIMESTAMP
+        canBeNull: true
+        doc: Время окончания задачи.
+    - status:
+        type: ENUM('in_progress', 'completed', 'scheduled', 'error')
+        doc: Статус выполнения задачи.
+    - params:
+        type: JSON 
+        canBeNull: true        
+        doc: Параметры запуска.
+    - log:
+        type: TEXT 
+        canBeNull: true        
+        doc: Лог сообщений.
+    - comment:
+        type: VARCHAR(255)
+        canBeNull: true
+    
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+
+queries:
+  
+  - All records:
+      type: 1D
+      roles: '@AllRoles'
+      layout: '{"quickType":"select"}'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      code: |2-
+            SELECT 
+              tr.id AS "ID",
+              tr.title AS "Title",
+              tr.description AS "Description",
+              tr.comment AS "Comment",
+              tr.params AS "Parameters;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'ti' />
+            FROM task_runs tr
+            ORDER BY tr.creationDate___ DESC
+            
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, title FROM task_runs tr ORDER BY title
+          

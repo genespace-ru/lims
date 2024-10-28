@@ -6,6 +6,10 @@ snv_:
     Список найденных SNV. Для каждого образца создается отдельная таблица,
     где название образца является суффиксом в названии таблицы.
     Например: snv_sample1.
+    Поля vcf_(chrom, pos, id, ref, alt, qual, filter, info) являются обязательными
+    полями VCF v.4.2 (https://samtools.github.io/hts-specs/VCFv4.2.pdf).
+    Их подробное описание смотри в спецификации VCFv4.2.
+    Ограничение - один VCF файл должен содержать данные только для одного образца.
 
   scheme:
     columns:
@@ -13,17 +17,41 @@ snv_:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - VEP_ID:
+    - vcf_chrom:
         type: VARCHAR(50)
+        doc: Хромосома.
+    - vcf_pos:
+        type: INT
+        doc: Позиция на хромосоме.
+    - vcf_id:
+        type: VARCHAR(200)
+        canBeNull: true 
+        doc: Список идентификаторов, разделитель - ;
+    - vcf_ref:
+        type: VARCHAR(50)
+        doc: Основания ( A,C,G,T,N) в референсном геноме.
+    - vcf_alt: 
+        type: VARCHAR(50)
+        doc: Альтернативные основания.
+    - vcf_qual:
+        type: DECIMAL(4,1)
+        canBeNull: true
+        doc: Качество, Phred-scaled quality score for the assertion made in ALT.
+    - vcf_filter:
+        type: VARCHAR(50)
+        doc: Статус, PASS - если поизиция прошла все фильтры.
+    - vcf_info: 
+        type: TEXT
+        canBeNull: true
+        doc: Дополнительная информация в формате ключ-значение.
+    - vcf_format:         
+        type: VARCHAR(1000)
+        doc: Формат для поля генотип.                 
+    - attributes:
+        type: JSON 
         canBeNull: true        
-        doc: Идентификатор SNV в VEP файле.
-    - location:
-        type: VARCHAR(50)
-        doc: |- 
-          Расположение SNV в стандартном формате (chr:start or chr:start-end)
-    - allele:
-        type: VARCHAR(10)
-        doc: Вариант, исопльзуемы для рассчета последствий SNV.
+        doc: Все аттрибуты (VCF info, format; VEP annotation и другие).
+
     - pathogenicity:
         type: INT
         reference: pathogenicity
@@ -34,10 +62,6 @@ snv_:
         reference: pathogenicity_authority
         canBeNull: true        
         doc: Автор или рекоммендации, по которой проставлена патогенность.
-    - attributes:
-        type: JSON 
-        canBeNull: true        
-        doc: Значения аттрибутов в формате JSON (название аттрибута - значение).
     - isAttached:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''
@@ -54,5 +78,130 @@ snv_:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''
         doc: Нужно ли включать SNV в отчет.
-     
+
+  queries:
+  - All records:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select","hideOperations":["ToggleAttached","ToggleHidden","ToggleIncludeInReport"]}'
+      invisible: true      
+      operations:
+      - ToggleAttached
+      - ToggleHidden
+      - ToggleIncludeInReport
+      code: |2-
+        SELECT 
+            s.id AS "___ID",
+          
+            '<a href="#!form/snv_/All records/ToggleAttached/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<img src="/static/images/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '"></a>' ||
+            
+            '<a href="#!form/snv_/All records/ToggleHidden/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<img src="/static/images/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке."></a>' || 
+
+            '<a href="#!form/snv_/All records/ToggleIncludeInReport/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
+            '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
+            ( CASE WHEN s.includeInReport='yes' THEN 'не включать' ELSE 'включить' END) || ' SNV в отчет."></a>' 
+              AS "Actions",
+           '<css class="ws-nowrap" />;<nosort/>' 
+              AS ";Actions",
+            
+            s.vcf_chrom || ':' || s.vcf_pos AS "Location",
+            s.vcf_ref || '>' || s.vcf_alt AS "Replacement",
+            s.attributes->>'GT' AS "Genotype",
+            COALESCE(s.attributes->>'DP' || ' (' || (s.attributes->>'AD') || ')', '') "Read depth (Ref,Alt)",
+            CASE WHEN s.attributes->>'VAF' LIKE '%,%' THEN null
+            ELSE ROUND(CAST(s.attributes->>'VAF' AS DECIMAL)*100, 0) END 
+              AS "Variant allele fraction, %;<quick visible='true' />",
+            s.vcf_qual AS "Quality;<quick visible='true' />",
+            s.vcf_filter AS "Filter;<quick visible='true' />",
+            s.vcf_id AS "IDs;<quick visible='false' />",
+            s.vcf_info AS "Info;<quick visible='false' />",
+            
+            (CASE WHEN s.attributes->>'Uploaded_variation' IS NOT null THEN 'VEP' ELSE '' END) 
+            AS "Annotation;<quick visible='true' />",
+
+            '<a href="#!table/snv_/SNV card/_tcloneid_=' || <parameter:_tcloneid_ /> || 
+            '/_snvid_=' || s.ID || '">Card</>' AS "Подробно",  
+            
+            s.attributes AS "Attributes;<quick visible='false' />"
+        FROM snv_<parameter:_tcloneid_ /> s
+        ORDER BY s.isAttached DESC, s.id
         
+  - SNV card:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      layout: '{"tableBox":"SnvCard", "mode":"named", "hideTitle":"true"}'
+      invisible: true      
+      code: |2-
+        SELECT 
+            ag.id,
+            ag.title,
+            ag.title_ru,
+            ag.viewName,
+            <parameter:_tcloneid_/> AS "sample",
+            <parameter:_snvid_/> AS "snv"
+            <if parameter="_notempty_">, 'yes' AS "notempty" </if>
+        FROM attribute_groups ag
+        ORDER BY CAST(ag.displayOrder AS DECIMAL)
+
+  - SNV tab:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      layout: '{"hideTitle":"true"}'
+      invisible: true      
+      code: |2-
+        SELECT
+            a.id,
+            a.title,
+            a.title_ru,
+            a.urlMask,
+            s.attributes->>(a.title) AS "Value"
+        FROM attributes a 
+        JOIN attribute_groups ag ON a.groupID = ag.ID
+        JOIN snv_<parameter:_tcloneid_/> s ON s.ID=<parameter:_snvid_/>
+        WHERE (1=1)
+          <if parameter="_groupid_">  AND ag.ID = <parameter:_groupid_/> </if>
+          <if parameter="_notempty_"> AND s.attributes->>(a.title) IS NOT NULL </if>
+        ORDER BY CAST(ag.displayOrder AS DECIMAL), a.displayOrder
+
+  - SNV tab2:
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      invisible: true      
+      code: |2-
+        SELECT
+            a.id,
+            a.title,
+            a.title_ru,
+            a.displayOrder,
+            a.urlMask,
+            s.attributes->>(a.title) AS "Value"
+        FROM attributes a 
+        JOIN attribute_groups ag ON a.groupID = ag.ID
+        JOIN snv_<parameter:_tcloneid_/> s ON s.ID=<parameter:_snvid_/>
+
+        WHERE (1=1)
+          <if parameter="_groupid_">
+              AND ag.ID = <parameter:_groupid_/>
+          </if>
+        ORDER BY ag.displayOrder, a.displayOrder
+                
+  operations:
+  - ToggleAttached:
+      type: Groovy
+      records: 1
+      roles: '@AllRolesExceptGuest'
+      file: operations.ToggleAttached.groovy
+  - ToggleHidden:
+      type: Groovy
+      records: 1
+      roles: '@AllRolesExceptGuest'
+      file: operations.ToggleHidden.groovy
+  - ToggleIncludeInReport:
+      type: Groovy
+      records: 1
+      roles: '@AllRolesExceptGuest'
+      file: operations.ToggleIncludeInReport.groovy

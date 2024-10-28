@@ -56,7 +56,6 @@ projects:
             SELECT id, name FROM projects ORDER BY name
   - Project card:
       roles: '@AllRolesExceptGuest'
-      invisible: true
       type: 1D_unknown
       layout: '{"tableBox":"projectCard", "mode":"named", "hideTitle":"true"}'
       code: |-

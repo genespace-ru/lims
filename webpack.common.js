@@ -47,13 +47,13 @@ module.exports = {
       test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
       exclude: /(node_modules|bower_components)/,
       loader: "url-loader",
-      options: {limit:"10000",mimetype:"image/svg+xml"}
+      options: {limit:"1",mimetype:"image/svg+xml",name:"static/images/[name].[ext]"}
     },
     {
       test: /\.(jpg|jpeg|gif|png|ico)$/,
       exclude: /node_modules/,
       loader:'url-loader',
-      options: {limit:"6024",name:"images/[name].[ext]"}
+      options: {limit:"1",name:"static/images/[name].[ext]"}
     }
   ],
   externals: {

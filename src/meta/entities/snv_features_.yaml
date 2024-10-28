@@ -1,12 +1,12 @@
-snv_transcripts_:
+snv_features_:
   type: table
   primaryKey: ID
-  displayName: SNV (транскрипты)
+  displayName: SNV (features)
   doc: |-
-    Список транскриптов и их свойств для соответствующей SNV.
+    Список features SNV (транскрипт, регуляторный район и т.п.) и их свойств для соответствующей SNV.
     Для каждого образца создается отдельная таблица,
     где название образца является суффиксом в названии таблицы.
-    Например: snv_transcripts_sample1.
+    Например: snv_features_sample1.
 
   scheme:
     columns:
@@ -14,13 +14,14 @@ snv_transcripts_:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - SNV:
+    - snv:
         type: INT
         reference: snv_
         doc: ссылка на SNV, к которой относится данный транскрипт
-    - transcript:
+    - feature:
         type: VARCHAR(50)
-        doc: Идентификатор транскрипта.
+        doc: |-
+          Тип особенности (Transcript, RegulatoryFeature и т.п.).
     - attributes:
         type: JSON 
         canBeNull: true        
