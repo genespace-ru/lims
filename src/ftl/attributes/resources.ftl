@@ -299,8 +299,144 @@ DELETE FROM resource_recommendations;
 "The Variant Call Format is a standard text file format used for storing gene sequence variations."
 "https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
 
-<#macro RESOURCE id, type, title, version, description, url, license, comment="null">
-    INSERT INTO resources(id, type, title, version, description, url, license, comment) 
-    VALUES( ${id}, ${type?str}, ${title?str}, ${version?str}, ${description?str}, ${url?str}, ${license?str}, ${comment});
-</#macro>
+<@RESOURCE 60, "database", "COSMIC", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 61, "database", "Franklin", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 62, "browser", "UCSC", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 63, "program", "RUSeq", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 64, "database", "gnomAD", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 65, "database", "Ensembl", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 66, "database", "UniProt", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 67, "database", "NCBI", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 68, "database", "Orphanet", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 69, "notation", "HGVS", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 70, "database", "OMIM", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 71, "database", "ClinVar", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 72, "database", "1000 G", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 73, "score", "GERP", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 74, "score", "PhyloP", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 75, "score", "PhastCons", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 76, "score", "SiPhy", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 77, "score", "BStatistic", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 78, "prediction", "LRT", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 79, "prediction", "FATHMM", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 80, "score", "CADD", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 81, "prediction", "BayesDe", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 82, "prediction", "Meta SVM", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 83, "prediction", "Meta LR", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 84, "score", "MVP", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 85, "score", "MPC", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 86, "score", "Primate AI", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 87, "score", "DEOGEN2", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 88, "score", "DANN", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 89, "prediction", "FATHMM-MKL", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 90, "prediction", "FATHMM-XF", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 91, "score", "Eigen", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 92, "annotation", "APPRIS", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 93, "eQTL", "Geuvadis", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
+<@RESOURCE 94, "prediction", "ENIGMA", "4.2",
+"The Variant Call Format is a standard text file format used for storing gene sequence variations."
+"https://samtools.github.io/hts-specs/VCFv4.2.pdf", "" />
+
 
