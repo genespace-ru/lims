@@ -1,4 +1,4 @@
-attribute_rules:
+rules:
   type: table
   primaryKey: ID
   displayName: Правила
@@ -16,7 +16,7 @@ attribute_rules:
         doc: Аттрибут, значение которого вычисляется. 
     - code:
         type: TEXT
-        doc: Код (JavaScript) для вычисления значения аттрибута.
+        doc: Код (Java/Groovy) для вычисления значения аттрибута.
     - desription:
         type: TEXT
         canBeNull: true        

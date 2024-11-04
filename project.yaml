@@ -21,7 +21,6 @@ lims:
   - attributes
   - attribute_groups
   - attribute_resources
-  - attribute_rules
   - attribute_types
   - analyses
   - devices
@@ -32,6 +31,8 @@ lims:
   - pathogenicity
   - pathogenicity_authority
   - projects
+  - rules
+  - rule_sets
   - runs
   - run_samples
   - run_metrics

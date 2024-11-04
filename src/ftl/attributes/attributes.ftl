@@ -3,11 +3,11 @@ DELETE FROM attribute_resources;
 
 <#assign VEP = 57>
 <#macro ATTRIBUTE id, group, order, title, title_ru, description, description_ru, 
-   level, storage, type, comment="null", dictionary="null", rule="null", displayIfEmpty="'no'", urlMask="null" >  
+   level, storage, type, comment="null", dictionary="null", displayIfEmpty="'no'", urlMask="null" >  
     INSERT INTO attributes(id, entity, groupID, displayOrder, title, title_ru, description, description_ru, 
-       level, storage, type, comment, dictionary, rule, displayIfEmpty, urlMask)
+       level, storage, type, comment, dictionary, displayIfEmpty, urlMask)
     VALUES( ${id}, 'snv_',  ${group}, ${order}, ${title?str}, ${title_ru?str}, ${description?str}, ${description_ru?str}, 
-    ${level?str}, ${storage?str}, ${type}, ${comment}, ${dictionary}, ${rule}, ${displayIfEmpty}, ${urlMask} );
+    ${level?str}, ${storage?str}, ${type}, ${comment}, ${dictionary}, ${displayIfEmpty}, ${urlMask} );
 </#macro>
 
 <#macro RESOURCE id, attribute, resource, comment="null">
