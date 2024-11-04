@@ -1,7 +1,7 @@
 DELETE FROM resources;
 DELETE FROM resource_recommendations;
 
- <#macro RESOURCE id, type, title, version, description, url, license, comment="null">
+<#macro RESOURCE id, type, title, version, description, url, license, comment="null">
     INSERT INTO resources(id, type, title, version, description, url, license, comment) 
     VALUES( ${id}, ${type?str}, ${title?str}, ${version?str}, ${description?str}, ${url?str}, ${license?str}, ${comment});
 </#macro>

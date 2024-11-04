@@ -15,6 +15,9 @@ _dictionaries_:
                 'Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.' /> 
             UNION <@DICTIONARY_REF 'attribute_types', 'Аттрибуты - типы данных', 
                 'Типы аттрибутов (int, string и т.п.).' />
+
+            UNION <@DICTIONARY_REF 'rule_sets', 'Наборы правил', 
+                'Наборы правил для интерпретации SNV и CNV.' />
                  
             UNION <@DICTIONARY_REF 'resources', 'Ресурсы (для аннотации)', 
                 'Программы, базы данных и рекоммендации, используемые для аннотации SNV и CNV.' /> 
