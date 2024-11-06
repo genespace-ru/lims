@@ -1,0 +1,37 @@
+rule_set_rules:
+  type: collection
+  primaryKey: ID
+  displayName: Правила для набора правил
+  doc: Таблица связка, указывающая, какие правила в какой набор входят.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - rule_set:
+        type: INT
+        reference: rule_sets
+        doc: Идентификатор набора правил.        
+    - rule:
+        type: INT
+        reference: rules
+        doc: Идентификатор правила.        
+    - comment:
+        type: TEXT
+        canBeNull: true
+        doc: Разные комментарии, в том числе вопросы и замечания. 
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  

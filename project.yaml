@@ -33,6 +33,7 @@ lims:
   - projects
   - rules
   - rule_sets
+  - rule_set_rules
   - runs
   - run_samples
   - run_metrics

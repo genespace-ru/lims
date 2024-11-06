@@ -2,7 +2,10 @@ rules:
   type: table
   primaryKey: ID
   displayName: Правила
-  doc: Правила для вычисления аттрибутов для аннотации SNV и CNV.
+  doc: |- 
+    Правила для вычисления аттрибутов для аннотации SNV и CNV.
+    
+    Pending: input - список входных аттрибутов. Пока перечисляются их title через запятую.
 
   scheme:
     columns:
@@ -10,6 +13,12 @@ rules:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
+    - input:
+        type: TEXT
+        doc: Список аттрибутов, которые служат входными значениями.
+    - priority:     
+        type: INT
+        doc: приоритет вычисления аттрибута.
     - attribute:
         type: INT
         reference: attributes
