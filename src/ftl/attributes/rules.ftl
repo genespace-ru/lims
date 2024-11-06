@@ -1,6 +1,6 @@
-DELETE FROM rule_sets;
+DELETE FROM rule_set_rules;
 
-<#macro ROOL_SET id, recommendation, title, version, description, comment="null">
+<#macro RULE id, recommendation, title, version, description, comment="null">
     INSERT INTO rule_sets(id, recommendation, title, version, description, comment) 
     VALUES( ${id}, ${recommendation}, ${title?str}, ${version?str}, ${description?str}, ${comment});
 </#macro>

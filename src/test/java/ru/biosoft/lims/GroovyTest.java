@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import groovy.json.JsonSlurper;
 import groovy.lang.GroovyClassLoader;
 
+/**
+ * https://groovy-lang.org/integrating.html
+ */
 public class GroovyTest 
 {
 
