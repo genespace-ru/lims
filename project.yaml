@@ -77,7 +77,8 @@ lims:
   - attributes/attributes
   - attributes/groups
   - attributes/resources
-  - attributes/rule_sets
   - attributes/rules
+  - attributes/rule_sets
+  - attributes/rule_set_rules
   - attributes/types
   includes: common

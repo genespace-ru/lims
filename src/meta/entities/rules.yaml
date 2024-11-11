@@ -14,7 +14,7 @@ rules:
         autoIncrement: true
         primaryKey: true
     - input:
-        type: TEXT
+        type: JSON 
         doc: Список аттрибутов, которые служат входными значениями.
     - priority:     
         type: INT

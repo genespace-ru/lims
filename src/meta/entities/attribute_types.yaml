@@ -52,11 +52,12 @@ attribute_types:
               <@COMMON_WHO_FIELDS 'at' />
             FROM attribute_types at
             ORDER BY at.ID
+            
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'
       code: |2-
-            SELECT id, name FROM attribute_types at ORDER BY name
+            SELECT id, title FROM attribute_types at ORDER BY title
   
   operations:
   - Insert:
