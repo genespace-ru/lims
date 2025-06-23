@@ -4,6 +4,8 @@ connectionProfiles:
       connectionUrl: jdbc:postgresql://docker:5433/lims
       username: lims
       password: lims
+      properties:
+      - SESSION_STORE: '/sessions/lims.ser'
     dockerRun:
       connectionUrl: jdbc:postgresql://postgres-lims:5432/lims
       username: lims
