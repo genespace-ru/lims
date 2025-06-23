@@ -1,7 +1,7 @@
 DELETE FROM projects WHERE ID=1 AND name='test-hematology';
 
-INSERT INTO projects VALUES(1, 'test-hematology', 'Тестовый проект по тагетному секвенированию для гематологии',
-CURRENT_TIMESTAMP, null, 'Administrator', null); 
+INSERT INTO projects( ID, name, description, creationDate___, whoInserted___ )
+VALUES(1, 'test-hematology', 'Тестовый проект по тагетному секвенированию для гематологии', CURRENT_TIMESTAMP, 'Administrator'); 
 
 DELETE FROM runs WHERE ID=1;
 INSERT INTO runs(ID, project_id, name, status, data, creationDate___, whoInserted___)
