@@ -11,7 +11,7 @@ INSERT INTO user_roles VALUES( ${name?str}, ${role?str} );
 </#macro>
 
 
-<@user 'Administrator', '12345', 'Administrator' />
-<@add_role 'Administrator', 'SystemDeveloper' />
+<@user 'admin', '12345', 'Administrator' />
+<@add_role 'admin', 'SystemDeveloper' />
 
 <@user 'User', '12345', 'User' />
