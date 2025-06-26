@@ -90,9 +90,10 @@ projects:
         
   operations:
   - Insert:
+      type: Groovy
       roles: [Administrator, User]
       layout: '{"type":"modalForm"}'
-      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+      file: operations.LoadProject.groovy
   - Edit:
       roles: [Administrator, User]
       records: 1
