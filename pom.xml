@@ -50,11 +50,38 @@
       <artifactId>be5-monitoring</artifactId>
       <version>[0.4.0,)</version>
     </dependency>
+    
+    <!-- ru.biosoft.* plugins -->
+    <dependency>
+      <groupId>ru.biosoft</groupId>
+      <artifactId>exception</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>ru.biosoft.access</groupId>
+      <artifactId>core</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>ru.biosoft.access</groupId>
+      <artifactId>file</artifactId>
+      <version>2.0.0</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>one.util</groupId>
+        <artifactId>streamex</artifactId>
+        <version>0.8.3</version>
+        <!--scope>runtime</scope-->
+    </dependency>
 
   </dependencies>
 
   <build>
     <plugins>
+
 
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
@@ -125,7 +152,11 @@
             </dependency>
         </dependencies>
       </plugin>
-
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-war-plugin</artifactId>
+    <version>3.3.1</version> <!-- Or latest stable version -->
+</plugin>
     </plugins>
   </build>
 
