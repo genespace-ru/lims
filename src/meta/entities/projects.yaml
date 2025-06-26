@@ -58,6 +58,7 @@ projects:
       roles: '@AllRolesExceptGuest'
       type: 1D_unknown
       layout: '{"tableBox":"projectCard", "mode":"named", "hideTitle":"true"}'
+      invisible: true
       code: |-
           SELECT
             pr.ID AS "ID",
