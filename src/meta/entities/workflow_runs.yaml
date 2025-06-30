@@ -32,7 +32,8 @@ workflow_runs:
         canBeNull: true
         doc: Время окончания сценария.
     - status:
-        type: ENUM('preparation', 'created',  in progress', 'succeeded', 'scheduled', 'error')
+        type: VARCHAR(255)
+        canBeNull: true
         doc: Статус выполнения сценария.
     - params:
         type: JSON 
