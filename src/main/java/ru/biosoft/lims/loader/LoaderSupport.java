@@ -20,20 +20,6 @@ public abstract class LoaderSupport implements Loader
     @Inject 
     protected DbService db;
 
-    public String getProjectDir()
-    {
-    	String dir = db.getString("SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='projects_dir'");
-    	if( dir == null )
-    		throw new NullPointerException(
-                    "Project directory is not specified in systemsettings." + System.lineSeparator() +
-                    "Please specify project directory in systemsettings, section_name=lims, setting_name=projects_dir. ");
-    	
-    	if( !dir.endsWith("/"))
-    		dir = dir + "/";
-    	
-    	return dir;
-    }
-
 	public void checkFormat(File file) throws Exception
 	{
     	try( BufferedReader br = new BufferedReader(new FileReader(file)) ) 

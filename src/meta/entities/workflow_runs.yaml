@@ -16,18 +16,15 @@ workflow_runs:
         type: KEYTYPE
         reference: projects
         doc: Проект, для которого был запущен сценарий.
-    - sample:
-        type: KEYTYPE
-        reference: samples
-        canBeNull: true
-        doc: Образец, для которого был запущен сценарий.
     - workflow_info: 
         type: KEYTYPE
         reference: workflow_info
         canBeNull: true
         doc: Информация о сценарии.
+
     - start:
         type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
         canBeNull: true
         doc: Время запуска сценария.
     - end:
@@ -35,7 +32,7 @@ workflow_runs:
         canBeNull: true
         doc: Время окончания сценария.
     - status:
-        type: ENUM('in_progress', 'completed', 'scheduled', 'error')
+        type: ENUM('preparation', in_progress', 'completed', 'scheduled', 'error')
         doc: Статус выполнения сценария.
     - params:
         type: JSON 
@@ -48,6 +45,34 @@ workflow_runs:
     - comment:
         type: VARCHAR(255)
         canBeNull: true
+
+    - creation_time:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+        canBeNull: true        
+        doc: workflow creation time
+    - completion_time:
+        type: TIMESTAMP
+        canBeNull: true        
+        doc: workflow completion time
+
+    # Nextflow data
+    - create_request:    
+        type: JSONB
+        canBeNull: true        
+        doc: request JSON - /trace/create 
+    - begin_request:    
+        type: JSONB
+        canBeNull: true        
+        doc: request JSON - /trace/begin
+    - progress_request:    
+        type: JSONB
+        canBeNull: true        
+        doc: request JSON - /trace/progress
+    - complete_request:    
+        type: JSONB
+        canBeNull: true        
+        doc: request JSON - /trace/complete
     
     - creationDate___:
         type: TIMESTAMP

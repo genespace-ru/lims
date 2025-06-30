@@ -10,8 +10,8 @@ nf_heartbeat:
         primaryKey: true
         autoIncrement: true
     - workflow_id:
-        type: VARCHAR(16)
-        reference: nf_workflows
+        type: KEYTYPE
+        reference: workflow_runs
         doc: Nexflow workflow_id
     - creation_time:
         type: TIMESTAMP

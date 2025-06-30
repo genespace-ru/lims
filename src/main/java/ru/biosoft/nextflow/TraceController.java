@@ -1,6 +1,5 @@
 package ru.biosoft.nextflow;
 
-
 import com.developmentontheedge.be5.database.DbService;
 import com.developmentontheedge.be5.databasemodel.EntityModel;
 import com.developmentontheedge.be5.web.Request;
@@ -14,7 +13,11 @@ import javax.inject.Singleton;
 @Singleton
 public class TraceController extends NextflowController
 {
-	@Inject protected DbService db;
+	@Inject 
+	protected DbService db;
+
+    @Inject 
+    protected NextflowService nf;
 	
     @Override
     protected String process(Request req, Response res, JsonObject body) throws Exception
