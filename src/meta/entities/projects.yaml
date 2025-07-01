@@ -103,8 +103,9 @@ projects:
       layout: '{"type":"modalForm"}'
       code: com.developmentontheedge.be5.server.operations.FilterOperation
   - Delete:
+      type: Groovy
       roles: [Administrator, User]
       records: 2
       layout: '{"type":"modalForm"}'
-      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+      file: operations.RemoveProject.groovy
 
