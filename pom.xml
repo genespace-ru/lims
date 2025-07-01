@@ -76,6 +76,20 @@
         <version>0.8.3</version>
         <!--scope>runtime</scope-->
     </dependency>
+    
+    <!-- https://mvnrepository.com/artifact/org.xeustechnologies/jtar -->
+    <dependency>
+        <groupId>org.xeustechnologies</groupId>
+        <artifactId>jtar</artifactId>
+        <version>1.1</version>
+    </dependency>
+    
+    <!-- https://mvnrepository.com/artifact/com.clickhouse/org.apache.commons.compress -->
+    <dependency>
+        <groupId>com.clickhouse</groupId>
+        <artifactId>org.apache.commons.compress</artifactId>
+        <version>1.9.1</version>
+    </dependency>
 
   </dependencies>
 
