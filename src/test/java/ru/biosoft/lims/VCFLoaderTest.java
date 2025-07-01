@@ -34,7 +34,7 @@ public class VCFLoaderTest extends DbTest
     public void checkVcfFormat() throws Exception
     {
     	vcfLoader = getInjector().getInstance(VCFLoader.class);
-    	file = new File(vcfLoader.getProjectDir() + PROJECT + "/results/VCF/" + SAMPLE + ".vcf");
+    	file = new File(SystemSettings.getProjectsDir(false) + PROJECT + "/results/VCF/" + SAMPLE + ".vcf");
 
     	vcfLoader.checkFormat(file);
     }
@@ -62,7 +62,7 @@ public class VCFLoaderTest extends DbTest
     {
         try 
         {
-            file = new File(vcfLoader.getProjectDir() + PROJECT + "/results/VCF/" + SAMPLE + "_genomenal.vcf");
+            file = new File(SystemSettings.getProjectsDir(false) + PROJECT + "/results/VCF/" + SAMPLE + "_genomenal.vcf");
             vcfLoader.load(file, PROJECT, SAMPLE+"_genomenal");
         }
         catch(Exception t)
@@ -79,7 +79,7 @@ public class VCFLoaderTest extends DbTest
         try 
         {
             vepLoader = getInjector().getInstance(VEPLoader.class);
-            file = new File(vepLoader.getProjectDir() + PROJECT + "/results/VEP/" + SAMPLE + ".vep");
+            file = new File(SystemSettings.getProjectsDir(false) + PROJECT + "/results/VEP/" + SAMPLE + ".vep");
 
             vepLoader.checkFormat(file);
             vepLoader.load(file, PROJECT, SAMPLE_ID);

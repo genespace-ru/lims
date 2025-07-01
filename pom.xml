@@ -1,49 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <artifactId>be5-app</artifactId>
-    <groupId>com.developmentontheedge.be5</groupId>
-    <version>1.0.0</version>
-  </parent>
+	<parent>
+		<artifactId>be5-app</artifactId>
+		<groupId>com.developmentontheedge.be5</groupId>
+		<version>1.0.0</version>
+	</parent>
 
-  <groupId>ru.biosoft</groupId>
-  <artifactId>lims</artifactId>
-  <version>0.1-SNAPSHOT</version>
-  <packaging>${packaging.type}</packaging>
+	<groupId>ru.biosoft</groupId>
+	<artifactId>lims</artifactId>
+	<version>0.1-SNAPSHOT</version>
+	<packaging>${packaging.type}</packaging>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>21</java.version>
-    <maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
-  </properties>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
-  <dependencies>
-    <!-- Your target database -->
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.3.8</version>
-    </dependency>
+	<dependencies>
+		<!-- Your target database -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.3.8</version>
+		</dependency>
 
-    <!-- For tests -->
-    <dependency>
-      <groupId>com.developmentontheedge.be5</groupId>
-      <artifactId>be5-test-base</artifactId>
-      <version>0.4.1</version>
-      <scope>test</scope>
-    </dependency>
+		<!-- For tests -->
+		<dependency>
+			<groupId>com.developmentontheedge.be5</groupId>
+			<artifactId>be5-test-base</artifactId>
+			<version>0.4.1</version>
+			<scope>test</scope>
+		</dependency>
 
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>[5.11.2,)</version>
-      <scope>test</scope>
-    </dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>[5.11.2,)</version>
+			<scope>test</scope>
+		</dependency>
 
+<<<<<<< HEAD
     <!-- Sample dependency on BE5 module -->
     <dependency>
       <groupId>com.developmentontheedge.be5</groupId>
@@ -90,88 +90,131 @@
         <artifactId>org.apache.commons.compress</artifactId>
         <version>1.9.1</version>
     </dependency>
+		<!-- Sample dependency on BE5 module -->
+		<dependency>
+			<groupId>com.developmentontheedge.be5</groupId>
+			<artifactId>be5-monitoring</artifactId>
+			<version>[0.4.0,)</version>
+		</dependency>
 
-  </dependencies>
+		<!-- ru.biosoft.* plugins -->
+		<dependency>
+			<groupId>ru.biosoft</groupId>
+			<artifactId>exception</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
-  <build>
-    <plugins>
+		<dependency>
+			<groupId>ru.biosoft.access</groupId>
+			<artifactId>core</artifactId>
+			<version>2.0.0</version>
+		</dependency>
 
+		<dependency>
+			<groupId>ru.biosoft.access</groupId>
+			<artifactId>file</artifactId>
+			<version>2.0.0</version>
+		</dependency>
 
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-dependency-plugin</artifactId>
-    <executions>
-        <execution>
-            <id>copy-dependencies</id>
-            <phase>prepare-package</phase>
-            <goals>
-                <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-                <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                <overWriteReleases>false</overWriteReleases>
-                <overWriteSnapshots>false</overWriteSnapshots>
-                <overWriteIfNewer>true</overWriteIfNewer>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
+		<dependency>
+			<groupId>one.util</groupId>
+			<artifactId>streamex</artifactId>
+			<version>0.8.3</version>
+			<!--scope>runtime</scope-->
+		</dependency>
 
-      <plugin>
-        <groupId>com.developmentontheedge.be5</groupId>
-        <artifactId>be5-maven-plugin</artifactId>
-        <version>0.1.3</version>
-        <!--configuration>
-          <projectPath>./</projectPath>
-        </configuration>
-        <executions>
-            <execution>
-                <id>generate-context</id>
-                <phase>prepare-package</phase>
-                <goals>
-                    <goal>generate-context</goal>
-                </goals>
-                <configuration>
-                    <generateContextPath>${project.build.directory}/${project.artifactId}/META-INF</generateContextPath>
-                </configuration>
-            </execution>
-            <execution>
-                <id>generate-groovy-dsl</id>
-                <phase>prepare-package</phase>
-                <goals>
-                    <goal>generate-groovy-dsl</goal>
-                </goals>
-                <configuration>
-                    <fileName>${project.build.directory}/generated-sources/java/${project.artifactId}</fileName>
-                </configuration>
-            </execution>
-        </executions-->
-        <!-- duplicate for (ModuleLoader2.class).getClassLoader().getResources(PROJECT_FILE_NAME); -->
-        <dependencies>
-            <dependency>
-                <groupId>com.developmentontheedge.be5.modules</groupId>
-                <artifactId>be5-modules-core</artifactId>
-                <version>[0.4.0,)</version>
-            </dependency>
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>2.2.224</version>
-            </dependency>
-            <!-- Your target database -->
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>42.3.8</version>
-            </dependency>
-        </dependencies>
-      </plugin>
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-war-plugin</artifactId>
-    <version>3.3.1</version> <!-- Or latest stable version -->
-</plugin>
-    </plugins>
-  </build>
+	</dependencies>
+
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+                <version>3.12.1</version>
+				<configuration>
+                  <release>21</release>
+        		</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/lib</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>com.developmentontheedge.be5</groupId>
+				<artifactId>be5-maven-plugin</artifactId>
+				<version>0.1.3</version>
+				<configuration>
+					<projectPath>./</projectPath>
+				</configuration>
+				<executions>
+					<execution>
+						<id>generate-context</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate-context</goal>
+						</goals>
+						<configuration>
+							<generateContextPath>
+								${project.build.directory}/${project.artifactId}/META-INF</generateContextPath>
+						</configuration>
+					</execution>
+					<execution>
+						<id>generate-groovy-dsl</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>generate-groovy-dsl</goal>
+						</goals>
+						<configuration>
+							<fileName>
+								${project.build.directory}/generated-sources/java/${project.artifactId}</fileName>
+						</configuration>
+					</execution>
+				</executions>
+
+				<!-- duplicate for
+				(ModuleLoader2.class).getClassLoader().getResources(PROJECT_FILE_NAME); -->
+				<dependencies>
+					<dependency>
+						<groupId>com.developmentontheedge.be5.modules</groupId>
+						<artifactId>be5-modules-core</artifactId>
+						<version>[0.4.0,)</version>
+					</dependency>
+					<dependency>
+						<groupId>com.h2database</groupId>
+						<artifactId>h2</artifactId>
+						<version>2.2.224</version>
+					</dependency>
+					<!-- Your target database -->
+					<dependency>
+						<groupId>org.postgresql</groupId>
+						<artifactId>postgresql</artifactId>
+						<version>42.3.8</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.3.1</version> <!-- Or latest stable version -->
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

@@ -55,9 +55,8 @@ lims:
   - task_runs
   - workflow_info
   - workflow_runs
-  - uploads
-  - nf_workflows
   - nf_heartbeat
+  - uploads
   scripts:
   - Post-db
   - dictionaries

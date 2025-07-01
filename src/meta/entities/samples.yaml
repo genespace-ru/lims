@@ -118,9 +118,12 @@ samples:
               </sql>' AS "Run;<quick visible='false' />",
               
               s.title AS "Title",
+              '<link table="samples" queryName="All records" using="___sampleID" columns="ID" />' AS ";Title",
               st.ID AS "___typeID",
               st.title AS "Type;<quick visible='true'/>",
               '<link table="sample_types" queryName="All records" using="___typeID" columns="ID" />' AS ";Type",
+
+             '<a href="#!table/snv_/All records/_tcloneid_=' || s.ID || '">viewer</a>' AS "SNV",  
 
               s.description AS "Description;<quick visible='true' />",
               s.comment AS "Description;<quick visible='true' />",

@@ -41,6 +41,8 @@ public class AppGuiceServletConfig extends Be5ServletListener
 
             final JmxReporter jmxReporter = JmxReporter.forRegistry(METRIC_REGISTRY).build();
             jmxReporter.start();
+            
+            requestStaticInjection(SystemSettings.class);
 
 //            final Graphite graphite = new Graphite(new InetSocketAddress("127.0.0.1", 2003));
 //            final GraphiteReporter graphiteReporter = GraphiteReporter.forRegistry(METRIC_REGISTRY)

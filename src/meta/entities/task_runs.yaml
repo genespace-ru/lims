@@ -1,7 +1,8 @@
 task_runs:
   type: table
   primaryKey: ID
-  displayName: Tasks
+  order: '20'
+  displayName:  Задачи
   doc: Информация о запущенных и выполненных задачах.
 
   scheme:
@@ -65,25 +66,32 @@ task_runs:
         type: VARCHAR(100)
         canBeNull: true 
 
-queries:
-  
+  queries:
   - All records:
       type: 1D
-      roles: '@AllRoles'
+      roles: '@AllRolesExceptGuest'
       layout: '{"quickType":"select"}'
-      operations:
-      - Insert
-      - Edit
-      - Delete
       code: |2-
             SELECT 
               tr.id AS "ID",
-              tr.title AS "Title",
-              tr.description AS "Description",
+
+              tr.project AS "___projectID",
+              tr.project AS "Project;<quick visible='true' />",
+              '<link table="projects" queryName="Project card" using="___projectID" columns="ID" />' AS ";Project",
+              
+              tr.sample AS "___sampleID",
+              tr.sample AS "Sample;<quick visible='true' />",
+              '<link table="samples" queryName="All records" using="___sampleID" columns="ID" />' AS ";Sample",
+
+              ti.ID AS "___taskInfoID",
+              ti.title AS "Task;<quick visible='true' />",
+              '<link table="task_info" queryName="All records" using="___taskInfoID" columns="ID" />' AS ";Task",
+              
               tr.comment AS "Comment",
               tr.params AS "Parameters;<quick visible='false' />",
-              <@COMMON_WHO_FIELDS 'ti' />
+              <@COMMON_WHO_FIELDS 'tr' />
             FROM task_runs tr
+            JOIN task_info ti ON tr.task_info = ti.ID
             ORDER BY tr.creationDate___ DESC
             
   - '*** Selection view ***':

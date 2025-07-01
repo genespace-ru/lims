@@ -41,6 +41,7 @@ uploads:
         FROM uploads u
   - All records:
       roles: '@AllRolesExceptGuest'
+      invisible: true
       operations:
       - Upload File
       - Delete
