@@ -21,108 +21,81 @@
 	</properties>
 
 	<dependencies>
-		<!-- Your target database -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-			<version>42.3.8</version>
-		</dependency>
-
-		<!-- For tests -->
-		<dependency>
-			<groupId>com.developmentontheedge.be5</groupId>
-			<artifactId>be5-test-base</artifactId>
-			<version>0.4.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>org.junit.jupiter</groupId>
-			<artifactId>junit-jupiter-engine</artifactId>
-			<version>[5.11.2,)</version>
-			<scope>test</scope>
-		</dependency>
-
-<<<<<<< HEAD
-    <!-- Sample dependency on BE5 module -->
-    <dependency>
-      <groupId>com.developmentontheedge.be5</groupId>
-      <artifactId>be5-monitoring</artifactId>
-      <version>[0.4.0,)</version>
-    </dependency>
+    	<!-- Your target database -->
+    	<dependency>
+    		<groupId>org.postgresql</groupId>
+    		<artifactId>postgresql</artifactId>
+    		<version>42.3.8</version>
+    	</dependency>
     
-    <!-- ru.biosoft.* plugins -->
-    <dependency>
-      <groupId>ru.biosoft</groupId>
-      <artifactId>exception</artifactId>
-      <version>1.0.0</version>
-    </dependency>
+    	<!-- For tests -->
+    	<dependency>
+    		<groupId>com.developmentontheedge.be5</groupId>
+    		<artifactId>be5-test-base</artifactId>
+    		<version>0.4.1</version>
+    		<scope>test</scope>
+    	</dependency>
     
-    <dependency>
-      <groupId>ru.biosoft.access</groupId>
-      <artifactId>core</artifactId>
-      <version>2.0.0</version>
-    </dependency>
+    	<dependency>
+    		<groupId>org.junit.jupiter</groupId>
+    		<artifactId>junit-jupiter-engine</artifactId>
+    		<version>[5.11.2,)</version>
+    		<scope>test</scope>
+    	</dependency>
     
-    <dependency>
-      <groupId>ru.biosoft.access</groupId>
-      <artifactId>file</artifactId>
-      <version>2.0.0</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>one.util</groupId>
-        <artifactId>streamex</artifactId>
-        <version>0.8.3</version>
-        <!--scope>runtime</scope-->
-    </dependency>
-    
-    <!-- https://mvnrepository.com/artifact/org.xeustechnologies/jtar -->
-    <dependency>
-        <groupId>org.xeustechnologies</groupId>
-        <artifactId>jtar</artifactId>
-        <version>1.1</version>
-    </dependency>
-    
-    <!-- https://mvnrepository.com/artifact/com.clickhouse/org.apache.commons.compress -->
-    <dependency>
-        <groupId>com.clickhouse</groupId>
-        <artifactId>org.apache.commons.compress</artifactId>
-        <version>1.9.1</version>
-    </dependency>
-		<!-- Sample dependency on BE5 module -->
-		<dependency>
-			<groupId>com.developmentontheedge.be5</groupId>
-			<artifactId>be5-monitoring</artifactId>
-			<version>[0.4.0,)</version>
-		</dependency>
-
-		<!-- ru.biosoft.* plugins -->
-		<dependency>
-			<groupId>ru.biosoft</groupId>
-			<artifactId>exception</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>ru.biosoft.access</groupId>
-			<artifactId>core</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>ru.biosoft.access</groupId>
-			<artifactId>file</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>one.util</groupId>
-			<artifactId>streamex</artifactId>
-			<version>0.8.3</version>
-			<!--scope>runtime</scope-->
-		</dependency>
-
+        <!-- Sample dependency on BE5 module -->
+        <dependency>
+          <groupId>com.developmentontheedge.be5</groupId>
+          <artifactId>be5-monitoring</artifactId>
+          <version>[0.4.0,)</version>
+        </dependency>
+        
+        <!-- ru.biosoft.* plugins -->
+        <dependency>
+          <groupId>ru.biosoft</groupId>
+          <artifactId>exception</artifactId>
+          <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>ru.biosoft.access</groupId>
+          <artifactId>core</artifactId>
+          <version>2.0.0</version>
+        </dependency>
+        
+        <dependency>
+          <groupId>ru.biosoft.access</groupId>
+          <artifactId>file</artifactId>
+          <version>2.0.0</version>
+        </dependency>
+        
+        <!--Other plugins-->
+        <dependency>
+            <groupId>one.util</groupId>
+            <artifactId>streamex</artifactId>
+            <version>0.8.3</version>
+            <!--scope>runtime</scope-->
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/org.xeustechnologies/jtar -->
+        <dependency>
+            <groupId>org.xeustechnologies</groupId>
+            <artifactId>jtar</artifactId>
+            <version>1.1</version>
+        </dependency>
+        
+        <!-- https://mvnrepository.com/artifact/com.clickhouse/org.apache.commons.compress -->
+        <dependency>
+            <groupId>com.clickhouse</groupId>
+            <artifactId>org.apache.commons.compress</artifactId>
+            <version>1.9.1</version>
+        </dependency>
+    	
+    	<dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.30</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -132,7 +105,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
                 <version>3.12.1</version>
 				<configuration>
-                  <release>21</release>
+                <release>21</release>
         		</configuration>
 			</plugin>
 
