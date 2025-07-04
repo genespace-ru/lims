@@ -251,7 +251,7 @@ public class LoadProject extends GOperationSupport {
                 entity: "run", entityID: runId]
         //samples
         //first row - column names
-        List<List<String>> samplesData = runInfo.get("Data" );
+        List<List<String>> samplesData = sampleSheetFormat.equals(ILLUMINA_SAMPLE_SHEET ) ? runInfo.get("Data" ) : runInfo.get("Samples");
         Map<String, Integer> nameToIndex = new HashMap<>();
         List<String> names = samplesData.get(0);
         for(int i = 0; i < names.size(); i++) {
@@ -329,11 +329,17 @@ public class LoadProject extends GOperationSupport {
     //TODO!!!!!
     def long getFileType(String suffix) {
         def typeID = db.oneLong( "SELECT id FROM file_types prj WHERE suffix = ?", suffix)
-        return typeID
+        if(typeID != null)
+            return Long.valueOf(typeID)
+        else
+            return 0
     }
 
     def long getSampleType(String name) {
         def typeID = db.oneLong( "SELECT id FROM sample_templates WHERE title = ?", name)
-        return typeID
+        if(typeID != null)
+            return Long.valueOf(typeID)
+        else
+            return 0
     }
 }
