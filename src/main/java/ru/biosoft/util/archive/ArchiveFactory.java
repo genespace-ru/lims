@@ -35,8 +35,9 @@ public class ArchiveFactory
                 if( name == null )
                     name = file.getName();
             }
-            result = new GZipArchiveFile(name, bis);
-            if(!result.isValid()) result = new TarArchiveFile(name, bis);
+            result = new TarArchiveFile( name, bis );
+            if( !result.isValid() )
+                result = new GZipArchiveFile( name, bis );
             if(!result.isValid())
             {
                 if(file == null && name.substring(name.length()-4).toLowerCase().equals(".zip"))
@@ -107,5 +108,13 @@ public class ArchiveFactory
         }
         archiveFile.close();
         return num;
+    }
+
+    public static boolean isComplexArchive(File archive) throws IOException
+    {
+        String name = archive.getName();
+        if(name.endsWith( ".zip" ) || name.endsWith( ".tar" ) || name.endsWith( ".tar.gz" ))
+            return true;
+        return false;
     }
 }
