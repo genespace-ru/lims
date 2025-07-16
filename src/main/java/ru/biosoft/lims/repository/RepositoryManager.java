@@ -140,7 +140,7 @@ public class RepositoryManager
         ArchiveFile archiveFile = ArchiveFactory.getArchiveFile( file );
         if( archiveFile == null )
             throw new Exception( "Specified file is not an archive" );
-        archiveFile = new ComplexArchiveFile( archiveFile );
+        //archiveFile = new ComplexArchiveFile( archiveFile );
         int i = 0;
         ArchiveEntry entry;
         int numImported = 0;

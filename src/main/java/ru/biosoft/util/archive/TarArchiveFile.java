@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.input.CountingInputStream;
 import org.xeustechnologies.jtar.TarEntry;
 import org.xeustechnologies.jtar.TarInputStream;
@@ -18,11 +19,11 @@ public class TarArchiveFile implements ArchiveFile
     private TarInputStream tarFile;
     private CountingInputStream cis;
     
-    public TarArchiveFile(String name, BufferedInputStream bis)
+    public TarArchiveFile(String fileName, BufferedInputStream bis)
     {
         try
         {
-            if(!name.substring(name.length()-4).equalsIgnoreCase(".tar"))
+            if( !fileName.toLowerCase().endsWith( ".tar" ) && !fileName.toLowerCase().endsWith( ".tar.gz" ) && !fileName.toUpperCase().endsWith( ".tgz" ) )
             {   // Signature check
                 bis.mark(0x200);
                 byte[] signature = new byte[0x120];
@@ -31,7 +32,16 @@ public class TarArchiveFile implements ArchiveFile
                 if(!new String(signature, 0x101, 7, StandardCharsets.ISO_8859_1).equals("ustar  ")) return;
             }
             cis = new CountingInputStream(bis);
-            tarFile = new TarInputStream(cis);
+            if( fileName.toUpperCase().endsWith( ".tar" ) )
+            {
+                tarFile = new TarInputStream( cis );
+            }
+            else if( fileName.toLowerCase().endsWith( ".tar.gz" ) || fileName.toUpperCase().endsWith( ".tgz" ) )
+            {
+                GzipCompressorInputStream inputStream = new GzipCompressorInputStream( cis, true );
+                tarFile = new TarInputStream( inputStream );
+            }
+
         }
         catch(Exception e)
         {

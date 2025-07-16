@@ -1,8 +1,8 @@
 package ru.biosoft.util.archive;
 
 import java.io.BufferedInputStream;
-import java.io.EOFException;
 import java.io.IOException;
+
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.io.input.CountingInputStream;
 
@@ -21,32 +21,14 @@ public class GZipArchiveFile implements ArchiveFile
     {
         try
         {
-            if(fileName.toLowerCase().endsWith(".bam")) return; // Skip BAM files
-            String name = fileName.replaceFirst("\\.(gz|GZ)$", "").replaceFirst("\\.(tgz|TGZ)$", ".tar");
+            if( !fileName.toLowerCase().endsWith( ".gz" ) )
+                return;
+            String name = fileName.substring( 0, fileName.length() - 3 );
             bis.mark(8192);
             byte[] header = new byte[10];
             bis.read(header);
             if( header[0] != (byte)0x1F || header[1] != (byte)0x8B )
                 throw new UnsupportedOperationException();
-            try
-            {   // Try to read original file name if it's present
-                // See http://www.gzip.org/zlib/rfc-gzip.html#file-format for details
-                if((header[3] & 0x08) != 0) // File name is set
-                {
-                    StringBuilder sb = new StringBuilder();
-                    for(int i=0; i<512; i++)
-                    {
-                        int ch = bis.read();
-                        if (ch == -1) throw new EOFException();
-                        if (ch == 0) break; // you read a NUL
-                        sb.append((char)ch);
-                    }
-                    name = sb.toString();
-                }
-            }
-            catch( Exception e )
-            {
-            }
             bis.reset();
             cis = new CountingInputStream(bis);
             inputStream = new GzipCompressorInputStream(cis, true);
