@@ -1,8 +1,8 @@
 resources:
   type: dictionary
   primaryKey: ID
-  displayName: Ресурсы (для аннотации)
-  doc: Программы, базы данных и рекоммендации, используемые для аннотации SNV и CNV.
+  displayName: Реестр ресурсов
+  doc: Программы, базы данных и рекоммендации, используемые в системе.
 
   scheme:
     columns:
@@ -10,9 +10,10 @@ resources:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - type:
-        type: ENUM('database', 'program', 'recommendation', 'format', 'other')
-        doc: Тип ресурса.
+    - typeID:
+        type: KEYTYPE
+        reference: resource_types
+        doc: Тип ресурса. 
     - title:
         type: VARCHAR(100)
         doc: Название ресурса.
@@ -61,7 +62,7 @@ resources:
       code: |2-
             SELECT 
               r.id AS "ID",
-              r.type AS "Type",
+              rt.title AS "Type",
               COALESCE('<a href="' || r.url || '" target="_blank">' || r.title || '</a>', r.title) AS "Title",
               r.version AS "Version;<quick visible='true' />",
               r.description AS "Description",
@@ -77,6 +78,7 @@ resources:
               r.comment AS "Comment;<quick visible='true' />",
               <@COMMON_WHO_FIELDS 'r' />
             FROM resources r
+            INNER JOIN resource_types rt ON rt.ID = r.typeID
             ORDER BY r.title
   - '*** Selection view ***':
       type: 1D_unknown

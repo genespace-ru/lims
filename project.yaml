@@ -40,6 +40,7 @@ lims:
   - run_applications
   - reports
   - resources
+  - resource_types
   - resource_recommendations
   - samples
   - sequencing_data

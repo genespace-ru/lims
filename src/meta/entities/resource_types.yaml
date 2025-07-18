@@ -1,0 +1,77 @@
+resource_types:
+  type: dictionary
+  primaryKey: ID
+  displayName: Resource type
+  doc: Типы ресурсов. Например, база данных, программа, docker образ и т.п.  
+  
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        primaryKey: true
+    - title:
+        type: VARCHAR(100)
+    - description:
+        type: TEXT
+        canBeNull: true
+    - comment:
+        type: TEXT
+        canBeNull: true
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+  
+  queries:
+  - All records:
+      type: 1D
+      invisible: true
+      roles: '@AllRoles'
+      operations:
+      - Insert
+      - Edit
+      - Delete
+      - Filter
+      code: |2-
+            SELECT 
+              rt.id AS "ID",
+              rt.title AS "Title",
+              rt.description AS "Description",
+              rt.comment AS "Comment;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'rt' />
+            FROM resource_types rt
+            ORDER BY rt.title
+
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, title FROM resource_types ORDER BY title
+
+  operations:
+  - Insert:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentInsertOperation
+  - Edit:
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      code: com.developmentontheedge.be5.server.operations.SilentEditOperation
+  - Filter:
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - Delete:
+      records: 2
+      roles: [Administrator]
+      layout: '{"type":"modalForm"}'
+      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
