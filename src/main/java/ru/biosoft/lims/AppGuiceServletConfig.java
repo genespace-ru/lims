@@ -13,6 +13,7 @@ import com.google.inject.Injector;
 
 import static com.developmentontheedge.be5.modules.monitoring.Metrics.METRIC_REGISTRY;
 
+import ru.biosoft.genomebrowser.GBApiModule;
 import ru.biosoft.lims.repository.RepositoryModule;
 import ru.biosoft.nextflow.NextflowApiModule;
 
@@ -38,6 +39,7 @@ public class AppGuiceServletConfig extends Be5ServletListener
             install(new LimsApiModule());
             install(new NextflowApiModule());
             install(new RepositoryModule());
+            install( new GBApiModule() );
 
             final JmxReporter jmxReporter = JmxReporter.forRegistry(METRIC_REGISTRY).build();
             jmxReporter.start();

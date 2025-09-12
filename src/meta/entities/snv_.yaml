@@ -126,8 +126,10 @@ snv_:
             '<a href="#!table/snv_/SNV card/_tcloneid_=' || <parameter:_tcloneid_ /> || 
             '/_snvid_=' || s.ID || '">Card</>' AS "Подробно",  
             
-            s.attributes AS "Attributes;<quick visible='false' />"
+            s.attributes AS "Attributes;<quick visible='false' />",
+            COALESCE('<a target="_blank" href="/static/genomebrowser2.html/#de=' || ss.setting_value || '&track=databases/EnsemblHuman104/Tracks/Variations;databases/EnsemblHuman104/Tracks/Genes&pos=' || SUBSTRING(s.vcf_chrom,4) || ':' || s.vcf_pos || '-' || s.vcf_pos+1 || '">' ||'Open in GB'||'</a>', '')AS "GB;<quick visible='true' />"
         FROM snv_<parameter:_tcloneid_ /> s
+        LEFT JOIN systemsettings ss ON ss.section_name='lims' AND ss.setting_name='sequence_path'
         ORDER BY s.isAttached DESC, s.id
         
   - SNV card:
