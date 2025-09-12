@@ -32,7 +32,7 @@ public class TarArchiveFile implements ArchiveFile
                 if(!new String(signature, 0x101, 7, StandardCharsets.ISO_8859_1).equals("ustar  ")) return;
             }
             cis = new CountingInputStream(bis);
-            if( fileName.toUpperCase().endsWith( ".tar" ) )
+            if( fileName.toLowerCase().endsWith( ".tar" ) )
             {
                 tarFile = new TarInputStream( cis );
             }
