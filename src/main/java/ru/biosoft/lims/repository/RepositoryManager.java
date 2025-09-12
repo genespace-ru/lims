@@ -1,7 +1,6 @@
 package ru.biosoft.lims.repository;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +10,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-
 import com.developmentontheedge.be5.database.DbService;
 
+import biouml.workbench.perspective.PerspectiveRegistry;
+import biouml.workbench.perspective.PropertiesPerspective;
+import biouml.workbench.perspective.RepositoryTabInfo;
 import one.util.streamex.StreamEx;
+import ru.biosoft.access.DataCollectionUtils;
 import ru.biosoft.access.core.CollectionFactory;
 import ru.biosoft.access.core.DataCollection;
 import ru.biosoft.access.core.DataCollectionConfigConstants;
@@ -23,16 +25,17 @@ import ru.biosoft.access.file.FileBasedCollection;
 import ru.biosoft.access.file.GenericFileDataCollection;
 import ru.biosoft.exception.ExceptionRegistry;
 import ru.biosoft.util.ApplicationUtils;
-import ru.biosoft.util.DataCollectionUtils;
 import ru.biosoft.util.TempFiles;
 import ru.biosoft.util.archive.ArchiveEntry;
 import ru.biosoft.util.archive.ArchiveFactory;
 import ru.biosoft.util.archive.ArchiveFile;
-import ru.biosoft.util.archive.ComplexArchiveFile;
 
 public class RepositoryManager
 {
     private static final Map<String, DataCollection<?>> repositoryMap = new HashMap<>();
+    //private static final List<DataCollection<?>> repositories = new ArrayList<>();
+    private DataCollection<?> projects = null;
+    private DataCollection<?> databases = null;
 
     @Inject
     protected DbService db;
@@ -46,6 +49,7 @@ public class RepositoryManager
         try
         {
             initRepositories();
+            initPerspective();
         }
         catch (Exception e)
         {
@@ -63,6 +67,14 @@ public class RepositoryManager
                     + "Please specify project repository in systemsettings, section_name=lims, setting_name=projects_repo. " );
 
         initRepository( dir );
+        projects = repositoryMap.get( dir );
+
+        String dbDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='databases_dir'" );
+        if( dbDir != null )
+        {
+            initRepository( dbDir );
+            databases = repositoryMap.get( dbDir );
+        }
     }
 
     public void initRepository(String path) throws Exception
@@ -110,25 +122,21 @@ public class RepositoryManager
      */
     public void closeRepositories() throws Exception
     {
-        for ( DataCollection<?> dc : repositoryMap.values() )
-            dc.close();
+        if( projects != null )
+            projects.close();
+        if( databases != null )
+            databases.close();
     }
 
-    public Set<String> getRepositoryPaths()
-    {
-        return repositoryMap.keySet();
-    }
-
+    //return projects path
     public String getRepositoryPath()
     {
         init();
-        if( repositoryMap.isEmpty() )
+        if( projects == null )
             return null;
         else
-            return repositoryMap.values().iterator().next().getCompletePath().toString();
+            return projects.getCompletePath().toString();
     }
-
-
 
     public static File getChildFile(FileBasedCollection<?> collection, String name)
     {
@@ -164,7 +172,7 @@ public class RepositoryManager
             try
             {
                 File entryFile = getChildFile( (FileBasedCollection<?>) parent, entryName );
-                ApplicationUtils.copyFile( entryFile, tmpFile );
+                ApplicationUtils.copyFile( entryFile, tmpFile, null );
                 numImported++;
             }
             catch (Exception e)
@@ -184,5 +192,51 @@ public class RepositoryManager
         {
             throw new Exception( "Error importing archived data: \n" + String.join( "\n", importErrors ) );
         }
+    }
+
+    private void initPerspective()
+    {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put( "title", "Default" );
+        List<RepositoryTabInfo> tabs = new ArrayList<>();
+        if( databases != null )
+        {
+            Map<String, Object> tabProps = new HashMap<>();
+            tabProps.put( "title", databases.getName() );
+            tabProps.put( "databases", true );
+            tabProps.put( "path", databases.getCompletePath().toString() );
+            RepositoryTabInfo repoTab = new RepositoryTabInfo( tabProps );
+            tabs.add( repoTab );
+        }
+        if( projects != null )
+        {
+            Map<String, Object> tabProps = new HashMap<>();
+            tabProps.put( "title", projects.getName() );
+            tabProps.put( "databases", false );
+            tabProps.put( "path", projects.getCompletePath().toString() );
+            RepositoryTabInfo repoTab = new RepositoryTabInfo( tabProps );
+            tabs.add( repoTab );
+        }
+        properties.put( "repository", tabs );
+        List<Map<String, Object>> actionRules = new ArrayList<>();
+        String[] deny = new String[] { "*" };
+        String[] allow = new String[] { "semantic_zoom_in", "semantic_zoom_out", "semantic_default", "semantic_detailed", "semantic_overview", "shift_backward", "shift_forward",
+                "page_backward", "page_forward", "combine_tracks", "new_gc_track" };
+        for ( String id : deny )
+        {
+            Map<String, Object> rule = new HashMap<>();
+            rule.put( "name", "deny" );
+            rule.put( "id", id );
+            actionRules.add( rule );
+        }
+        for ( String id : allow )
+        {
+            Map<String, Object> rule = new HashMap<>();
+            rule.put( "name", "allow" );
+            rule.put( "id", id );
+            actionRules.add( rule );
+        }
+        properties.put( "actions", actionRules.toArray( new Object[] {} ) );
+        PerspectiveRegistry.registerPerspective( "Default", PropertiesPerspective.class.getName(), properties );
     }
 }

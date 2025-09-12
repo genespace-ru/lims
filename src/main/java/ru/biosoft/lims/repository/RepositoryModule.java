@@ -4,7 +4,7 @@ import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
 
 import ru.biosoft.access.core.Environment;
-import ru.biosoft.util.SimpleClassLoading;
+import ru.biosoft.access.security.BiosoftClassLoading;
 
 public class RepositoryModule extends ServletModule
 {
@@ -12,7 +12,7 @@ public class RepositoryModule extends ServletModule
     @Override
     protected void configureServlets()
     {
-        Environment.setClassLoading( new SimpleClassLoading() );
+        Environment.setClassLoading( new BiosoftClassLoading() );
         bind( RepositoryManager.class ).in( Scopes.SINGLETON );
     }
 

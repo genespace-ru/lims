@@ -7,7 +7,7 @@ import java.util.logging.Level
 import ru.biosoft.lims.parsers.IlluminaCSVParser
 import ru.biosoft.lims.parsers.YamlParser
 import ru.biosoft.util.ApplicationUtils
-import ru.biosoft.util.DataCollectionUtils
+import ru.biosoft.access.DataCollectionUtils
 
 import javax.inject.Inject
 import org.apache.commons.fileupload.FileItem
@@ -319,10 +319,13 @@ public class LoadProject extends GOperationSupport {
             errors.add("Sample data is empty or not valid, no samples information was loaded" )
         }
 
-        if(errors.isEmpty())
-            setResult(OperationResult.finished())
-        else
-            OperationResult.finished(String.join("\n", errors))
+        //if(errors.isEmpty())
+        setResult(OperationResult.finished())
+        //        else {
+        //            errors.add(0, "<p class='invalid-feedback'>" )
+        //            errors.add("</p>" )
+        //            OperationResult.finished(String.join("\n", errors))
+        //        }
     }
 
     def String getOrDefault(List<String> values, Map<String, Integer> keyToIndex, String key) {
