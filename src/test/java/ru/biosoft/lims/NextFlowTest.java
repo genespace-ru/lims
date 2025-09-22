@@ -20,8 +20,14 @@ public class NextFlowTest
     @Test
     public void runFastQCTest() throws Exception
     {
-        String[] command = new String[] {"wsl", "--cd", WORK_DIR, "nextflow", NEXT_FLOW_PATH, "-c", CONFIG_PATH, "-with-tower",
-                TOWER_ADDRESS};
+        //String[] command = new String[] {};
+
+        boolean useWsl = System.getProperty( "os.name" ).startsWith( "Windows" );
+        String[] command;
+        if( useWsl )
+            command = new String[] { "wsl", "--cd", WORK_DIR, "nextflow", NEXT_FLOW_PATH, "-c", CONFIG_PATH, "-with-tower", TOWER_ADDRESS };
+        else
+            command = new String[] { "nextflow", NEXT_FLOW_PATH, "-c", CONFIG_PATH, "-with-tower", TOWER_ADDRESS };
         runCommand(command);
     }
 
