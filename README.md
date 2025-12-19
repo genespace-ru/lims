@@ -118,3 +118,8 @@ createdb --encoding='utf-8' --lc-collate='en_US.UTF-8' --lc-ctype='en_US.UTF-8' 
 ```sh
 psql -h localhost -p 5435 -U lims -d lims < Downloads/lims/lims-10-18.sql 
 ```
+
+###Зависимости
+Возможно, для получения последних версий зависимостей потребуется локально собрать и установить проекты
+- Геномный браузер https://github.com/Biosoft-ru/genome-browser
+- Workflow Engine https://github.com/genespace-ru/workflow-engine
