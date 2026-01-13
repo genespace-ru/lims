@@ -1,9 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-    <title>Genome Browser BioUML</title>
+    <title>Diagrams viewer</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta name="description" content="Genome Browser framework for system biology" />
+    <meta name="description" content="Diagrams framework for system biology" />
     <link rel="stylesheet" href="gb/css/bootstrap.css">
 	<link type="text/css" href="gb/css/ui/custom-theme/jquery-ui-1.13.1.css" rel="stylesheet" />
 	<link rel="stylesheet" href="gb/css/main.css">
@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="gb/lib/jstree/themes/default/style.css" />
     <link rel="stylesheet" type="text/css" href="gb/css/contextMenu/jquery.contextMenu-2.9.2.css" />
     <link type="text/css" href="gb/css/jpicker/jPicker-1.1.6.min.css" rel="stylesheet" />
+    <link type="text/css" href="gb/lib/codemirror/lib/codemirror.css" rel="stylesheet" />
     
 	<script type="text/javascript" src="gb/lib/jquery/jquery-3.6.0.min.js"></script>
 	<script type="text/javascript" src="gb/lib/jquery/jquery.inherit-1.3.6.mod.js"></script>
@@ -19,6 +20,7 @@
 	<script type="text/javascript" src="gb/lib/jquery/jquery.json-2.2.min.js"></script>
 	<script type="text/javascript" src="gb/lib/jquery/jquery.mousewheel.min.js"></script>
     <script type="text/javascript" src="gb/lib/jquery/jquery.includeMany-1.2.2.js"></script>
+    <script type="text/javascript" src="gb/lib/jquery/jquery.scrollview.mod.js"></script>
 	<script type="text/javascript" src="gb/lib/table/jquery.dataTables.js"></script>
 	<script type="text/javascript" src="gb/lib/table/tableUtils.js"></script>
 	<script type="text/javascript" src="gb/lib/contextMenu/jquery.contextMenu-2.9.2.js"></script>
@@ -28,6 +30,17 @@
 	<script type="text/javascript" src="gb/lib/ui/ui.tabs.paging.js"></script>
     <script type="text/javascript" src="gb/lib/jstree/jstree.min.js"></script>
     <script type="text/javascript" src="gb/lib/splitter/jquery.splitter.js"></script>
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/lib/codemirror.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/mode/shell/shell.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/addon/hint/show-hint.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/addon/hint/javascript-hint.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/addon/mode/multiplex.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/addon/search/search.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/addon/search/searchcursor.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/addon/selection/active-line.js"></script>
+    <script type="text/javascript" src="gb/lib/codemirror/addon/dialog/dialog.js"></script>
     
 	<script type="text/javascript" src="gb/lib/propertyInspector/dpiUtils.js"></script>
 	<script type="text/javascript" src="gb/lib/propertyInspector/dpi.min.js"></script>
@@ -55,11 +68,9 @@
 	<script type="text/javascript" src="gb/lib/dialogs.js"></script>
 	<script type="text/javascript" src="gb/lib/serverQuery.js"></script>
 	<script type="text/javascript" src="gb/lib/viewparts.js"></script>
-	<!--script type="text/javascript" src="gb/lib/viewpartsBsa.js"></script-->
 	<script type="text/javascript" src="gb/lib/polymorph.js"></script>
 	<script type="text/javascript" src="gb/lib/graph/graph.js"></script>
 	<script type="text/javascript" src="gb/lib/graph/viewpane.js"></script>
-	<!--script type="text/javascript" src="gb/lib/sequence.js"></script-->
     <script type="text/javascript" src="gb/lib/cookies.js"></script>
     <script type="text/javascript" src="gb/lib/messageBundle.js"></script>
     <script type="text/javascript" src="gb/lib/messageBundle.en.js"></script>
@@ -75,9 +86,12 @@
     <script type="text/javascript" src="gb/lib/jsActions.js"></script>
     <script type="text/javascript" src="gb/lib/preferences.js"></script>
     <script type="text/javascript" src="gb/lib/tree.js"></script>
-    <script type="text/javascript" src="gb/lib/import_new.js"></script>
+    <script type="text/javascript" src="gb/lib/import.js"></script>
     <script type="text/javascript" src="gb/lib/infoPane.js"></script>
     <script type="text/javascript" src="gb/lib/contextToolbar.js"></script>
+    
+    <!--script type="text/javascript" src="gb/lib/diagramSupport.js"></script>
+    <script type="text/javascript" src="gb/lib/diagram.js"></script-->
     
     
     <script type="text/javascript" src="gb/lib/user.js"></script>
@@ -87,122 +101,7 @@
     
     <script type="text/javascript" src="gb/lib/table.js"></script>
     <script type="text/javascript" src="gb/lib/viewpartsTable.js"></script>
-    <!--script src="gbrowser.js"></script-->
-    <!--script src="dummys.js"></script-->
-    
-    <!--
-                ???<script type="text/javascript" src="gb/lib/jquery/jquery.jeditable.js"></script>
-               ??? <script type="text/javascript" src="gb/lib/jquery/jquery.scrollview.mod.js"></script>
-                
-                ??? (for search tab)<script type="text/javascript" src="gb/lib/lucene.js"></script>
-                <script type="text/javascript" src="gb/lib/javascript.js"></script>
-                <script type="text/javascript" src="gb/lib/projectUtils.js"></script>
-    -->
-	
 	<style>
-		#gb-viewPartTabs {
-		    overflow: hidden;
-		    padding:2px;
-			border-radius:unset;
-		}
-		
-		#gb-viewPartTabs > div {
-		    overflow: auto;
-		    padding: 10px 15px;
-		    min-height: 244px;
-		}
-	   .gb_header{
-		    background-color:#343a40;
-		    color:#fff;
-		    text-align: center;
-		    font-family:helvetica, tahoma, arial, sans-serif;
-		    font-size: 20pt;
-		    padding: 20px;
-		}
-		.region_selector {
-    		display: none;
-    		z-index: 1;
-		}
-
-		.region_selector_dotes {
-		    border: 2px solid red;
-		    background: #ffffff;
-		    font-size: 0;
-		}
-		
-		.buttons_pane {
-			border: 1px solid #ccc;
-			padding: 5px 30px;
-			margin: 20px auto;
-			text-align:center;
-			vertical-align: middle;
-		}
-		.gb_container {
-			padding-top: 20px;
-		}
-		.buttons_pane .gb-separator {
-			width: 10px;
-			height: 16px;
-			display: inline-block;
-		}
-		#info_area {
-			padding: 10px 5px 5px 20px;;
-			min-height:250px;
-			overflow:auto;
-		}
-		.buttons_pane .gb-button {
-    		display: inline-block;
-    		outline: 0;
-		    margin: 0 0 0 0;
-		    padding: .2em .2em;
-		    text-decoration: none !important;
-		    cursor: pointer;
-		    position: relative;
-		    text-align: center;
-		    zoom: 1;
-		}
-
-		.gb-controls-container {
-		    width:100%;
-		    border:1px solid #ccc;
-		}
-		.gb-controls-container div {
-		    width:100%;
-		}
-		.gb-controls-container .header {
-		    background-color:#ccc;
-		    padding: 2px;
-		    cursor: pointer;
-		    font-weight: bold;
-		}
-		.gb-controls-container .content {
-		    display: none;
-		    padding : 5px;
-		}
-		
-		#gb-mainPane {
-		    overflow: hidden;
-		    width: 100%
-		}
-		
-		
-		#gb-topPane {
-		    overflow: hidden;
-		    height: 60%;
-		}
-		
-		
-		#gb-leftBottomPane {
-		    overflow: auto;
-		    width: 30%;
-		    float:left;
-		    border:1px solid #aaa;
-		}
-		
-		#gb-rightBottomPane {
-		    overflow: hidden;
-		}
-
 		body {
 		    margin-top: 0px;
 		    margin-bottom: 0px;
@@ -211,7 +110,6 @@
 		    overflow: auto;
 		}
 	</style>
-
 </head>
 <body>
     <div id="mainToolbar" class="fg-toolbar ui-widget-header ui-corner-all ui-helper-clearfix">

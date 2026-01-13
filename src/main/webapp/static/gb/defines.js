@@ -22,7 +22,7 @@
 
 
 var appInfo = {
-        name: "Genome browser",
+        name: "Data Element browser",
         edition: "web edition",
         version: "1.0",
         ensemblPath: "databases/EnsemblHuman104",

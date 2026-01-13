@@ -1,4 +1,3 @@
-/* $Id: tree.js,v 1.42 2013/08/16 10:22:50 lan Exp $ */
 /*
  * Repository-tree related functions.
  */
