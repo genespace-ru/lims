@@ -109,7 +109,7 @@ public class TempFileManager
     {
         //TODO: ask Sergey
         //String sessionId = session.getSessionId();
-        String sessionId = String.valueOf( new Random().nextLong() );
+        String sessionId = String.valueOf( Math.abs( new Random().nextLong() ) );
         File file = new File( applicationTemp, sessionId );
         if(!file.isDirectory())
             file.mkdirs();

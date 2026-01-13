@@ -36,6 +36,9 @@ ru:
     - topics: displayName
       entries:
       - displayName: Образцы
+    - topics: operationName
+      entries:
+      - QualityControl: Контроль качества
   - devices:
     - topics: displayName
       entries:

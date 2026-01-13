@@ -148,11 +148,11 @@ samples:
       - Edit
       - Delete
       - Filter
+      - QualityControl
       code: |-
             SELECT 
               s.id AS "ID" ,
               s.title AS "Title",
-
               st.ID AS "___typeID",
               st.title AS "Type;<quick visible='true'/>",
               '<link table="sample_types" queryName="All records" using="___typeID" columns="ID" />' AS ";Type",
@@ -170,8 +170,9 @@ samples:
               <@COMMON_WHO_FIELDS 's' />
             FROM samples s
             LEFT JOIN sample_types st ON st.id = s.typeID
-            INNER JOIN run_samples rs ON rs.sample_id = s.ID
-            INNER JOIN runs r ON rs.run_id = r.ID AND r.project_id = <parameter:___prjID />
+            LEFT JOIN run_samples rs ON rs.sample_id = s.ID
+            LEFT JOIN runs r ON rs.run_id = r.ID 
+            WHERE s.project = <parameter:___prjID />
             ORDER BY s.title
   
   operations:
@@ -193,4 +194,7 @@ samples:
       roles: [Administrator]
       layout: '{"type":"modalForm"}'
       code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
-
+  - QualityControl:
+      type: Groovy
+      roles: [Administrator, User]
+      file: operations.QualityControlOperation.groovy

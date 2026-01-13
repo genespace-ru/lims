@@ -36,6 +36,7 @@ public class RepositoryManager
     //private static final List<DataCollection<?>> repositories = new ArrayList<>();
     private DataCollection<?> projects = null;
     private DataCollection<?> databases = null;
+    private DataCollection<?> workflows = null;
 
     @Inject
     protected DbService db;
@@ -74,6 +75,13 @@ public class RepositoryManager
         {
             initRepository( dbDir );
             databases = repositoryMap.get( dbDir );
+        }
+
+        String workflowsDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='workflows_dir'" );
+        if( workflowsDir != null )
+        {
+            initRepository( workflowsDir );
+            workflows = repositoryMap.get( workflowsDir );
         }
     }
 
@@ -126,6 +134,8 @@ public class RepositoryManager
             projects.close();
         if( databases != null )
             databases.close();
+        if( workflows != null )
+            workflows.close();
     }
 
     //return projects path
@@ -217,6 +227,15 @@ public class RepositoryManager
             RepositoryTabInfo repoTab = new RepositoryTabInfo( tabProps );
             tabs.add( repoTab );
         }
+        if( workflows != null )
+        {
+            Map<String, Object> tabProps = new HashMap<>();
+            tabProps.put( "title", workflows.getName() );
+            tabProps.put( "databases", false );
+            tabProps.put( "path", workflows.getCompletePath().toString() );
+            RepositoryTabInfo repoTab = new RepositoryTabInfo( tabProps );
+            tabs.add( repoTab );
+        }
         properties.put( "repository", tabs );
         List<Map<String, Object>> actionRules = new ArrayList<>();
         String[] deny = new String[] { "*" };
@@ -238,5 +257,10 @@ public class RepositoryManager
         }
         properties.put( "actions", actionRules.toArray( new Object[] {} ) );
         PerspectiveRegistry.registerPerspective( "Default", PropertiesPerspective.class.getName(), properties );
+    }
+
+    public DataCollection<?> getWorkflowsCollection()
+    {
+        return workflows;
     }
 }
