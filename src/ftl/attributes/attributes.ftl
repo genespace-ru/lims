@@ -37,10 +37,12 @@ DELETE FROM attribute_resources;
 <#assign GR_Protein_add = 10>
 <#assign GR_Other       = 11>
 <#assign GR_Custom      = 12>
+<#assign GR_ACMG_CRITERIA      = 13>
 
 <#assign INT    = 1 /> 
 <#assign DOUBLE = 2 /> 
 <#assign STRING = 3 /> 
+
 
 <@ATTRIBUTE '101', GR_COMMON, 1, "dbSNP", "dbSNP",
 "Links to variant information pages in dbSNP (rsId), VarSome, ClinVar, COSMIC (if the database was uploaded as a custom annotation), Franklin, UCSC, gnomAD 3, RUSeq (if the database was uploaded as a custom annotation).",
@@ -1036,4 +1038,146 @@ DELETE FROM attribute_resources;
 "The tab is in the detail information panel if at least one custom annotation was added to the system before the variants in the sample were annotated. The tab contains column values ​​from custom annotations with which the variant was annotated.",
 "Вкладка есть на панели детальной информации, если хотя бы одна пользовательская аннотация была добавлена в систему до того, как варианты в образце были проаннотированы. Вкладка содержит значения колонок из пользовательских аннотаций, которыми был проаннотирован вариант.",
 "SNV", "query", INT />
+
+
+<ATTRIBUTE '2001', GR_ACMG_CRITERIA, 9, "PVS1", "PVS1",
+"Null variant (nonsense, frameshift, canonical +/−1 or 2 splice sites, initiation codon, single or multi-exon deletion) in a gene where loss of function (LOF) is a known mechanism of disease",
+"Null variant (nonsense, frameshift, canonical +/−1 or 2 splice sites, initiation codon, single or multi-exon deletion) in a gene where loss of function (LOF) is a known mechanism of disease",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2002', GR_ACMG_CRITERIA, 9, "PS1", "PS1",
+"Same amino acid change as a previously established pathogenic variant regardless of nucleotide change",
+"Same amino acid change as a previously established pathogenic variant regardless of nucleotide change",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2003', GR_ACMG_CRITERIA, 9, "PS2", "PS2",
+"De novo (both maternity and paternity confirmed) in a patient with the disease and no family history",
+"De novo (both maternity and paternity confirmed) in a patient with the disease and no family history",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2004', GR_ACMG_CRITERIA, 9, "PS3", "PS3",
+"Well-established in vitro or in vivo functional studies supportive of a damaging effect on the gene or gene product",
+"Well-established in vitro or in vivo functional studies supportive of a damaging effect on the gene or gene product",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2005', GR_ACMG_CRITERIA, 9, "PS4", "PS4",
+"The prevalence of the variant in affected individuals is significantly increased compared to the prevalence in controls",
+"The prevalence of the variant in affected individuals is significantly increased compared to the prevalence in controls",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2006', GR_ACMG_CRITERIA, 9, "PM1", "PM1",
+"Located in a mutational hot spot and/or critical and well-established functional domain (e.g. active site of an enzyme) without benign variation",
+"Located in a mutational hot spot and/or critical and well-established functional domain (e.g. active site of an enzyme) without benign variation",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2007', GR_ACMG_CRITERIA, 9, "PM2", "PM2",
+"Absent from controls (or at extremely low frequency if recessive) (see Table 6) in Exome Sequencing Project, 1000 Genomes or ExAC",
+"Absent from controls (or at extremely low frequency if recessive) (see Table 6) in Exome Sequencing Project, 1000 Genomes or ExAC",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2008', GR_ACMG_CRITERIA, 9, "PM3", "PM3",
+"For recessive disorders, detected in trans with a pathogenic variant",
+"For recessive disorders, detected in trans with a pathogenic variant",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2009', GR_ACMG_CRITERIA, 9, "PM4", "PM4",
+"Protein length changes due to in-frame deletions/insertions in a non-repeat region or stop-loss variants",
+"Protein length changes due to in-frame deletions/insertions in a non-repeat region or stop-loss variants",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2010', GR_ACMG_CRITERIA, 9, "PM5", "PM5",
+"Novel missense change at an amino acid residue where a different missense change determined to be pathogenic has been seen before",
+"Novel missense change at an amino acid residue where a different missense change determined to be pathogenic has been seen before",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2011', GR_ACMG_CRITERIA, 9, "PM6", "PM6",
+"Assumed de novo, but without confirmation of paternity and maternity",
+"Assumed de novo, but without confirmation of paternity and maternity",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2012', GR_ACMG_CRITERIA, 9, "PP1", "PP1",
+"Co-segregation with disease in multiple affected family members in a gene definitively known to cause the disease",
+"Co-segregation with disease in multiple affected family members in a gene definitively known to cause the disease",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2013', GR_ACMG_CRITERIA, 9, "PP2", "PP2",
+"Missense variant in a gene that has a low rate of benign missense variation and where missense variants are a common mechanism of disease",
+"Missense variant in a gene that has a low rate of benign missense variation and where missense variants are a common mechanism of disease",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2014', GR_ACMG_CRITERIA, 9, "PP3", "PP3",
+"Multiple lines of computational evidence support a deleterious effect on the gene or gene product (conservation, evolutionary, splicing impact, etc)",
+"Multiple lines of computational evidence support a deleterious effect on the gene or gene product (conservation, evolutionary, splicing impact, etc)",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2015', GR_ACMG_CRITERIA, 9, "PP4", "PP4",
+"Patient’s phenotype or family history is highly specific for a disease with a single genetic etiology",
+"Patient’s phenotype or family history is highly specific for a disease with a single genetic etiology",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2016', GR_ACMG_CRITERIA, 9, "PP5", "PP5",
+"Reputable source recently reports variant as pathogenic but the evidence is not available to the laboratory to perform an independent evaluation",
+"Reputable source recently reports variant as pathogenic but the evidence is not available to the laboratory to perform an independent evaluation",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2017', GR_ACMG_CRITERIA, 9, "BA1", "BA1",
+"Allele frequency is above 5% in Exome Sequencing Project, 1000 Genomes, or ExAC",
+"Allele frequency is above 5% in Exome Sequencing Project, 1000 Genomes, or ExAC",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2018', GR_ACMG_CRITERIA, 9, "BS1", "BS1",
+"Allele frequency is greater than expected for disorder",
+"Allele frequency is greater than expected for disorder",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2019', GR_ACMG_CRITERIA, 9, "BS2", "BS2",
+"Observed in a healthy adult individual for a recessive (homozygous), dominant (heterozygous), or X-linked (hemizygous) disorder with full penetrance expected at an early age",
+"Observed in a healthy adult individual for a recessive (homozygous), dominant (heterozygous), or X-linked (hemizygous) disorder with full penetrance expected at an early age",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2020', GR_ACMG_CRITERIA, 9, "BS3", "BS3",
+"Well-established in vitro or in vivo functional studies shows no damaging effect on protein function or splicing",
+"Well-established in vitro or in vivo functional studies shows no damaging effect on protein function or splicing",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2021', GR_ACMG_CRITERIA, 9, "BS4", "BS4",
+"Lack of segregation in affected members of a family",
+"Lack of segregation in affected members of a family",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2022', GR_ACMG_CRITERIA, 9, "BP1", "BP1",
+"Missense variant in a gene for which primarily truncating variants are known to cause disease",
+"Missense variant in a gene for which primarily truncating variants are known to cause disease",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2023', GR_ACMG_CRITERIA, 9, "BP2", "BP2",
+"Observed in trans with a pathogenic variant for a fully penetrant dominant gene/disorder; or observed in cis with a pathogenic variant in any inheritance pattern",
+"Observed in trans with a pathogenic variant for a fully penetrant dominant gene/disorder; or observed in cis with a pathogenic variant in any inheritance pattern",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2024', GR_ACMG_CRITERIA, 9, "BP3", "BP3",
+"In-frame deletions/insertions in a repetitive region without a known function",
+"In-frame deletions/insertions in a repetitive region without a known function",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2025', GR_ACMG_CRITERIA, 9, "BP4", "BP4",
+"Multiple lines of computational evidence suggest no impact on gene or gene product (conservation, evolutionary, splicing impact, etc)",
+"Multiple lines of computational evidence suggest no impact on gene or gene product (conservation, evolutionary, splicing impact, etc)",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2026', GR_ACMG_CRITERIA, 9, "BP5", "BP5",
+"Variant found in a case with an alternate molecular basis for disease",
+"Variant found in a case with an alternate molecular basis for disease",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2027', GR_ACMG_CRITERIA, 9, "BP6", "BP6",
+"Reputable source recently reports variant as benign but the evidence is not available to the laboratory to perform an independent evaluation",
+"Reputable source recently reports variant as benign but the evidence is not available to the laboratory to perform an independent evaluation",
+"SNV", "query", INT />
+
+<ATTRIBUTE '2028', GR_ACMG_CRITERIA, 9, "BP7", "BP7",
+"A synonymous (silent) variant for which splicing prediction algorithms predict no impact to the splice consensus sequence nor the creation of a new splice site AND the nucleotide is not highly conserved",
+"A synonymous (silent) variant for which splicing prediction algorithms predict no impact to the splice consensus sequence nor the creation of a new splice site AND the nucleotide is not highly conserved",
+"SNV", "query", INT />
+
 
