@@ -10,6 +10,7 @@ import ru.biosoft.access.file.GenericFileDataCollection
 import ru.biosoft.util.ApplicationUtils
 import ru.biosoft.util.TempFiles
 import ru.biosoft.lims.repository.RepositoryManager
+import ru.biosoft.nextflow.NextflowService
 import biouml.plugins.wdl.NextFlowRunner
 
 import com.developmentontheedge.beans.DynamicProperty
@@ -20,6 +21,8 @@ public class QualityControlOperation extends GOperationSupport {
 
     @Inject
     private RepositoryManager repo;
+    @Inject
+    protected NextflowService nf;
 
     Map<String, Object> presets
 
@@ -32,6 +35,7 @@ public class QualityControlOperation extends GOperationSupport {
 
     @Override
     public void invoke(Object parameters) throws Exception {
+        def workflowName = "fastqc.nf"
         def qPars = new groovy.json.JsonSlurper().parseText( presets._params_ )
         String repoPath = repo.getRepositoryPath();
         def prjId = qPars["___prjID"]
@@ -44,6 +48,17 @@ public class QualityControlOperation extends GOperationSupport {
                 DataElementPath results = projectPath.getChildPath("results" );
                 GenericFileDataCollection resultsDc = results.getDataCollection();
                 GenericFileDataCollection workflowsDc = repo.getWorkflowsCollection();
+                def workflowQCPath = workflowsDc.getCompletePath().getChildPath(workflowName )
+                def fileInfo = db.oneLong("SELECT id FROM file_info WHERE path = ?",  workflowQCPath.toString())
+                if(fileInfo == null) {
+                    setResult(OperationResult.error("Unknown file " + workflowQCPath.toString()))
+                    return
+                }
+                def workflowInfo = db.oneLong( "SELECT id FROM workflow_info WHERE file_info = ?", fileInfo)
+                if(workflowInfo == null) {
+                    workflowInfo = database.workflow_info << [file_info: fileInfo, title: "Quality control", description: "Контроль качества fastq ридов."]
+                }
+
                 File samplesDir = prjDc.getFile("samples");
 
                 Map<String, Object> nextflowParams = new HashMap<>();
@@ -53,9 +68,15 @@ public class QualityControlOperation extends GOperationSupport {
                 nextflowParams.put("readsDir", samplesDir.getAbsolutePath() );
                 nextflowParams.put("fastqcDir", resultsDc.getFile("fastqc").getAbsolutePath() );
                 nextflowParams.put("multiqcDir", resultsDc.getFile("multiqc").getAbsolutePath() );
-                String nextFlowScript = ApplicationUtils.readAsString(workflowsDc.getFile("fastqc.nf" ));
+
+                String nextFlowScript = ApplicationUtils.readAsString(workflowsDc.getFile(workflowName ));
                 String outputDir = TempFiles.getTempDirectory().getAbsolutePath();
-                NextFlowRunner.runNextFlow("fastqc", nextflowParams, nextFlowScript, outputDir, false, null)
+
+                //TODO: get workflow_info somehow
+
+                def workflowRunId = nf.insertWorkflowRun ((int)prj.$id, (int)workflowInfo)
+                // database.workflow_runs << [project: prj.$id, workflow_info: workflowInfo, status: "preparation"]
+                NextFlowRunner.runNextFlow("fastqc", nextflowParams, nextFlowScript, outputDir, false, "http://localhost:8200/nf")
             }
         }
     }

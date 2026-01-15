@@ -39,7 +39,7 @@ task_runs:
         canBeNull: true
         doc: Время окончания задачи.
     - status:
-        type: ENUM('in_progress', 'completed', 'scheduled', 'error')
+        type: ENUM('in_progress', 'completed', 'scheduled', 'error', 'running')
         doc: Статус выполнения задачи.
     - params:
         type: JSON 
@@ -52,6 +52,16 @@ task_runs:
     - comment:
         type: VARCHAR(255)
         canBeNull: true
+
+      # Nextflow data
+    - task_run_id:
+        type: INT
+        canBeNull: true 
+        doc: Идентификатор задачи nextflow
+    - run_info:
+        type: JSONB
+        canBeNull: true 
+        doc: Параметры задачи nextflow
     
     - creationDate___:
         type: TIMESTAMP

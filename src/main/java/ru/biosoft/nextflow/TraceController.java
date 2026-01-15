@@ -1,14 +1,18 @@
 package ru.biosoft.nextflow;
 
-import com.developmentontheedge.be5.database.DbService;
-import com.developmentontheedge.be5.databasemodel.EntityModel;
-import com.developmentontheedge.be5.web.Request;
-import com.developmentontheedge.be5.web.Response;
-import static com.google.common.collect.ImmutableMap.of;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.OffsetDateTime;
 
-import javax.json.JsonObject;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonString;
+
+import com.developmentontheedge.be5.database.DbService;
+import com.developmentontheedge.be5.web.Request;
+import com.developmentontheedge.be5.web.Response;
 
 @Singleton
 public class TraceController extends NextflowController
@@ -70,8 +74,66 @@ public class TraceController extends NextflowController
     {
         db.updateRaw("UPDATE workflow_runs SET status='in progress', progress_request=?::jsonb WHERE id=?",
         		body.toString(), workflowId);
+        Long projectId = db.oneLong( "SELECT project FROM workflow_runs WHERE id=?", workflowId );
+        JsonArray tasks = body.getJsonArray( "tasks" );
+        processTasks( tasks, workflowId, projectId );
     	
     	return "{ \"workflowId\":\"" + workflowId + "\", \"status\":\"OK\"}";
+    }
+
+    private void processTasks(JsonArray tasks, int workflowId, Long projectId)
+    {
+        for ( int i = 0; i < tasks.size(); i++ )
+        {
+            JsonObject task = tasks.getJsonObject( i );
+            int taskRunId = task.getInt( "taskId" );
+            String status = task.getString( "status" );
+            Timestamp start = getDateTime( task.get( "start" ) );
+            Timestamp end = getDateTime( task.get( "complete" ) );
+
+            /*
+             * {"taskId":5,
+             * "status":"NEW","hash":"b7/a07f7a","name":"multiQC","exit":2147483647,
+             * "submit":null,"start":null,"process":"multiQC","tag":null,"module":[],
+             * "container":"quay.io/biocontainers/multiqc:1.21--pyhdfd78af_0","attempt":1,
+             * "script":"\n    multiqc .\n    ","scratch":null,
+             * "workdir":"/tmp/lims_20260115092847926.tmp/3875705983264562470/work/b7/a07f7a59320ddd136e793849f7ea75",
+             * "queue":null,"cpus":1,"memory":null,"disk":null,"time":null,"env":null,
+             * "executor":"local","cloudZone":null,"machineType":null,"priceModel":null}
+             */
+
+            //TODO: sample - parse from parameters?
+
+            String sql = "SELECT id FROM task_runs WHERE workflow=? AND task_run_id=?";
+            Long taskId = db.oneLong( sql, workflowId, taskRunId );
+
+            if( taskId == null )
+            {
+                String sqlInsert = "INSERT INTO task_runs(project, workflow, task_run_id, status) VALUES(?, ?, ?, ?)";
+                taskId = (Long) db.insert( sqlInsert, projectId, workflowId, taskRunId, "scheduled" );
+            }
+            if( start != null )
+                db.updateRaw( "UPDATE task_runs SET status=?, run_info=?::jsonb, start=?, \"end\"=? WHERE id=?", status, task.toString(), start, end, taskId );
+            else
+                db.updateRaw( "UPDATE task_runs SET status=?, run_info=?::jsonb, \"end\"=? WHERE id=?", status, task.toString(), end, taskId );
+
+        }
+    }
+
+    private Timestamp getDateTime(Object dateObj)
+    {
+        if( dateObj == null || JsonObject.NULL.equals( dateObj ) )
+            return null;
+        String dateStr = null;
+        if( dateObj instanceof String )
+            dateStr = (String) dateObj;
+        else if( dateObj instanceof JsonString )
+            dateStr = ((JsonString) dateObj).getString();
+        if( dateStr == null )
+            return null;
+        OffsetDateTime odt = OffsetDateTime.parse( dateStr );
+        Instant instant = odt.toInstant();
+        return Timestamp.from( instant );
     }
 
     protected String complete(Request req, JsonObject body, int workflowId) throws Exception
