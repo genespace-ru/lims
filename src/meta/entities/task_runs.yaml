@@ -39,7 +39,7 @@ task_runs:
         canBeNull: true
         doc: Время окончания задачи.
     - status:
-        type: ENUM('in_progress', 'completed', 'scheduled', 'error', 'running', 'submitted', 'new')
+        type: VARCHAR(100)
         doc: Статус выполнения задачи.
     - params:
         type: JSON 
