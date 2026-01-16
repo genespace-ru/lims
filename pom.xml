@@ -39,7 +39,7 @@
     	<dependency>
     		<groupId>org.junit.jupiter</groupId>
     		<artifactId>junit-jupiter-engine</artifactId>
-    		<version>[5.11.2,)</version>
+    		<version>6.0.2</version>
     		<scope>test</scope>
     	</dependency>
     
@@ -72,25 +72,25 @@
         <dependency>
           <groupId>ru.biosoft.genomebrowser</groupId>
           <artifactId>bsa</artifactId>
-          <version>[2.0.1,)</version>
+          <version>[2.0.2,)</version>
         </dependency>
         
         <dependency>
           <groupId>ru.biosoft.genomebrowser</groupId>
           <artifactId>misc</artifactId>
-          <version>[2.0.1,)</version>
+          <version>[2.0.2,)</version>
         </dependency>
         
         <dependency>
           <groupId>ru.biosoft.genomebrowser</groupId>
           <artifactId>server</artifactId>
-          <version>[2.0.1,)</version>
+          <version>[2.0.2,)</version>
         </dependency>
         
         <dependency>
           <groupId>ru.biosoft.genomebrowser</groupId>
           <artifactId>ensembl</artifactId>
-          <version>[2.0.1,)</version>
+          <version>[2.0.2,)</version>
         </dependency>
         
         <!--Other plugins-->
