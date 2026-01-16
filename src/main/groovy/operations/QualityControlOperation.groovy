@@ -72,14 +72,12 @@ public class QualityControlOperation extends GOperationSupport {
                 String nextFlowScript = ApplicationUtils.readAsString(workflowsDc.getFile(workflowName ));
                 String outputDir = TempFiles.getTempDirectory().getAbsolutePath();
 
-                def serverIp = request.getRemoteAddr()
-
-                //TODO: get workflow_info somehow
-
                 def workflowRunId = nf.insertWorkflowRun ((int)prj.$id, (int)workflowInfo)
-                // database.workflow_runs << [project: prj.$id, workflow_info: workflowInfo, status: "preparation"]
 
-                NextFlowRunner.runNextFlow("fastqc", nextflowParams, nextFlowScript, outputDir, false, "http://" + serverIp +":8200/nf")
+                def serverUrl =request.getServerUrl()
+                def towerAddress = serverUrl+"/nf"
+
+                NextFlowRunner.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, outputDir, false, towerAddress)
             }
         }
     }
