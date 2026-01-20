@@ -31,6 +31,7 @@ lims:
   - pathogenicity
   - pathogenicity_authority
   - projects
+  - qc_runs
   - rules
   - rule_sets
   - rule_set_rules

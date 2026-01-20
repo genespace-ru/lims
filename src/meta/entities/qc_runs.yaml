@@ -1,0 +1,85 @@
+qc_runs:
+  type: table
+  primaryKey: ID
+  order: '20'
+  displayName:  Контроль качества
+  doc: Информация о результатах Quality Check.
+
+  scheme:
+    columns:
+    - ID:
+        type: KEYTYPE
+        autoIncrement: true
+        primaryKey: true
+    - project:
+        type: KEYTYPE
+        reference: projects
+        doc: Проект, для которого был выполнен контроль качества.
+    - sample:
+        type: KEYTYPE
+        reference: samples
+        canBeNull: true
+        doc: Образец, для которого был выполнен контроль качества.
+    - file_info:
+            type: KEYTYPE
+            reference: file_info
+            canBeNull: true
+            doc: Файл образца, для которого был выполнен контроль качества.
+    - workflow:
+        type: KEYTYPE
+        reference: workflow_runs
+        canBeNull: true
+        doc: Сценарий, в рамках которого был проведен контроль качества.
+    - qc_info:
+        type: JSONB
+        canBeNull: true 
+        doc: Результат контроля качества
+    
+    - creationDate___:
+        type: TIMESTAMP
+        defaultValue: CURRENT_TIMESTAMP
+    - modificationDate___:
+        type: TIMESTAMP
+        canBeNull: true        
+    - whoInserted___:
+        type: VARCHAR(100)
+        defaultValue: '''Administrator'''
+    - whoModified___:
+        type: VARCHAR(100)
+        canBeNull: true 
+
+  queries:
+  - All records:
+      type: 1D
+      roles: '@AllRolesExceptGuest'
+      layout: '{"quickType":"select"}'
+      code: |2-
+            SELECT 
+              tr.id AS "ID",
+
+              tr.project AS "___projectID",
+              tr.project AS "Project;<quick visible='true' />",
+              '<link table="projects" queryName="Project card" using="___projectID" columns="ID" />' AS ";Project",
+              
+              tr.sample AS "___sampleID",
+              tr.sample AS "Sample;<quick visible='true' />",
+              '<link table="samples" queryName="All records" using="___sampleID" columns="ID" />' AS ";Sample",
+              
+              tr.file_info AS "___fileInfoID",
+              fi.fileName AS "File;<quick visible='true' />",
+              '<link table="file_info" queryName="All records" using="___fileInfoID" columns="ID" />' AS ";File",
+
+              tr.workflow AS "___workflowRunID",
+              
+              tr.qc_info AS "Parameters;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'tr' />
+            FROM qc_runs tr
+            JOIN file_info fi ON tr.file_info = fi.ID
+            ORDER BY tr.creationDate___ DESC
+            
+  - '*** Selection view ***':
+      type: 1D_unknown
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT id, title FROM qc_runs tr ORDER BY tr.creationDate___ DESC
+          

@@ -77,6 +77,10 @@ public class QualityControlOperation extends GOperationSupport {
                 def serverUrl =request.getServerUrl()
                 def towerAddress = serverUrl+"/nf"
 
+                nextflowParams.put("parseData", "\\\"prjId\\\":"+(int)prj.$id+",\\\"workflowId\\\":"+workflowRunId );
+                nextflowParams.put("parseUrl", serverUrl+ "/nf/parse/multiqc" );
+
+
                 NextFlowRunner.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, outputDir, false, towerAddress)
             }
         }
