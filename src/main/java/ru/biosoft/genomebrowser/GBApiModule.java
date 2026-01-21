@@ -4,6 +4,7 @@ import com.developmentontheedge.beans.Preferences;
 import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
 
+import ru.biosoft.access.AccessInitializer;
 import ru.biosoft.bsa.BSAInitializer;
 import ru.biosoft.server.ServerInitializer;
 import ru.biosoft.util.ServerPreferences;
@@ -31,6 +32,7 @@ public class GBApiModule extends ServletModule
         //                .register( new FileType( "BED track", new String[] { "bed" }, "ru.biosoft.bsa.transformer.BedFileTransformer", FileTypePriority.HIGH_PRIORITY, "BED track file" ) );
         //ServerPreferences.setPreferences( new Preferences() );
         ServerPreferences.loadPreferences( "pref1.xml" );
+        AccessInitializer.initialize();
         ServerInitializer.initialize();
         BSAInitializer.initialize();
     }

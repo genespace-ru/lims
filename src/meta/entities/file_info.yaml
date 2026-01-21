@@ -107,7 +107,7 @@ file_info:
       code: |-
             SELECT 
               fi.id AS "ID" ,
-              (CASE WHEN fi.entity='workflow_info' THEN COALESCE('<a target="_blank" href="/static/diagrams.html/#de=' || fi.path || '">' || fi.path ||'</a>', fi.path) ELSE fi.path END) AS "Path;<quick visible='true'/>",
+              (CASE WHEN fi.entity='workflow_info' OR fi.entity='workflow_runs' THEN COALESCE('<a target="_blank" href="/gb/web/content/' || fi.path || '">' || fi.path ||'</a>', fi.path) ELSE fi.path END) AS "Path;<quick visible='true'/>",
               fi.fileName AS "File",
               fi.size AS "Size",
               fi.mimeType AS "MimeType;<quick visible='false'/>",

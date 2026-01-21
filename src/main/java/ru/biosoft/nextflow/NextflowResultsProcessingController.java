@@ -2,7 +2,9 @@ package ru.biosoft.nextflow;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.json.Json;
@@ -38,22 +40,23 @@ public class NextflowResultsProcessingController extends NextflowController
         String method = req.getRawRequest().getMethod();
         
         if( "POST".equals( method ) && "parse".equals( tokens[2] ) )
-            return parseResults(req, body);
+        {
+            if( "multiqc".equals( tokens[3] ) )
+                return parseMultiQCResults( req, body );
+        }
 
         throw unknownRequest(req);
     }
 
-    private String parseResults(Request req, JsonObject body)
+    private String parseMultiQCResults(Request req, JsonObject body)
     {
         Integer workflowId = body.getInt( "workflowId" );
         Integer projectId = body.getInt( "prjId" );
         String repoPath = repo.getRepositoryPath();
 
         String projectName = db.getString( "SELECT name FROM projects WHERE ID=?", projectId );
-        //DataElementPath projectPath = DataElementPath.create( repoPath ).getChildPath( projectName );
-        //DataElementPath results = projectPath.getChildPath( "results" );
-        //GenericFileDataCollection resultsDc = (GenericFileDataCollection) results.getDataCollection();
-
+        DataElementPath projectPath = DataElementPath.create( repoPath ).getChildPath( projectName );
+        Integer qcRunId = null;
 
         String resFile = body.getString( "results" );
         if( resFile != null )
@@ -97,19 +100,36 @@ public class NextflowResultsProcessingController extends NextflowController
                             }
                         }
                         Long fileInfo = fileName != null ? db.oneLong( "SELECT ID FROM file_info WHERE filename=? AND project=? ", fileName, projectId ) : null;
-                        db.updateRaw( sql, projectId, sampleId, fileInfo, workflowId, params.toString() );
+                        qcRunId = db.updateRaw( sql, projectId, sampleId, fileInfo, workflowId, params.toString() );
                     }
                 }
 
             }
             catch (IOException e)
             {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
         }
+        String reportFileStr = body.getString( "report" );
+        if( reportFileStr != null )
+        {
+            File reportFile = new File( reportFileStr );
+            File resultsFolder = ((GenericFileDataCollection) projectPath.getDataCollection()).getFile( "results" );
+            Path pathRelative = resultsFolder.toPath().relativize( reportFile.toPath() );
 
-        return "{ \"workflowId\":\"" + workflowId + "\"}";
+            DataElementPath results = projectPath.getChildPath( "results" );
+            String[] parts = pathRelative.toString().split( Pattern.quote( File.separator ) );
+            DataElementPath reportPath = results.getChildPath( parts );
+
+            Long fileTypeId = db.oneLong( "SELECT ID FROM file_types WHERE suffix=?", reportFile.getName() );
+            if( reportPath.exists() )
+            {
+                db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)", reportFile.getName(), fileTypeId,
+                        reportPath.toString(), reportFile.length(), projectId, "workflow_runs", workflowId );
+            }
+
+        }
+
+        return "{ \"result\":\"ok\"}";
 
     }
 
