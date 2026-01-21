@@ -238,9 +238,9 @@ public class RepositoryManager
         }
         properties.put( "repository", tabs );
         List<Map<String, Object>> actionRules = new ArrayList<>();
-        String[] deny = new String[] { "*" };
-        String[] allow = new String[] { "semantic_zoom_in", "semantic_zoom_out", "semantic_default", "semantic_detailed", "semantic_overview", "shift_backward", "shift_forward",
-                "page_backward", "page_forward", "combine_tracks", "new_gc_track" };
+        String[] deny = new String[0];
+        String[] allow = new String[] { "*" };// { "semantic_zoom_in", "semantic_zoom_out", "semantic_default", "semantic_detailed", "semantic_overview", "shift_backward", "shift_forward",
+                //"page_backward", "page_forward", "combine_tracks", "new_gc_track" };
         for ( String id : deny )
         {
             Map<String, Object> rule = new HashMap<>();
