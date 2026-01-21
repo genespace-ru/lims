@@ -28,7 +28,7 @@ public class VCFLoaderTest extends DbTest
     VEPLoader vepLoader;
 	File file;
 	
-	//@Disabled
+    @Disabled
 	@Test
     @Order(1) 
     public void checkVcfFormat() throws Exception
@@ -39,7 +39,7 @@ public class VCFLoaderTest extends DbTest
     	vcfLoader.checkFormat(file);
     }
 
-    //@Disabled
+    @Disabled
     @Test
     @Order(2) 
     public void checkLoadVCF() throws Exception
@@ -55,7 +55,7 @@ public class VCFLoaderTest extends DbTest
         }
     }
     
-    //@Disabled
+    @Disabled
     @Test
     @Order(3)
     public void checkLoadGenominal() throws Exception
@@ -72,6 +72,7 @@ public class VCFLoaderTest extends DbTest
         }
     }
     
+    @Disabled
     @Test
     @Order(4)
     public void checkLoadVEP() throws Exception

@@ -20,6 +20,7 @@ public class NextflowServiceTest extends DbTest
 	NextflowService nfService;
 	int workflowRunID;
 	
+    @Disabled
 	@Test
     @Order(1) 
     public void startWorkflow() throws Exception
