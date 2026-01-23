@@ -3,6 +3,7 @@ package operations
 import java.nio.channels.FileChannel
 import java.nio.charset.StandardCharsets
 import java.util.logging.Level
+import java.io.FileInputStream
 
 import ru.biosoft.lims.parsers.IlluminaCSVParser
 import ru.biosoft.lims.parsers.YamlParser
@@ -37,6 +38,9 @@ import one.util.streamex.StreamEx
 import com.developmentontheedge.beans.DynamicProperty
 import com.developmentontheedge.beans.DynamicPropertySet as DPS
 import com.developmentontheedge.beans.DynamicPropertySetSupport
+
+import ru.biosoft.util.FileDownloader
+
 import com.developmentontheedge.beans.BeanInfoConstants
 
 
@@ -71,7 +75,12 @@ public class LoadProject extends GOperationSupport {
 
         //Sample sheet - файл
         params.sampleSheetFile = [ TYPE: java.io.File,
-            DISPLAY_NAME: "Sample sheet file" ]
+            DISPLAY_NAME: "Sample sheet file",
+            CAN_BE_NULL: true ]
+
+        params.sampleSheetFileURL = [ TYPE: String,
+            DISPLAY_NAME: "Sample sheet file URL",
+            CAN_BE_NULL: true]
 
         //Sample sheet формат (Illumina/Нанофор СПС)
         params.sampleSheetFormat = [ value: "Illumina",
@@ -85,14 +94,29 @@ public class LoadProject extends GOperationSupport {
 
         DynamicProperty prop = new DynamicProperty("sequencesFile", "Sequences (fastg.gz or fastq files)", java.io.File.class);
         prop.setAttribute(BeanInfoConstants.MULTIPLE_SELECTION_LIST, true )
+        prop.setAttribute(BeanInfoConstants.CAN_BE_NULL, true )
         params.add(prop)
         dpsHelper.addLabelRaw(params, "Single or multiple files with *.fastq or *.fastq.gz (.tar, .tar.gz, zip archive with multiple fasta is allowed)")
+
+        params.sequencesFileURL = [ TYPE: String,
+            DISPLAY_NAME: "Sequences URL (single .tar/.tar.gz file)",
+            CAN_BE_NULL: true ]
 
         params = DpsUtils.setValues(params, presetValues)
 
         def projectName = params.getValue("projectName")
         if(isProjectExists(projectName)) {
             validator.setError( params.projectName, "The project name you have entered already exists.\nPlease try again." )
+            return params
+        }
+
+        if(params.getValue("sampleSheetFile") == null && params.getValue("sampleSheetFileURL" ) == null) {
+            validator.setError( params.sampleSheetFile, "Please, specify sample sheet file or url." )
+            return params
+        }
+
+        if(params.getValue("sequencesFile") == null && params.getValue("sequencesFileURL" ) == null) {
+            validator.setError( params.sequencesFile, "Please, specify sequence file(s) or url." )
             return params
         }
 
@@ -129,6 +153,44 @@ public class LoadProject extends GOperationSupport {
         }
 
         DataElementPath parentPath = DataElementPath.create(repoPath);
+
+
+        File tempDir = TempFiles.getTempDirectory();
+
+        //TODO: Check if it is file name only or with path. Documentation says some browsers return full path.
+        InputStream source = null;
+        FileItem sampleSheetItem = getFileItem( params.$sampleSheetFile )
+        def fileName = null
+        if(sampleSheetItem == null) {
+
+            def sampleSheetFileURL = params.$sampleSheetFileURL
+            if(sampleSheetFileURL != null) {
+                URL url = null;
+                try {
+                    url = FileDownloader.convertURL(new URL(sampleSheetFileURL), null)
+                }
+                catch( Exception e ) {
+                    setResult(OperationResult.error("Can not upload file: "+e.getMessage()));
+                    return;
+                }
+                File file = new File(url.getFile());
+                File destinationFile = new File(tempDir, file.getName())
+                fileName = FileDownloader.downloadFile(url, destinationFile, null)
+                source = new FileInputStream(destinationFile)
+            }
+        }
+        else {
+            fileName = sampleSheetItem.getName()
+            source = sampleSheetItem.getInputStream()
+        }
+
+        if(fileName == null) {
+            setResult(OperationResult.error("Sample sheet file not specified"))
+            return
+        }
+
+        def description = params.$description
+        def projectId = database.projects << [name: projectName, description: description]
         DataCollection proj = null;
         try {
             proj = DataCollectionUtils.createSubCollection(parentPath.getChildPath(projectName ));
@@ -138,18 +200,11 @@ public class LoadProject extends GOperationSupport {
             return
         }
 
-        List<String> errors = new ArrayList<>()
-        def description = params.$description
-        def projectId = database.projects << [name: projectName, description: description]
-
-        //TODO: Check if it is file name only or with path. Documentation says some browsers return full path.
-        FileItem sampleSheetItem = getFileItem( params.$sampleSheetFile )
-        def fileName = sampleSheetItem.getName();
-
         File sampleSheetFile = repo.getChildFile(proj, fileName );
 
+        List<String> errors = new ArrayList<>()
         //copy sampleSheetFile to file
-        InputStream source = sampleSheetItem.getInputStream(); FileOutputStream destination = new FileOutputStream(sampleSheetFile)
+        FileOutputStream destination = new FileOutputStream(sampleSheetFile)
         try {
             IOUtils.copy(source, destination);
         }
@@ -168,12 +223,32 @@ public class LoadProject extends GOperationSupport {
 
         Object[] files = params.$sequencesFile;
         FileItem seqfile = null;
+        if(files == null && params.$sequencesFileURL != null) {
+            URL url = null;
+            try {
+                url = FileDownloader.convertURL(new URL(params.$sequencesFileURL), null)
+            }
+            catch( Exception e ) {
+                setResult(OperationResult.error("Can not upload sequences file: "+e.getMessage()));
+                return;
+            }
+            File file = new File(url.getFile());
+            File seqfileTmp = new File(tempDir, file.getName())
+            def seqArhiveName = FileDownloader.downloadFile(url, destinationFile, null);
+            if(ArchiveFactory.isComplexArchive(seqfileTmp)) {
+                repo.importArchiveFile(seqfileTmp, samples)
+            }
+            else {
+                //single fasta, copy as is
+                ApplicationUtils.copyFile(repo.getChildFile(samples, file.name ), seqfileTmp )
+            }
+        }
         if(files.length == 1) {
             //Single file, it can be simple fasta (gzipped or not) or archive
             //Try to import as archive first, if...
             seqfile = getFileItem( files[0] )
             try {
-                File tempDir = TempFiles.getTempDirectory();
+
                 File seqfileTmp = new File(tempDir, seqfile.name)
                 source = seqfile.getInputStream();
                 destination = new FileOutputStream(seqfileTmp)
@@ -215,12 +290,13 @@ public class LoadProject extends GOperationSupport {
             }
         for (String name: samples.getNameList()) {
             File deFile = repo.getChildFile(samples, name);
-            namesNoExt[deFile.getName().replaceFirst(~/\..+$/, '')] = deFile;
+            namesNoExt[deFile.getName().replaceFirst(~/\..+$/, '').toLowerCase()] = deFile;
         }
 
         //Sample sheet file is null or incorrect, do not add run info to database
         if(sampleSheetFile == null) {
             errors.add("Sample sheet file is not valid, no run information is available")
+            db.update( "DELETE FROM projects WHERE ID = $projectId" )
             setResult(OperationResult.finished(String.join("\n", errors)))
             return
         }
@@ -250,7 +326,7 @@ public class LoadProject extends GOperationSupport {
             errors.add("Unknown sample sheet format, file " + sampleSheetFile.getName() + " can not be parsed")
         }
 
-        def fileData = IOUtils.toString(sampleSheetItem.getInputStream(), StandardCharsets.UTF_8);
+        def fileData = IOUtils.toString(new FileInputStream(sampleSheetFile), StandardCharsets.UTF_8);
         def runId = database.runs << [project_id: projectId, name: runName, status:"completed", data:fileData]
 
         String sampleFileName = sampleSheetFile.getName();
@@ -276,6 +352,7 @@ public class LoadProject extends GOperationSupport {
             runSampleFields["index1"] = "index"
             runSampleFields["I5_index_id"] = "I5_Index_ID"
             runSampleFields["index2"] = "index2"
+            //TODO: all file names lowercased!
             for(int i = 1; i < samplesData.size(); i++) {
                 List<String> sampleValues = samplesData.get(i);
                 String sampleName = getOrDefault(sampleValues, nameToIndex, "Sample_ID" );
@@ -293,20 +370,20 @@ public class LoadProject extends GOperationSupport {
                 runSample["sample_id"] = sampleId
                 def runSampleId = database.run_samples << runSample
                 if(params.$readsType.equals("single" )) {
-                    if(namesNoExt.containsKey(sampleName)) {
+                    if(namesNoExt.containsKey(sampleName.toLowerCase())) {
                         File fname = namesNoExt.get(sampleName);
                         long fileTypeId = getFileType(fname, fname.getName().replace(sampleName, ""))
                         fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
                     }
                 }
                 else if(params.$readsType.equals("paired" )) {
-                    def readName = sampleName + "_r1";
+                    def readName = (sampleName + "_r1").toLowerCase()
                     if(namesNoExt.containsKey(readName)) {
                         File fname = namesNoExt.get(readName);
                         long fileTypeId = getFileType(fname, fname.getName().replace(sampleName, ""))
                         fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
                     }
-                    readName = sampleName + "_r2";
+                    readName = (sampleName + "_r2").toLowerCase()
                     if(namesNoExt.containsKey(readName)) {
                         File fname = namesNoExt.get(readName);
                         long fileTypeId = getFileType(fname, fname.getName().replace(sampleName, ""))
