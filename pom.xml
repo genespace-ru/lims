@@ -133,6 +133,14 @@
           <version>[1.0.0,)</version>
         </dependency>
         
+        <dependency>
+          <groupId>it.sauronsoftware</groupId>
+          <artifactId>ftp4j</artifactId>
+          <version>1.6</version>
+          <!--scope>system</scope-->
+          <!--systemPath>${project.basedir}/plugins/it.sauronsoftware.ftp4j_1.6.jar</systemPath-->
+      </dependency>
+        
 	</dependencies>
 
 	<build>
