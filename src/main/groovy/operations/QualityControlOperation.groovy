@@ -46,6 +46,9 @@ public class QualityControlOperation extends GOperationSupport {
             if(projectPath.exists()) {
                 DataElementPath samples = projectPath.getChildPath("samples" );
                 DataElementPath results = projectPath.getChildPath("results" );
+                if(!results.exists()) {
+                    DataCollectionUtils.createSubCollection(results);
+                }
                 GenericFileDataCollection resultsDc = results.getDataCollection();
                 GenericFileDataCollection workflowsDc = repo.getWorkflowsCollection();
                 def workflowQCPath = workflowsDc.getCompletePath().getChildPath(workflowName )
