@@ -4,99 +4,99 @@
     <title>Genome Browser BioUML</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="description" content="Genome Browser framework for system biology" />
-    <link rel="stylesheet" href="gb/css/bootstrap.css">
-	<link type="text/css" href="gb/css/ui/custom-theme/jquery-ui-1.13.1.css" rel="stylesheet" />
-	<link rel="stylesheet" href="gb/css/main.css">
-	<link type="text/css" href="gb/css/table/table.css" rel="stylesheet" />
-	<link type="text/css" href="gb/css/propertyInspector/js_pi.css" rel="stylesheet" />
-    <link rel="stylesheet" href="gb/lib/jstree/themes/default/style.css" />
-    <link rel="stylesheet" type="text/css" href="gb/css/contextMenu/jquery.contextMenu-2.9.2.css" />
-    <link type="text/css" href="gb/css/jpicker/jPicker-1.1.6.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="webserver/css/bootstrap.css">
+	<link type="text/css" href="webserver/css/ui/custom-theme/jquery-ui-1.13.1.css" rel="stylesheet" />
+	<link rel="stylesheet" href="webserver/css/main.css">
+	<link type="text/css" href="webserver/css/table/table.css" rel="stylesheet" />
+	<link type="text/css" href="webserver/css/propertyInspector/js_pi.css" rel="stylesheet" />
+    <link rel="stylesheet" href="webserver/lib/jstree/themes/default/style.css" />
+    <link rel="stylesheet" type="text/css" href="webserver/css/contextMenu/jquery.contextMenu-2.9.2.css" />
+    <link type="text/css" href="webserver/css/jpicker/jPicker-1.1.6.min.css" rel="stylesheet" />
     
-	<script type="text/javascript" src="gb/lib/jquery/jquery-3.6.0.min.js"></script>
-	<script type="text/javascript" src="gb/lib/jquery/jquery.inherit-1.3.6.mod.js"></script>
-	<script type="text/javascript" src="gb/lib/jquery/jquery.ui.touch-punch.min.js"></script>
-	<script type="text/javascript" src="gb/lib/jquery/jquery.json-2.2.min.js"></script>
-	<script type="text/javascript" src="gb/lib/jquery/jquery.mousewheel.min.js"></script>
-    <script type="text/javascript" src="gb/lib/jquery/jquery.includeMany-1.2.2.js"></script>
-	<script type="text/javascript" src="gb/lib/table/jquery.dataTables.js"></script>
-	<script type="text/javascript" src="gb/lib/table/tableUtils.js"></script>
-	<script type="text/javascript" src="gb/lib/contextMenu/jquery.contextMenu-2.9.2.js"></script>
-    <script type="text/javascript" src="gb/lib/jpicker/jpicker-1.1.6.min.js"></script>
-	<script type="text/javascript" src="gb/lib/underscore/underscore-min.js"></script>
-    <script type="text/javascript" src="gb/lib/ui/jquery-ui-1.13.1.js"></script>
-	<script type="text/javascript" src="gb/lib/ui/ui.tabs.paging.js"></script>
-    <script type="text/javascript" src="gb/lib/jstree/jstree.min.js"></script>
-    <script type="text/javascript" src="gb/lib/splitter/jquery.splitter.js"></script>
+	<script type="text/javascript" src="webserver/lib/jquery/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript" src="webserver/lib/jquery/jquery.inherit-1.3.6.mod.js"></script>
+	<script type="text/javascript" src="webserver/lib/jquery/jquery.ui.touch-punch.min.js"></script>
+	<script type="text/javascript" src="webserver/lib/jquery/jquery.json-2.2.min.js"></script>
+	<script type="text/javascript" src="webserver/lib/jquery/jquery.mousewheel.min.js"></script>
+    <script type="text/javascript" src="webserver/lib/jquery/jquery.includeMany-1.2.2.js"></script>
+	<script type="text/javascript" src="webserver/lib/table/jquery.dataTables.js"></script>
+	<script type="text/javascript" src="webserver/lib/table/tableUtils.js"></script>
+	<script type="text/javascript" src="webserver/lib/contextMenu/jquery.contextMenu-2.9.2.js"></script>
+    <script type="text/javascript" src="webserver/lib/jpicker/jpicker-1.1.6.min.js"></script>
+	<script type="text/javascript" src="webserver/lib/underscore/underscore-min.js"></script>
+    <script type="text/javascript" src="webserver/lib/ui/jquery-ui-1.13.1.js"></script>
+	<script type="text/javascript" src="webserver/lib/ui/ui.tabs.paging.js"></script>
+    <script type="text/javascript" src="webserver/lib/jstree/jstree.min.js"></script>
+    <script type="text/javascript" src="webserver/lib/splitter/jquery.splitter.js"></script>
     
-	<script type="text/javascript" src="gb/lib/propertyInspector/dpiUtils.js"></script>
-	<script type="text/javascript" src="gb/lib/propertyInspector/dpi.min.js"></script>
-    <script type="text/javascript" src="gb/lib/propertyInspector/JSDataElementPathEditor.js"></script>
-    <script type="text/javascript" src="gb/lib/propertyInspector/JSDataElementSelector.js"></script>
-    <script type="text/javascript" src="gb/lib/propertyInspector/JSArrayControl.js"></script>
-    <script type="text/javascript" src="gb/lib/propertyInspector/JSColorSelector.js"></script>
+	<script type="text/javascript" src="webserver/lib/propertyInspector/dpiUtils.js"></script>
+	<script type="text/javascript" src="webserver/lib/propertyInspector/dpi.min.js"></script>
+    <script type="text/javascript" src="webserver/lib/propertyInspector/JSDataElementPathEditor.js"></script>
+    <script type="text/javascript" src="webserver/lib/propertyInspector/JSDataElementSelector.js"></script>
+    <script type="text/javascript" src="webserver/lib/propertyInspector/JSArrayControl.js"></script>
+    <script type="text/javascript" src="webserver/lib/propertyInspector/JSColorSelector.js"></script>
     <!--
         
         
-        <script type="text/javascript" src="gb/lib/propertyInspector/JSFileUploader.js"></script>
-        <script type="text/javascript" src="gb/lib/propertyInspector/JSWorkflowExpressionEditBox.js"></script>
-        <script type="text/javascript" src="gb/lib/propertyInspector/JSTextScriptEditBox.js"></script>
-        <script type="text/javascript" src="gb/lib/propertyInspector/JSUrlBuilder.js"></script>
+        <script type="text/javascript" src="webserver/lib/propertyInspector/JSFileUploader.js"></script>
+        <script type="text/javascript" src="webserver/lib/propertyInspector/JSWorkflowExpressionEditBox.js"></script>
+        <script type="text/javascript" src="webserver/lib/propertyInspector/JSTextScriptEditBox.js"></script>
+        <script type="text/javascript" src="webserver/lib/propertyInspector/JSUrlBuilder.js"></script>
         
     -->
 	
-    <script type="text/javascript" src="gb/defines.js"></script>
+    <script type="text/javascript" src="webserver/defines.js"></script>
     	      
-	<script type="text/javascript" src="gb/lib/urlHandler.js"></script>
-	<script type="text/javascript" src="gb/lib/core.js"></script>
-	<script type="text/javascript" src="gb/lib/dataCollection.js"></script>
-	<script type="text/javascript" src="gb/lib/documents.js"></script>
-	<script type="text/javascript" src="gb/lib/uiCommons.js"></script>
-	<script type="text/javascript" src="gb/lib/dialogs.js"></script>
-	<script type="text/javascript" src="gb/lib/serverQuery.js"></script>
-	<script type="text/javascript" src="gb/lib/viewparts.js"></script>
-	<!--script type="text/javascript" src="gb/lib/viewpartsBsa.js"></script-->
-	<script type="text/javascript" src="gb/lib/polymorph.js"></script>
-	<script type="text/javascript" src="gb/lib/graph/graph.js"></script>
-	<script type="text/javascript" src="gb/lib/graph/viewpane.js"></script>
-	<!--script type="text/javascript" src="gb/lib/sequence.js"></script-->
-    <script type="text/javascript" src="gb/lib/cookies.js"></script>
-    <script type="text/javascript" src="gb/lib/messageBundle.js"></script>
-    <script type="text/javascript" src="gb/lib/messageBundle.en.js"></script>
-    <script type="text/javascript" src="gb/lib/messageBundle.ru.js"></script>
-    <script type="text/javascript" src="gb/lib/setLocale.js"></script>
+	<script type="text/javascript" src="webserver/lib/urlHandler.js"></script>
+	<script type="text/javascript" src="webserver/lib/core.js"></script>
+	<script type="text/javascript" src="webserver/lib/dataCollection.js"></script>
+	<script type="text/javascript" src="webserver/lib/documents.js"></script>
+	<script type="text/javascript" src="webserver/lib/uiCommons.js"></script>
+	<script type="text/javascript" src="webserver/lib/dialogs.js"></script>
+	<script type="text/javascript" src="webserver/lib/serverQuery.js"></script>
+	<script type="text/javascript" src="webserver/lib/viewparts.js"></script>
+	<!--script type="text/javascript" src="webserver/lib/viewpartsBsa.js"></script-->
+	<script type="text/javascript" src="webserver/lib/polymorph.js"></script>
+	<script type="text/javascript" src="webserver/lib/graph/graph.js"></script>
+	<script type="text/javascript" src="webserver/lib/graph/viewpane.js"></script>
+	<!--script type="text/javascript" src="webserver/lib/sequence.js"></script-->
+    <script type="text/javascript" src="webserver/lib/cookies.js"></script>
+    <script type="text/javascript" src="webserver/lib/messageBundle.js"></script>
+    <script type="text/javascript" src="webserver/lib/messageBundle.en.js"></script>
+    <script type="text/javascript" src="webserver/lib/messageBundle.ru.js"></script>
+    <script type="text/javascript" src="webserver/lib/setLocale.js"></script>
     
-    <script type="text/javascript" src="gb/lib/copy.js"></script>
+    <script type="text/javascript" src="webserver/lib/copy.js"></script>
     
-    <script type="text/javascript" src="gb/lib/upload.js"></script>
-    <script type="text/javascript" src="gb/lib/serverMessages.js"></script>
-    <script type="text/javascript" src="gb/lib/toolbar.js"></script>
-    <script type="text/javascript" src="gb/lib/uiActions.js"></script>
-    <script type="text/javascript" src="gb/lib/jsActions.js"></script>
-    <script type="text/javascript" src="gb/lib/preferences.js"></script>
-    <script type="text/javascript" src="gb/lib/tree.js"></script>
-    <script type="text/javascript" src="gb/lib/import_new.js"></script>
-    <script type="text/javascript" src="gb/lib/infoPane.js"></script>
-    <script type="text/javascript" src="gb/lib/contextToolbar.js"></script>
+    <script type="text/javascript" src="webserver/lib/upload.js"></script>
+    <script type="text/javascript" src="webserver/lib/serverMessages.js"></script>
+    <script type="text/javascript" src="webserver/lib/toolbar.js"></script>
+    <script type="text/javascript" src="webserver/lib/uiActions.js"></script>
+    <script type="text/javascript" src="webserver/lib/jsActions.js"></script>
+    <script type="text/javascript" src="webserver/lib/preferences.js"></script>
+    <script type="text/javascript" src="webserver/lib/tree.js"></script>
+    <script type="text/javascript" src="webserver/lib/import_new.js"></script>
+    <script type="text/javascript" src="webserver/lib/infoPane.js"></script>
+    <script type="text/javascript" src="webserver/lib/contextToolbar.js"></script>
     
     
-    <script type="text/javascript" src="gb/lib/user.js"></script>
-    <script type="text/javascript" src="gb/lib/framework.js"></script>
-    <script type="text/javascript" src="gb/lib/iframeCommons.js"></script>
-    <script type="text/javascript" src="gb/lib/onDemandLoader.js"></script>
+    <script type="text/javascript" src="webserver/lib/user.js"></script>
+    <script type="text/javascript" src="webserver/lib/framework.js"></script>
+    <script type="text/javascript" src="webserver/lib/iframeCommons.js"></script>
+    <script type="text/javascript" src="webserver/lib/onDemandLoader.js"></script>
     
-    <script type="text/javascript" src="gb/lib/table.js"></script>
-    <script type="text/javascript" src="gb/lib/viewpartsTable.js"></script>
+    <script type="text/javascript" src="webserver/lib/table.js"></script>
+    <script type="text/javascript" src="webserver/lib/viewpartsTable.js"></script>
     <!--script src="gbrowser.js"></script-->
     <!--script src="dummys.js"></script-->
     
     <!--
-                ???<script type="text/javascript" src="gb/lib/jquery/jquery.jeditable.js"></script>
-               ??? <script type="text/javascript" src="gb/lib/jquery/jquery.scrollview.mod.js"></script>
+                ???<script type="text/javascript" src="webserver/lib/jquery/jquery.jeditable.js"></script>
+               ??? <script type="text/javascript" src="webserver/lib/jquery/jquery.scrollview.mod.js"></script>
                 
-                ??? (for search tab)<script type="text/javascript" src="gb/lib/lucene.js"></script>
-                <script type="text/javascript" src="gb/lib/javascript.js"></script>
-                <script type="text/javascript" src="gb/lib/projectUtils.js"></script>
+                ??? (for search tab)<script type="text/javascript" src="webserver/lib/lucene.js"></script>
+                <script type="text/javascript" src="webserver/lib/javascript.js"></script>
+                <script type="text/javascript" src="webserver/lib/projectUtils.js"></script>
     -->
 	
 	<style>

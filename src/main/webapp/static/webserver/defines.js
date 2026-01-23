@@ -26,13 +26,13 @@ var appInfo = {
         edition: "web edition",
         version: "1.0",
         ensemblPath: "databases/EnsemblHuman104",
-        serverPath: "../gb/",
+        serverPath: "../webserver/",
         disablePerspectiveSelector : true,
         disableProjectSelector : true,
         userProjectsPath: "Examples",
         skipLogin: true,
         build: "1",
         enableLocales: ["en","ru"],
-        iconsPath: "gb/icons/"
+        iconsPath: "webserver/icons/"
         
 };

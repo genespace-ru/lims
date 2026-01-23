@@ -76,7 +76,7 @@ function loadBioUMLModules(modules, initFunction, callback)
         var chain = {};
         for(var i=0; i<modules.length; i++)
         {
-            chain["gb/lib/"+modules[i]+".js"] = function() {};
+            chain["webserver/lib/"+modules[i]+".js"] = function() {};
         }
         $.chainclude(chain, function()
         {
