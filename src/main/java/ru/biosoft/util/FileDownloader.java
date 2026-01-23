@@ -1,18 +1,17 @@
 package ru.biosoft.util;
 
-import it.sauronsoftware.ftp4j.FTPClient;
-import it.sauronsoftware.ftp4j.FTPConnector;
-import it.sauronsoftware.ftp4j.FTPException;
-import it.sauronsoftware.ftp4j.FTPFile;
-import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
-import it.sauronsoftware.ftp4j.connectors.DirectConnector;
-import it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector;
+//import it.sauronsoftware.ftp4j.FTPClient;
+//import it.sauronsoftware.ftp4j.FTPConnector;
+//import it.sauronsoftware.ftp4j.FTPException;
+//import it.sauronsoftware.ftp4j.FTPFile;
+//import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
+//import it.sauronsoftware.ftp4j.connectors.DirectConnector;
+//import it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -23,11 +22,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import one.util.streamex.StreamEx;
-
-import ru.biosoft.jobcontrol.JobControl;
-import ru.biosoft.access.exception.BiosoftNetworkException;
 import ru.biosoft.access.security.SecurityManager;
+import ru.biosoft.jobcontrol.JobControl;
 
 /**
  * static method for file download from external FTP server
@@ -36,121 +32,122 @@ import ru.biosoft.access.security.SecurityManager;
  */
 public class FileDownloader
 {
-    public static String downloadFileFromFTP(URL url, File destinationFile, FTPUploadListener transferListener, boolean continueDownload) throws Exception
+    public static String downloadFileFromFTP(URL url, File destinationFile, /*FTPUploadListener transferListener, */boolean continueDownload) throws Exception
     {
-        FTPClient ftpClient = null;
-        try
-        {
-            File file = new File(url.getFile());
-            String fileName = file.getName();
-
-            String[] userInfo = new String[] {"anonymous", ""};
-            if( url.getUserInfo() != null )
-            {
-                userInfo = url.getUserInfo().split(":", -1);
-            }
-            String hostname = url.getHost();
-            int port = url.getPort();
-            ftpClient = new FTPClient();
-            FTPConnector connector = new DirectConnector();
-            ftpClient.setConnector(connector);
-            try
-            {
-                if( port != -1 )
-                    ftpClient.connect(hostname, port);
-                else
-                    ftpClient.connect(hostname);
-                ftpClient.login(userInfo[0], userInfo[1]);
-            }
-            catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e1 )
-            {
-                //can not connect or login, try to use proxy settings
-                try
-                {
-                    ftpClient.disconnect(false);
-                }
-                catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e )
-                {
-                }
-                if( NetworkConfigurator.getHost() != null )
-                {
-                    connector = new HTTPTunnelConnector(NetworkConfigurator.getHost(), NetworkConfigurator.getPort());
-                }
-                ftpClient.setConnector(connector);
-                try
-                {
-                    if( port != -1 )
-                        ftpClient.connect(hostname, port);
-                    else
-                        ftpClient.connect(hostname);
-                    ftpClient.login(userInfo[0], userInfo[1]);
-                }
-                catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e2 )
-                {
-                    ftpClient.disconnect(false);
-                    throw new Exception("FTP server refused connection", e2);
-                }
-            }
-            ftpClient.setType(FTPClient.TYPE_TEXTUAL);
-            String parentDir = new File(url.getFile()).getParent();
-            ftpClient.changeDirectory(parentDir);
-            FTPFile[] files = ftpClient.list();
-            ftpClient.setType(FTPClient.TYPE_BINARY);
-            long originalFileSize = StreamEx.of( files ).filter( f -> f.getName().equals( fileName ) ).mapToLong( FTPFile::getSize )
-                    .findAny().orElseThrow( () -> new Exception( "File " + fileName + " not found on the server " + hostname ) );
-            transferListener.setTotalBytesToTransfer(originalFileSize);
-            boolean transferred = false;
-            int tries = 0;
-            long offset = 0;
-            if(continueDownload && destinationFile.exists())
-                offset = destinationFile.length();
-            while( !transferred && tries < 10 )
-            {
-                try
-                {
-                    transferListener.setBytesTransferred( offset );
-                    ftpClient.download(url.getFile(), destinationFile, offset, transferListener);
-                    ftpClient.currentDirectory(); //workaround, since download on user kick is not interrupted
-                    transferred = true;
-                }
-                catch( Exception e )
-                {
-                    ftpClient.disconnect(false);
-                    if( port != -1 )
-                        ftpClient.connect(hostname, port);
-                    else
-                        ftpClient.connect(hostname);
-                    ftpClient.login(userInfo[0], userInfo[1]);
-                    ftpClient.setType(FTPClient.TYPE_BINARY);
-                    //TODO: correct transfer resuming
-                    try (FileOutputStream fos = new FileOutputStream( destinationFile, true ))
-                    {
-                        long downloadedFileSize = fos.getChannel().size();
-                        if( downloadedFileSize > 0 && downloadedFileSize < originalFileSize )
-                        {
-                            offset = downloadedFileSize;
-                        }
-                    }
-                    tries++;
-                }
-            }
-            return fileName;
-        }
-        catch( Exception e )
-        {
-            throw new BiosoftNetworkException( e, url.toString() );
-        }
-        finally
-        {
-            try
-            {
-                if(ftpClient != null)
-                    ftpClient.disconnect(true);
-            }
-            catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e )
-            {
-            }
-        }
+        throw new RuntimeException( "FTP download is not available" );
+        //        FTPClient ftpClient = null;
+        //        try
+        //        {
+        //            File file = new File(url.getFile());
+        //            String fileName = file.getName();
+        //
+        //            String[] userInfo = new String[] {"anonymous", ""};
+        //            if( url.getUserInfo() != null )
+        //            {
+        //                userInfo = url.getUserInfo().split(":", -1);
+        //            }
+        //            String hostname = url.getHost();
+        //            int port = url.getPort();
+        //            ftpClient = new FTPClient();
+        //            FTPConnector connector = new DirectConnector();
+        //            ftpClient.setConnector(connector);
+        //            try
+        //            {
+        //                if( port != -1 )
+        //                    ftpClient.connect(hostname, port);
+        //                else
+        //                    ftpClient.connect(hostname);
+        //                ftpClient.login(userInfo[0], userInfo[1]);
+        //            }
+        //            catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e1 )
+        //            {
+        //                //can not connect or login, try to use proxy settings
+        //                try
+        //                {
+        //                    ftpClient.disconnect(false);
+        //                }
+        //                catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e )
+        //                {
+        //                }
+        //                if( NetworkConfigurator.getHost() != null )
+        //                {
+        //                    connector = new HTTPTunnelConnector(NetworkConfigurator.getHost(), NetworkConfigurator.getPort());
+        //                }
+        //                ftpClient.setConnector(connector);
+        //                try
+        //                {
+        //                    if( port != -1 )
+        //                        ftpClient.connect(hostname, port);
+        //                    else
+        //                        ftpClient.connect(hostname);
+        //                    ftpClient.login(userInfo[0], userInfo[1]);
+        //                }
+        //                catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e2 )
+        //                {
+        //                    ftpClient.disconnect(false);
+        //                    throw new Exception("FTP server refused connection", e2);
+        //                }
+        //            }
+        //            ftpClient.setType(FTPClient.TYPE_TEXTUAL);
+        //            String parentDir = new File(url.getFile()).getParent();
+        //            ftpClient.changeDirectory(parentDir);
+        //            FTPFile[] files = ftpClient.list();
+        //            ftpClient.setType(FTPClient.TYPE_BINARY);
+        //            long originalFileSize = StreamEx.of( files ).filter( f -> f.getName().equals( fileName ) ).mapToLong( FTPFile::getSize )
+        //                    .findAny().orElseThrow( () -> new Exception( "File " + fileName + " not found on the server " + hostname ) );
+        //            transferListener.setTotalBytesToTransfer(originalFileSize);
+        //            boolean transferred = false;
+        //            int tries = 0;
+        //            long offset = 0;
+        //            if(continueDownload && destinationFile.exists())
+        //                offset = destinationFile.length();
+        //            while( !transferred && tries < 10 )
+        //            {
+        //                try
+        //                {
+        //                    transferListener.setBytesTransferred( offset );
+        //                    ftpClient.download(url.getFile(), destinationFile, offset, transferListener);
+        //                    ftpClient.currentDirectory(); //workaround, since download on user kick is not interrupted
+        //                    transferred = true;
+        //                }
+        //                catch( Exception e )
+        //                {
+        //                    ftpClient.disconnect(false);
+        //                    if( port != -1 )
+        //                        ftpClient.connect(hostname, port);
+        //                    else
+        //                        ftpClient.connect(hostname);
+        //                    ftpClient.login(userInfo[0], userInfo[1]);
+        //                    ftpClient.setType(FTPClient.TYPE_BINARY);
+        //                    //TODO: correct transfer resuming
+        //                    try (FileOutputStream fos = new FileOutputStream( destinationFile, true ))
+        //                    {
+        //                        long downloadedFileSize = fos.getChannel().size();
+        //                        if( downloadedFileSize > 0 && downloadedFileSize < originalFileSize )
+        //                        {
+        //                            offset = downloadedFileSize;
+        //                        }
+        //                    }
+        //                    tries++;
+        //                }
+        //            }
+        //            return fileName;
+        //        }
+        //        catch( Exception e )
+        //        {
+        //            throw new BiosoftNetworkException( e, url.toString() );
+        //        }
+        //        finally
+        //        {
+        //            try
+        //            {
+        //                if(ftpClient != null)
+        //                    ftpClient.disconnect(true);
+        //            }
+        //            catch( IllegalStateException | IOException | FTPIllegalReplyException | FTPException e )
+        //            {
+        //            }
+        //        }
     }
     
     public static String downloadFileFromHTTP(URL url, File destinationFile, JobControl jobControl, boolean continueDownload) throws Exception
@@ -217,7 +214,7 @@ public class FileDownloader
             ApplicationUtils.linkOrCopyFile(destinationFile, file, jobControl);
             return file.getName();
         } else if(url.getProtocol().equalsIgnoreCase("ftp"))
-            return downloadFileFromFTP(url, destinationFile, new FTPUploadListener(jobControl, 0, 100), continueDownload);
+            return downloadFileFromFTP( url, destinationFile, /*new FTPUploadListener(jobControl, 0, 100), */continueDownload );
         else if(url.getProtocol().equalsIgnoreCase("http") || url.getProtocol().equalsIgnoreCase("https"))
             return downloadFileFromHTTP(url, destinationFile, jobControl, continueDownload);
         else
