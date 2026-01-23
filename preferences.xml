@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<dynamicPropertySet> 
+    <property name="DataCollectionPaths" type="com.developmentontheedge.beans.Preferences" display-name="DataCollectionPaths" short-description="DataCollectionPaths">
+        <dynamicPropertySet> 
+            <property name="TextDataElement" type="java.lang.String" value="projects/test-hematology/workflows" display-name="TextDataElement" short-description="TextDataElement"/> 
+        </dynamicPropertySet> 
+    </property> 
+    <property name="Global" type="com.developmentontheedge.beans.Preferences" display-name="Global" short-description="Global" hidden="true">
+        <dynamicPropertySet> 
+            <property name="IconsPath" type="java.lang.String" value="webserver/icons/" display-name="IconsPath" short-description="Server path to icons folder"/> 
+        </dynamicPropertySet> 
+    </property> 
+    <property name="Perspective" type="java.lang.String" value="Default" display-name="Perspective" short-description="Perspective" property-editor="biouml.workbench.perspective.PerspectiveSelector"/> 
+    <property name="currentJournal" type="java.lang.String" value="" display-name="Current journal" short-description="Current journal"/> 
+    <property name="fullUI" type="java.lang.String" value="true" display-name="fullUI" short-description="fullUI"/> 
+    <property name="showRepository" type="java.lang.String" value="true" display-name="showRepository" short-description="showRepository"/> 
+</dynamicPropertySet> 
