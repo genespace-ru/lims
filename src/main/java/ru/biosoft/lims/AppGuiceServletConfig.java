@@ -39,9 +39,10 @@ public class AppGuiceServletConfig extends Be5ServletListener
 
             install(new LimsApiModule());
             install(new NextflowApiModule());
+            install( new WebserverApiModule() );
             install(new RepositoryModule());
             install( new GBApiModule() );
-            install( new WebserverApiModule() );
+
 
             final JmxReporter jmxReporter = JmxReporter.forRegistry(METRIC_REGISTRY).build();
             jmxReporter.start();

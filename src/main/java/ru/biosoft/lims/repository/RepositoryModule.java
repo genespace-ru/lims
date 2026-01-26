@@ -12,7 +12,6 @@ public class RepositoryModule extends ServletModule
     @Override
     protected void configureServlets()
     {
-        Environment.setClassLoading( new SimpleClassLoading() );
         bind( RepositoryManager.class ).in( Scopes.SINGLETON );
     }
 

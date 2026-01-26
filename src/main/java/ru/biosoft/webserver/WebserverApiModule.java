@@ -3,6 +3,7 @@ package ru.biosoft.webserver;
 import com.google.inject.Scopes;
 import com.google.inject.servlet.ServletModule;
 
+import ru.biosoft.access.AccessCoreInit;
 import ru.biosoft.access.AccessInitializer;
 import ru.biosoft.bsa.BSAInitializer;
 import ru.biosoft.server.ServerInitializer;
@@ -20,6 +21,7 @@ public class WebserverApiModule extends ServletModule
         bind( LoginController.class ).in( Scopes.SINGLETON );
         bind( WebserverController.class ).in( Scopes.SINGLETON );
 
+        AccessCoreInit.init();
         ServerPreferences.loadPreferences( "preferences.xml" );
         AccessInitializer.initialize();
         ServerInitializer.initialize();
