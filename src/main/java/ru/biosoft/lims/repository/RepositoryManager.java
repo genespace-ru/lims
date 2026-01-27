@@ -72,12 +72,14 @@ public class RepositoryManager
 
         initRepository( dir );
         projects = repositoryMap.get( dir );
+        log.info( "Projects repo " + projects.getCompletePath().toString() );
 
         String dbDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='databases_dir'" );
         if( dbDir != null )
         {
             initRepository( dbDir );
             databases = repositoryMap.get( dbDir );
+            log.info( "Databases repo " + databases.getCompletePath().toString() );
         }
 
         String workflowsDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='workflows_dir'" );
@@ -85,6 +87,7 @@ public class RepositoryManager
         {
             initRepository( workflowsDir );
             workflows = repositoryMap.get( workflowsDir );
+            log.info( "Workflows repo " + workflows.getCompletePath().toString() );
         }
         log.info( "Repositories initialized" );
     }
@@ -124,7 +127,7 @@ public class RepositoryManager
             }
             catch (Exception e)
             {
-                System.out.println( "Unable to init " + path + ": " + ExceptionRegistry.log( e ) );
+                log.info( "Unable to init " + path + ": " + ExceptionRegistry.log( e ) );
             }
         }
     }
