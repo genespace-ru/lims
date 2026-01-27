@@ -39,7 +39,7 @@ import com.developmentontheedge.beans.DynamicProperty
 import com.developmentontheedge.beans.DynamicPropertySet as DPS
 import com.developmentontheedge.beans.DynamicPropertySetSupport
 
-import ru.biosoft.util.FileDownloader
+import ru.biosoft.util.download.FileDownloader
 
 import com.developmentontheedge.beans.BeanInfoConstants
 
