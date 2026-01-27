@@ -234,13 +234,13 @@ public class LoadProject extends GOperationSupport {
             }
             File file = new File(url.getFile());
             File seqfileTmp = new File(tempDir, file.getName())
-            def seqArhiveName = FileDownloader.downloadFile(url, destinationFile, null);
+            def seqArhiveName = FileDownloader.downloadFile(url, seqfileTmp, null);
             if(ArchiveFactory.isComplexArchive(seqfileTmp)) {
                 repo.importArchiveFile(seqfileTmp, samples)
             }
             else {
                 //single fasta, copy as is
-                ApplicationUtils.copyFile(repo.getChildFile(samples, file.name ), seqfileTmp )
+                ApplicationUtils.copyFile(repo.getChildFile(samples, file.name ), seqfileTmp, null )
             }
         }
         if(files.length == 1) {
