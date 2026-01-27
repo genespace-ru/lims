@@ -243,7 +243,7 @@ public class LoadProject extends GOperationSupport {
                 ApplicationUtils.copyFile(repo.getChildFile(samples, file.name ), seqfileTmp, null )
             }
         }
-        if(files.length == 1) {
+        else if(files.length == 1) {
             //Single file, it can be simple fasta (gzipped or not) or archive
             //Try to import as archive first, if...
             seqfile = getFileItem( files[0] )
