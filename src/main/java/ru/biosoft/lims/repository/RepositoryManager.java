@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -29,9 +30,11 @@ import ru.biosoft.util.TempFiles;
 import ru.biosoft.util.archive.ArchiveEntry;
 import ru.biosoft.util.archive.ArchiveFactory;
 import ru.biosoft.util.archive.ArchiveFile;
+import ru.biosoft.webserver.WebserverController;
 
 public class RepositoryManager
 {
+    private static final Logger log = Logger.getLogger( RepositoryManager.class.getName() );
     private static final Map<String, DataCollection<?>> repositoryMap = new HashMap<>();
     //private static final List<DataCollection<?>> repositories = new ArrayList<>();
     private DataCollection<?> projects = null;
@@ -83,6 +86,7 @@ public class RepositoryManager
             initRepository( workflowsDir );
             workflows = repositoryMap.get( workflowsDir );
         }
+        log.info( "Repositories initialized" );
     }
 
     public void initRepository(String path) throws Exception
@@ -257,6 +261,7 @@ public class RepositoryManager
         }
         properties.put( "actions", actionRules.toArray( new Object[] {} ) );
         PerspectiveRegistry.registerPerspective( "Default", PropertiesPerspective.class.getName(), properties );
+        log.info( "Perspective initialized" );
     }
 
     public DataCollection<?> getWorkflowsCollection()
