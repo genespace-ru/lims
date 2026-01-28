@@ -2,6 +2,8 @@ package ru.biosoft.lims.repository;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,10 +38,10 @@ public class RepositoryManager
 {
     private static final Logger log = Logger.getLogger( RepositoryManager.class.getName() );
     private static final Map<String, DataCollection<?>> repositoryMap = new HashMap<>();
-    //private static final List<DataCollection<?>> repositories = new ArrayList<>();
-    private DataCollection<?> projects = null;
-    private DataCollection<?> databases = null;
-    private DataCollection<?> workflows = null;
+    private String projectsDir = null;
+    private String databasesDir = null;
+    private String workflowsDir = null;
+    private String genomesDir = null;
 
     @Inject
     protected DbService db;
@@ -65,29 +67,36 @@ public class RepositoryManager
 
     public void initRepositories() throws Exception
     {
-        String dir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='projects_dir'" );
-        if( dir == null )
+        projectsDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='projects_dir'" );
+        if( projectsDir == null )
             throw new NullPointerException( "Project repository is not specified in systemsettings." + System.lineSeparator()
                     + "Please specify project repository in systemsettings, section_name=lims, setting_name=projects_repo. " );
 
-        initRepository( dir );
-        projects = repositoryMap.get( dir );
+        initRepository( projectsDir );
+        DataCollection<?> projects = repositoryMap.get( projectsDir );
         log.info( "Projects repo " + projects.getCompletePath().toString() );
 
-        String dbDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='databases_dir'" );
-        if( dbDir != null )
+        databasesDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='databases_dir'" );
+        if( databasesDir != null )
         {
-            initRepository( dbDir );
-            databases = repositoryMap.get( dbDir );
+            initRepository( databasesDir );
+            DataCollection<?> databases = repositoryMap.get( databasesDir );
             log.info( "Databases repo " + databases.getCompletePath().toString() );
         }
 
-        String workflowsDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='workflows_dir'" );
+        workflowsDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='workflows_dir'" );
         if( workflowsDir != null )
         {
             initRepository( workflowsDir );
-            workflows = repositoryMap.get( workflowsDir );
+            DataCollection<?> workflows = repositoryMap.get( workflowsDir );
             log.info( "Workflows repo " + workflows.getCompletePath().toString() );
+        }
+        log.info( "Repositories initialized" );
+        genomesDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='genomes_dir'" );
+        if( genomesDir != null )
+        {
+            //Genomes is not supposed to be used as repository in tree
+            log.info( "Genomes folder exist" );
         }
         log.info( "Repositories initialized" );
     }
@@ -137,22 +146,22 @@ public class RepositoryManager
      */
     public void closeRepositories() throws Exception
     {
-        if( projects != null )
-            projects.close();
-        if( databases != null )
-            databases.close();
-        if( workflows != null )
-            workflows.close();
+        if( projectsDir != null )
+            repositoryMap.get( projectsDir ).close();
+        if( databasesDir != null )
+            repositoryMap.get( databasesDir ).close();
+        if( workflowsDir != null )
+            repositoryMap.get( workflowsDir ).close();
     }
 
     //return projects path
     public String getRepositoryPath()
     {
         init();
-        if( projects == null )
+        if( projectsDir == null )
             return null;
         else
-            return projects.getCompletePath().toString();
+            return repositoryMap.get( projectsDir ).getCompletePath().toString();
     }
 
     public static File getChildFile(FileBasedCollection<?> collection, String name)
@@ -216,8 +225,9 @@ public class RepositoryManager
         Map<String, Object> properties = new HashMap<>();
         properties.put( "title", "Default" );
         List<RepositoryTabInfo> tabs = new ArrayList<>();
-        if( databases != null )
+        if( databasesDir != null )
         {
+            DataCollection<?> databases = repositoryMap.get( databasesDir );
             Map<String, Object> tabProps = new HashMap<>();
             tabProps.put( "title", databases.getName() );
             tabProps.put( "databases", true );
@@ -225,8 +235,9 @@ public class RepositoryManager
             RepositoryTabInfo repoTab = new RepositoryTabInfo( tabProps );
             tabs.add( repoTab );
         }
-        if( projects != null )
+        if( projectsDir != null )
         {
+            DataCollection<?> projects = repositoryMap.get( projectsDir );
             Map<String, Object> tabProps = new HashMap<>();
             tabProps.put( "title", projects.getName() );
             tabProps.put( "databases", false );
@@ -234,8 +245,9 @@ public class RepositoryManager
             RepositoryTabInfo repoTab = new RepositoryTabInfo( tabProps );
             tabs.add( repoTab );
         }
-        if( workflows != null )
+        if( workflowsDir != null )
         {
+            DataCollection<?> workflows = repositoryMap.get( workflowsDir );
             Map<String, Object> tabProps = new HashMap<>();
             tabProps.put( "title", workflows.getName() );
             tabProps.put( "databases", false );
@@ -269,6 +281,30 @@ public class RepositoryManager
 
     public DataCollection<?> getWorkflowsCollection()
     {
-        return workflows;
+        return workflowsDir == null ? null : repositoryMap.get( workflowsDir );
+    }
+
+    public Path getGenomePath()
+    {
+        return getRepoPath( genomesDir );
+    }
+
+    public Path getProjectsPath()
+    {
+        return getRepoPath( projectsDir );
+
+    }
+
+    public Path getWorkflowsPath()
+    {
+        return getRepoPath( workflowsDir );
+    }
+
+    private Path getRepoPath(String pathStr)
+    {
+        init();
+        if( pathStr == null )
+            return null;
+        return Paths.get( pathStr );
     }
 }

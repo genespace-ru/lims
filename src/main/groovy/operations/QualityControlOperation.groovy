@@ -5,6 +5,7 @@ import javax.inject.Inject
 import com.developmentontheedge.be5.server.operations.support.GOperationSupport;
 import com.developmentontheedge.be5.operation.OperationResult
 import com.developmentontheedge.beans.DynamicPropertySetSupport
+import java.nio.file.Path
 import ru.biosoft.access.core.DataElementPath
 import ru.biosoft.access.file.GenericFileDataCollection
 import ru.biosoft.access.DataCollectionUtils
@@ -12,6 +13,7 @@ import ru.biosoft.util.ApplicationUtils
 import ru.biosoft.util.TempFiles
 import ru.biosoft.lims.repository.RepositoryManager
 import ru.biosoft.nextflow.NextflowService
+import biouml.plugins.wdl.GeneSpaceContext
 import biouml.plugins.wdl.NextFlowRunner
 
 import com.developmentontheedge.beans.DynamicProperty
@@ -84,8 +86,8 @@ public class QualityControlOperation extends GOperationSupport {
                 nextflowParams.put("parseData", "\\\"prjId\\\":"+(int)prj.$id+",\\\"workflowId\\\":"+workflowRunId );
                 nextflowParams.put("parseUrl", serverUrl+ "/nf/parse/multiqc" );
 
-
-                NextFlowRunner.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, outputDir, false, towerAddress)
+                GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath())
+                NextFlowRunner.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, outputDir, false, towerAddress, context)
             }
         }
     }
