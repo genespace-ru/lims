@@ -72,9 +72,12 @@ public class NextflowController extends BaseControllerSupport
     	}
         catch(Throwable t)
         {
-            log.log(Level.SEVERE, "Nextflow service exeption: " + t.getMessage(), t);
+            String message = t.getMessage() != null ? t.getMessage() : "unknown reason";
+            log.log( Level.SEVERE, "Nextflow service exeption: " + message, t );
 
-            String error = t.getMessage() + ", cause: " + t.getCause().getMessage()
+            String error = message;
+            if( t.getCause() != null )
+                error += ", cause: " + t.getCause().getMessage()
             					.replace("\"", "\\\"").replace("\n", "\\n");
             res.setStatus(400);
             res.sendJson("{ \"message\":\"" + error + "\"}");

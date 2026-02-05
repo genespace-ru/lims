@@ -66,28 +66,34 @@ public class QualityControlOperation extends GOperationSupport {
                 }
 
                 File samplesDir = prjDc.getFile("samples");
+                File resultsDir = prjDc.getFile("results");
 
                 Map<String, Object> nextflowParams = new HashMap<>();
                 //params.readsDir   = "${params.projectDir}/samples"
                 //params.fastqcDir  = "${params.projectDir}/results/fastqc"
                 //params.multiqcDir = "${params.projectDir}/results/multiqc"
-                nextflowParams.put("readsDir", samplesDir.getAbsolutePath() );
-                nextflowParams.put("fastqcDir", resultsDc.getFile("fastqc").getAbsolutePath() );
-                nextflowParams.put("multiqcDir", resultsDc.getFile("multiqc").getAbsolutePath() );
+                nextflowParams.put("readsDir", samplesDir.getAbsolutePath() ) //absolute path on server same as on host if in docker
+                nextflowParams.put("resultsDir", resultsDir.getAbsolutePath() ) //absolute path on server same as on host if in docker
+                nextflowParams.put("fastqcDir", resultsDc.getFile("fastqc").getAbsolutePath() ) //absolute path on server same as on host if in docker
+                nextflowParams.put("multiqcDir", resultsDc.getFile("multiqc").getAbsolutePath() ) //absolute path on server same as on host if in docker
 
                 String nextFlowScript = ApplicationUtils.readAsString(workflowsDc.getFile(workflowName ));
-                String outputDir = TempFiles.getTempDirectory().getAbsolutePath();
+                Path outputDir = TempFiles.getTempDirectory().toPath()
 
                 def workflowRunId = nf.insertWorkflowRun ((int)prj.$id, (int)workflowInfo)
 
-                def serverUrl =request.getServerUrl()
-                def towerAddress = serverUrl+"/nf"
+                def serverUrl = request.getServerUrl()
+                def serverDockerUrl = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_server_url'" );
+                if( serverDockerUrl != null ) {
+                    serverUrl = serverDockerUrl
+                }
+                def towerAddress = null;//serverUrl+"/nf"
 
                 nextflowParams.put("parseData", "\\\"prjId\\\":"+(int)prj.$id+",\\\"workflowId\\\":"+workflowRunId );
                 nextflowParams.put("parseUrl", serverUrl+ "/nf/parse/multiqc" );
 
-                GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath())
-                NextFlowRunner.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, outputDir, false, towerAddress, context)
+                GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
+                NextFlowRunner.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, false, true, towerAddress, context)
             }
         }
     }
