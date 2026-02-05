@@ -15,6 +15,7 @@ import ru.biosoft.lims.repository.RepositoryManager
 import ru.biosoft.nextflow.NextflowService
 import biouml.plugins.wdl.GeneSpaceContext
 import biouml.plugins.wdl.NextFlowRunner
+import ru.biosoft.nextflow.NextFlowRunnerLims
 
 import com.developmentontheedge.beans.DynamicProperty
 import com.developmentontheedge.beans.DynamicPropertySet as DPS
@@ -93,7 +94,7 @@ public class QualityControlOperation extends GOperationSupport {
                 nextflowParams.put("parseUrl", serverUrl+ "/nf/parse/multiqc" );
 
                 GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
-                NextFlowRunner.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, false, true, towerAddress, context)
+                NextFlowRunnerLims.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, false, true, towerAddress, context)
             }
         }
     }
