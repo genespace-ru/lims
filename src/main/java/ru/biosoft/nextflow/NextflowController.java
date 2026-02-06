@@ -62,6 +62,7 @@ public class NextflowController extends BaseControllerSupport
     	try
     	{
             String bodyIncoming = req.getBody();
+            log.info( "Nextflow request body: " + bodyIncoming );
             JsonReader jsonReader = Json.createReader( new StringReader( bodyIncoming ) );
             JsonObject body = jsonReader.readObject();
         	log.info("  json: " + body);
