@@ -3,6 +3,7 @@ package ru.biosoft.nextflow;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -53,7 +54,18 @@ public class TraceController extends NextflowController
 
     protected String create(Request req, JsonObject body) throws Exception
     {
-    	String workflowId = body.getString("workflowId");
+        String workflowId = null;
+        if( JsonObject.EMPTY_JSON_OBJECT.equals( body ) )
+        {
+            Map<String, String[]> params = req.getParameters();
+            if( params.containsKey( "workflowId" ) && params.get( "workflowId" ) != null )
+                workflowId = params.get( "workflowId" )[0];
+            else if( params.containsKey( "workspaceId" ) && params.get( "workspaceId" ) != null )
+                workflowId = params.get( "workspaceId" )[0];
+
+        }
+        else
+            workflowId = body.getString( "workflowId" );
         db.updateRaw("UPDATE workflow_runs SET status='created', create_request=?::jsonb WHERE id=?",
         		body.toString(), Integer.parseInt(workflowId));
 

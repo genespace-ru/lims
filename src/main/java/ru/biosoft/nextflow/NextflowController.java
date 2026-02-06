@@ -63,8 +63,17 @@ public class NextflowController extends BaseControllerSupport
     	{
             String bodyIncoming = req.getBody();
             log.info( "Nextflow request body: " + bodyIncoming );
-            JsonReader jsonReader = Json.createReader( new StringReader( bodyIncoming ) );
-            JsonObject body = jsonReader.readObject();
+            JsonObject body = JsonObject.EMPTY_JSON_OBJECT;
+            if(bodyIncoming == null || bodyIncoming.isBlank())
+            {
+                log.severe( "Nextflow request body is empty, try to use parameters" );
+                log.info( "Nextflow request parameters " + req.getParameters() );
+            }
+            else
+            {
+                JsonReader jsonReader = Json.createReader( new StringReader( bodyIncoming ) );
+                body = jsonReader.readObject();
+            }
         	log.info("  json: " + body);
     		
     		json = process(req, res, body);
