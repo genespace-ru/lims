@@ -88,13 +88,19 @@ public class QualityControlOperation extends GOperationSupport {
                 if( serverDockerUrl != null ) {
                     serverUrl = serverDockerUrl
                 }
-                def towerAddress = null;//serverUrl+"/nf"
+                def towerAddress = serverUrl+"/nf"
+
+                boolean useDocker = false
+                String useDockerStr = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_nextflow'" )
+                if(useDockerStr != null) {
+                    useDocker = Boolean.parseBoolean(useDockerStr )
+                }
 
                 nextflowParams.put("parseData", "\\\"prjId\\\":"+(int)prj.$id+",\\\"workflowId\\\":"+workflowRunId );
                 nextflowParams.put("parseUrl", serverUrl+ "/nf/parse/multiqc" );
 
                 GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
-                NextFlowRunnerLims.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, false, true, towerAddress, context)
+                NextFlowRunnerLims.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, false, useDocker, towerAddress, context)
             }
         }
     }
