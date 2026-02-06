@@ -32,7 +32,7 @@ public class TraceController extends NextflowController
 
     	String method = req.getRawRequest().getMethod();
     	
-        if( ("POST".equals( method ) || "GET".equals( method )) && "create".equals( tokens[3] ) )
+        if( "POST".equals( method ) && "create".equals( tokens[3] ) )
    			return create(req, body);
 
     	// request: /nf/trace/workflowId/[begin/complete/heartbeat/progress]

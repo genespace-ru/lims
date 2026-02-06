@@ -6,10 +6,6 @@ import com.developmentontheedge.be5.server.servlet.support.BaseControllerSupport
 import com.developmentontheedge.be5.web.Request;
 import com.developmentontheedge.be5.web.Response;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.util.Enumeration;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -55,10 +51,8 @@ public class NextflowController extends BaseControllerSupport
     @Override
     public void generate(Request req, Response res)
     {
-    	String uri = req.getRequestUri();
     	log.info( "Nextflow request: " + req.getRawRequest().getMethod() + " " + req.getRequestUri());
     	
-    	String[] tokens = uri.split("/");
     	String json;
     	try
     	{
@@ -67,22 +61,7 @@ public class NextflowController extends BaseControllerSupport
             JsonObject body = JsonObject.EMPTY_JSON_OBJECT;
             if(bodyIncoming == null || bodyIncoming.isBlank())
             {
-                log.severe( "Nextflow request body is empty, print complete request" );
-                HttpServletRequest request = req.getRawRequest();
-
-                Enumeration<String> headerNames = request.getHeaderNames();
-                while ( headerNames.hasMoreElements() )
-                {
-                    String headerName = headerNames.nextElement();
-                    log.info( "Header Name - " + headerName + ", Value - " + request.getHeader( headerName ) );
-                }
-
-                Enumeration<String> params = request.getParameterNames();
-                while ( params.hasMoreElements() )
-                {
-                    String paramName = params.nextElement();
-                    log.info( "Parameter Name - " + paramName + ", Value - " + request.getParameter( paramName ) );
-                }
+                log.severe( "Nextflow request body is empty" );
             }
             else
             {
