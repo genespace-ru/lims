@@ -85,16 +85,20 @@ public class QualityControlOperation extends GOperationSupport {
 
                 def serverUrl = request.getServerUrl()
 
-                def serverDockerUrl = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_server_url'" );
-                if( serverDockerUrl != null ) {
-                    serverUrl = serverDockerUrl
-                }
+
                 String referer = null
                 if( request != null && request.getRawRequest() != null ) {
                     referer = request.getRawRequest().getHeader( "referer" )
                 }
-                if(referer != null)
-                    serverUrl = referer
+                if(referer != null) {
+                    serverUrl = referer.replaceAll('/$', '')
+                }
+
+                def serverDockerUrl = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_server_url'" );
+                if( serverDockerUrl != null ) {
+                    serverUrl = serverDockerUrl
+                }
+
                 def towerAddress = serverUrl+"/nf"
 
                 boolean useDocker = false
