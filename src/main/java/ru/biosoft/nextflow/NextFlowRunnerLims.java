@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import biouml.plugins.wdl.GeneSpaceContext;
-import biouml.plugins.wdl.NextFlowRunner;
+import biouml.plugins.wdl.nextflow.NextFlowRunner;
 import one.util.streamex.StreamEx;
 import ru.biosoft.util.ApplicationUtils;
 

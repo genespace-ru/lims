@@ -14,7 +14,7 @@ import ru.biosoft.util.TempFiles
 import ru.biosoft.lims.repository.RepositoryManager
 import ru.biosoft.nextflow.NextflowService
 import biouml.plugins.wdl.GeneSpaceContext
-import biouml.plugins.wdl.NextFlowRunner
+import biouml.plugins.wdl.nextflow.NextFlowRunner
 import ru.biosoft.nextflow.NextFlowRunnerLims
 
 import com.developmentontheedge.beans.DynamicProperty
