@@ -8,7 +8,7 @@
 	<parent>
 		<artifactId>be5-app</artifactId>
 		<groupId>com.developmentontheedge.be5</groupId>
-		<version>1.0.0</version>
+		<version>1.0.2</version>
 	</parent>
 
 	<groupId>ru.biosoft</groupId>
@@ -32,7 +32,7 @@
     	<dependency>
     		<groupId>com.developmentontheedge.be5</groupId>
     		<artifactId>be5-test-base</artifactId>
-    		<version>0.4.1</version>
+    		<version>[0.4.4,)</version>
     		<scope>test</scope>
     	</dependency>
     
@@ -47,7 +47,7 @@
         <dependency>
           <groupId>com.developmentontheedge.be5</groupId>
           <artifactId>be5-monitoring</artifactId>
-          <version>[0.4.0,)</version>
+          <version>[0.4.4,)</version>
         </dependency>
         
         <!-- ru.biosoft.* plugins -->
