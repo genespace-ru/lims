@@ -78,7 +78,7 @@
         <dependency>
           <groupId>ru.biosoft.genomebrowser</groupId>
           <artifactId>misc</artifactId>
-          <version>[2.0.6,)</version>
+          <version>[2.0.8,)</version>
         </dependency>
         
         <dependency>
@@ -101,20 +101,6 @@
             <!--scope>runtime</scope-->
         </dependency>
         
-        <!-- https://mvnrepository.com/artifact/org.xeustechnologies/jtar -->
-        <dependency>
-            <groupId>org.xeustechnologies</groupId>
-            <artifactId>jtar</artifactId>
-            <version>1.1</version>
-        </dependency>
-        
-        <!-- https://mvnrepository.com/artifact/com.clickhouse/org.apache.commons.compress -->
-        <dependency>
-            <groupId>com.clickhouse</groupId>
-            <artifactId>org.apache.commons.compress</artifactId>
-            <version>1.9.1</version>
-        </dependency>
-    	
     	<dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
