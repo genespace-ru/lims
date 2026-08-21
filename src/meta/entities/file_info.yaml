@@ -23,7 +23,7 @@ file_info:
         canBeNull: true
     - path:
         type: VARCHAR(255)
-        doc: Полный путь до файла, относительно проекта.
+        doc: Полный путь до файла в репозитории.
     - size:
         type: INT
         doc: Размер файла в байтах.

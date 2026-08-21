@@ -6,6 +6,8 @@ import com.developmentontheedge.be5.server.operations.support.GOperationSupport;
 import com.developmentontheedge.be5.operation.OperationResult
 import com.developmentontheedge.beans.DynamicPropertySetSupport
 import java.nio.file.Path
+import java.util.Map.Entry
+
 import ru.biosoft.access.core.DataElementPath
 import ru.biosoft.access.file.GenericFileDataCollection
 import ru.biosoft.access.DataCollectionUtils
@@ -14,10 +16,11 @@ import ru.biosoft.util.TempFiles
 import ru.biosoft.lims.repository.RepositoryManager
 import ru.biosoft.nextflow.NextflowService
 import biouml.plugins.wdl.GeneSpaceContext
+import biouml.plugins.wdl.WorkflowSettings
 import biouml.plugins.wdl.nextflow.NextFlowRunner
-import ru.biosoft.nextflow.NextFlowRunnerLims
 
 import com.developmentontheedge.beans.DynamicProperty
+import com.developmentontheedge.beans.DynamicPropertySet
 import com.developmentontheedge.beans.DynamicPropertySet as DPS
 import com.developmentontheedge.be5.databasemodel.util.DpsUtils
 
@@ -110,9 +113,24 @@ public class QualityControlOperation extends GOperationSupport {
                 nextflowParams.put("parseData", "\\\"prjId\\\":"+(int)prj.$id+",\\\"workflowId\\\":"+workflowRunId );
                 nextflowParams.put("parseUrl", serverUrl+ "/nf/parse/multiqc" );
 
+                WorkflowSettings settings = new WorkflowSettings();
+                settings.setParameters( initParameters( nextflowParams ) );
+                settings.setUseDocker(useDocker )
+                File json = settings.generateParametersJSON(outputDir.toAbsolutePath().toString() )
                 GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
-                NextFlowRunnerLims.runNextFlow(""+ workflowRunId, "fastqc", nextflowParams, nextFlowScript, false, useDocker, towerAddress, context)
+                NextFlowRunner.runNextFlow("$workflowRunId", "fastqc", nextFlowScript, false, settings, towerAddress, context, json)
             }
         }
+    }
+    public static DynamicPropertySet initParameters(Map<String, Object> params) {
+        DynamicPropertySet parameters = new DynamicPropertySetSupport();
+        for ( Entry<String, Object> param : params.entrySet() ) {
+            String name = param.getKey();
+            Object value = param.getValue();
+            Class clazz = String.class;
+            DynamicProperty dp = new DynamicProperty( name, clazz, value );
+            parameters.add( dp );
+        }
+        return parameters;
     }
 }

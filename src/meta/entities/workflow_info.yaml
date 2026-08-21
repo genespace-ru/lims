@@ -4,7 +4,7 @@ workflow_info:
   displayName: Workflow info
   doc: |-
     Информация о типах сценариев.
-    На данный момент сценарий - это файло со сценарием Nextflow.
+    На данный момент сценарий - это файл со сценарием Nextflow или WDL.
     Pending: 
     - формат и хранение аттрибутов для запуска задачи.
     - иконка для представления сценария
@@ -77,6 +77,16 @@ workflow_info:
       roles: '@AllRolesExceptGuest'
       code: |2-
             SELECT id, title FROM workflow_info wi ORDER BY title
+
+  - 'Workflow Selection':
+      type: 1D_unknown
+      invisible: true
+      roles: '@AllRolesExceptGuest'
+      code: |2-
+            SELECT wi.id, wi.title || '  (' || fi.path || ')' AS label
+            FROM workflow_info wi
+            INNER JOIN file_info fi ON fi.id = wi.file_info
+            ORDER BY wi.title
   
   operations:
   - Insert:

@@ -149,6 +149,7 @@ samples:
       - Delete
       - Filter
       - QualityControl
+      - RunWorkflow
       code: |-
             SELECT 
               s.id AS "ID" ,
@@ -198,3 +199,7 @@ samples:
       type: Groovy
       roles: [Administrator, User]
       file: operations.QualityControlOperation.groovy
+  - RunWorkflow:
+        type: Groovy
+        roles: [Administrator, User]
+        file: operations.RunWorkflowOperation.groovy
