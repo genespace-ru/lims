@@ -51,13 +51,13 @@ public class NextflowController extends BaseControllerSupport
     @Override
     public void generate(Request req, Response res)
     {
-    	log.info( "Nextflow request: " + req.getRawRequest().getMethod() + " " + req.getRequestUri());
+        //log.info( "Nextflow request: " + req.getRawRequest().getMethod() + " " + req.getRequestUri());
     	
     	String json;
     	try
     	{
             String bodyIncoming = req.getBody();
-            log.info( "Nextflow request body: " + bodyIncoming );
+            //log.info( "Nextflow request body: " + bodyIncoming );
             JsonObject body = JsonObject.EMPTY_JSON_OBJECT;
             if(bodyIncoming == null || bodyIncoming.isBlank())
             {
@@ -68,11 +68,11 @@ public class NextflowController extends BaseControllerSupport
                 JsonReader jsonReader = Json.createReader( new StringReader( bodyIncoming ) );
                 body = jsonReader.readObject();
             }
-        	log.info("  json: " + body);
+            //log.info("  json: " + body);
     		
     		json = process(req, res, body);
     		res.sendJson(json);
-    		log.info("Response: " + json);
+            //log.info("Response: " + json);
     	}
         catch(Throwable t)
         {
