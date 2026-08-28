@@ -39,6 +39,7 @@ ru:
     - topics: operationName
       entries:
       - QualityControl: Контроль качества
+      - RunWorkflow: Запуск сценария
   - devices:
     - topics: displayName
       entries:

@@ -202,7 +202,7 @@ public class RunWorkflowOperation extends GOperationSupport {
         Map<String, String> result = new LinkedHashMap<>()
         def rows = db.list("SELECT fi.path FROM file_info fi " +
                 "INNER JOIN file_types ft ON ft.id = fi.filetype " +
-                "WHERE fi.entity='workflow_info' AND fi.entityID=${workflowId} AND ft.suffix = 'folder' ORDER BY fi.path")
+                "WHERE fi.entity='workflow_info' AND ft.suffix = 'folder' ORDER BY fi.path")
         for (def row : rows) {
             String filePathStr = row.$path
             if (filePathStr == null || filePathStr.isBlank())
@@ -316,11 +316,10 @@ public class RunWorkflowOperation extends GOperationSupport {
         def prj = database.getEntity( "projects" ).get( projectId )
         DataElementPath projectPath = DataElementPath.create(repoPath).getChildPath(prj.$name );
         GenericFileDataCollection prjDc = projectPath.getDataCollection();
+
         DataElementPath results = projectPath.getChildPath("results" );
-        if(!results.exists()) {
-            DataCollectionUtils.createSubCollection(results);
-        }
-        File resultsDir = prjDc.getFile("results");
+        GenericFileDataCollection resutsDc = DataCollectionUtils.createSubCollection(results);
+
 
         def wfRow = db.recordWithParams( "SELECT ft.suffix, fi.path, wi.params FROM workflow_info wi " +
                 "INNER JOIN file_info fi ON fi.id = wi.file_info INNER JOIN file_types ft on ft.id = fi.fileType WHERE wi.id = ?", workflowId)
@@ -346,22 +345,46 @@ public class RunWorkflowOperation extends GOperationSupport {
         File workflowFile  = wfParent.getFile(workflowName );
         String nextFlowScript = null;
         String suffix = wfRow.getString("suffix")
+
+        def workflowRunId = nf.insertWorkflowRun ( projectId.intValue(), workflowId.intValue())
+        String runResultsSubdir = "workflow_run_${workflowRunId}"
+        DataElementPath resultsPath = results.getChildPath(runResultsSubdir)
+        if(!resultsPath.exists()) {
+            DataCollectionUtils.createSubCollection(resultsPath);
+        }
+        File resultsDir = resutsDc.getFile(runResultsSubdir);
+        db.update("UPDATE workflow_runs SET comment = ? WHERE id = ?", runResultsSubdir, workflowRunId)
+
+        boolean useDocker = false
+        String useDockerStr = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_nextflow'" )
+        if(useDockerStr != null) {
+            useDocker = Boolean.parseBoolean(useDockerStr )
+        }
+
+        WorkflowSettings settings = new WorkflowSettings()
+        settings.setOutputPath(results )
+        settings.setUseDocker(useDocker)
+        settings.getNextflowSettings().setPublishOutput("copy" )
+
+
         if(suffix.equals(".nf" )) {
             nextFlowScript = ApplicationUtils.readAsString(workflowFile);
-            //TODO: pass params.outdir in nextflow config parameters
+            settings.getNextflowSettings().setPublishDir(resultsDir.getAbsolutePath() )
         }
         else if(suffix.equals(".wdl" )){
             Map<String, Diagram> diagrams = WDLImporter.loadWDLDiagrams(workflowFile.toPath());
-            generateNextflow(diagrams, outputDir, resultsDir.toPath());
+            generateNextflow(diagrams, outputDir, resultsDir.toPath(), settings);
             File nfWorkflowFile = outputDir.resolve(workflowName + ".nf").toFile();
             nextFlowScript = ApplicationUtils.readAsString(nfWorkflowFile);
         }
         else {
+            resultsPath.remove()
+            db.update("UPDATE workflow_runs SET status = ? WHERE id = ?", "failed", workflowRunId)
             setResult(OperationResult.error("Unknown workflow type"))
             return
         }
 
-        def workflowRunId = nf.insertWorkflowRun ( projectId.intValue(), workflowId.intValue())
+
 
         def serverUrl = request.getServerUrl()
 
@@ -381,18 +404,14 @@ public class RunWorkflowOperation extends GOperationSupport {
 
         def towerAddress = serverUrl+"/nf"
 
-        boolean useDocker = false
-        String useDockerStr = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_nextflow'" )
-        if(useDockerStr != null) {
-            useDocker = Boolean.parseBoolean(useDockerStr )
-        }
+
 
         GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
 
         // Pass the project results folder to the workflow. Hand-written .nf
         // scripts declare `params.resultsDir` and reference it in publishDir;
         // generated (WDL) scripts already bake it in via setPublishDir.
-        workflowParams.put("resultsDir", resultsDir.toAbsolutePath().toString())
+        workflowParams.put("resultsDir", resultsDir.getAbsolutePath())
 
         String json = JsonOutput.toJson(workflowParams)
         File jsonFile = outputDir.resolve("parameters.json" ).toFile();
@@ -400,19 +419,19 @@ public class RunWorkflowOperation extends GOperationSupport {
 
         NextFlowRunner.generateFunctions(outputDir.toAbsolutePath().toString())
 
-        WorkflowSettings settings = new WorkflowSettings()
-        settings.setUseDocker(useDocker)
-        settings.getNextflowSettings().setPublishOutput(useDockerStr )
-        NextFlowRunner.runNextFlow("${workflowRunId}", workflowName, nextFlowScript, false, settings, towerAddress, context, jsonFile.toString())
+
+        NextFlowRunner.runNextFlow("${workflowRunId}", workflowName, nextFlowScript, false, settings, towerAddress, context, jsonFile.toString(), true)
 
         setResult(OperationResult.finished("Workflow ${workflowName} started"))
     }
 
 
 
-    protected static void generateNextflow(Map<String, Diagram> diagrams, Path outputFolderPath, Path resultsFolderPath) {
+    protected static void generateNextflow(Map<String, Diagram> diagrams, Path outputFolderPath, Path resultsFolderPath, WorkflowSettings settings) {
         NextFlowGenerator gen = new NextFlowGenerator();
         gen.setPublishDir(resultsFolderPath.toAbsolutePath().toString());
+        gen.setResultPath(outputFolderPath.toAbsolutePath().toString())
+        gen.setNextflowSettings(settings.getNextflowSettings())
         for(Entry<String, Diagram> entry : diagrams) {
             Path outFilePath = outputFolderPath.resolve(entry.getKey() + ".nf");
             String nextFlow = gen.generate(entry.getValue());

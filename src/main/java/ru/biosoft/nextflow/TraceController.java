@@ -1,15 +1,22 @@
 package ru.biosoft.nextflow;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonString;
+import javax.servlet.RequestDispatcher;
 
 import com.developmentontheedge.be5.database.DbService;
 import com.developmentontheedge.be5.web.Request;
@@ -23,6 +30,10 @@ public class TraceController extends NextflowController
 
     @Inject 
     protected NextflowService nf;
+
+    // Create a thread pool for background tasks
+    private final ExecutorService executor = Executors.newFixedThreadPool( 10 );
+    private final HttpClient httpClient = HttpClient.newBuilder().executor( executor ).build();
 	
     @Override
     protected String process(Request req, Response res, JsonObject body) throws Exception
@@ -154,6 +165,12 @@ public class TraceController extends NextflowController
 
     	db.updateRaw("UPDATE workflow_runs SET status=?, completion_time=CURRENT_TIMESTAMP, complete_request=?::jsonb WHERE id=?",
         		status, body.toString(), workflowId);
+
+        String targetUrl = req.getServerUrl() + "/nf/parse/results?workflowId=" + workflowId;
+        String jsonParams = "{\"workflowId\": " + workflowId + "}";
+        HttpRequest asyncRequest = HttpRequest.newBuilder().uri( URI.create( targetUrl ) ).POST( HttpRequest.BodyPublishers.ofString( jsonParams ) ).build();
+
+        httpClient.sendAsync( asyncRequest, HttpResponse.BodyHandlers.discarding() );
 
         return "{ \"workflowId\":\"" + workflowId + "\", \"status\":\"OK\"}";
     }
