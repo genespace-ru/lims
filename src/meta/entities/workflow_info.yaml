@@ -61,13 +61,14 @@ workflow_info:
       - Insert
       - Edit
       - Delete
+      - Import
       code: |2-
             SELECT 
               wi.id AS "ID",
               wi.title AS "Title",
               wi.description AS "Description",
               wi.comment AS "Comment",
-              wi.params AS "Parameters;<quick visible='false' />",
+              wi.params AS "Parameters",
               <@COMMON_WHO_FIELDS 'wi' />
             FROM workflow_info wi
             ORDER BY wi.title
@@ -103,4 +104,9 @@ workflow_info:
       roles: [Administrator]
       layout: '{"type":"modalForm"}'
       code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+  - Import:
+      type: Groovy
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator, User]
+      file: operations.ImportWorkflowOperation.groovy
  
