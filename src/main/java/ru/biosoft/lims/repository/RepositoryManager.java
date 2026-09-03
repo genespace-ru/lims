@@ -286,17 +286,20 @@ public class RepositoryManager
 
     public Path getGenomePath()
     {
+        init();
         return getRepoPath( genomesDir );
     }
 
     public Path getProjectsPath()
     {
+        init();
         return getRepoPath( projectsDir );
 
     }
 
     public Path getWorkflowsPath()
     {
+        init();
         return getRepoPath( workflowsDir );
     }
 

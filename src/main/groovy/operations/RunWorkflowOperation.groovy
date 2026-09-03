@@ -3,6 +3,8 @@ package operations;
 import java.nio.file.Path
 import java.util.Map.Entry
 
+import java.util.logging.Logger
+
 import javax.inject.Inject
 
 import com.developmentontheedge.be5.databasemodel.util.DpsUtils
@@ -26,11 +28,14 @@ import ru.biosoft.access.file.GenericFileDataCollection
 import ru.biosoft.lims.repository.RepositoryManager
 import ru.biosoft.nextflow.NextflowService
 import ru.biosoft.util.ApplicationUtils
+import ru.biosoft.util.RepositoryFileUtils
 import ru.biosoft.util.TempFiles
 
 import biouml.plugins.wdl.WorkflowSettings
 
 public class RunWorkflowOperation extends GOperationSupport {
+
+    private static final Logger log = Logger.getLogger( RunWorkflowOperation.class.getName() )
 
     @Inject
     private RepositoryManager repo;
@@ -172,7 +177,6 @@ public class RunWorkflowOperation extends GOperationSupport {
         if (repoPath == null) return result
 
         DataElementPath projectPath = DataElementPath.create(repoPath).getChildPath(projectName )
-        GenericFileDataCollection prjDc = projectPath.getDataCollection()
         if (projectPath.exists()) {
             def rows = db.list("SELECT path FROM file_info WHERE project = ${prjId} ORDER BY path")
             for (def row : rows) {
@@ -181,10 +185,14 @@ public class RunWorkflowOperation extends GOperationSupport {
                     continue
 
                 DataElementPath filePath = DataElementPath.create(filePathStr)
-                //Probably not fully correct check
+                // filePathStr is a complete repo-root-relative path (e.g. "projects/<prj>/...").
+                // DataElementPath.create(...).exists() resolves it against the registered
+                // roots (projects/databases/workflows) and returns true only if the file is
+                // actually present, so this also filters out stale file_info rows.
                 if (filePath.exists()) {
+                    // Resolve the absolute file via the parent collection (single walk).
                     File f = filePath.getParentPath().getDataElement(GenericFileDataCollection.class).getFile(filePath.getName())
-                    if (f != null && f.exists()) {
+                    if (f != null) {
                         result.put(filePathStr, f.getAbsolutePath())
                     }
                 }
@@ -195,14 +203,18 @@ public class RunWorkflowOperation extends GOperationSupport {
 
     /**
      * Collect workflow reference files (genome databases, etc.) stored in file_info
-     * as folders (entity = 'workflow_info') for the given workflow.
+     * as folders (entity = 'workflow_info'). These are supporting data shared across
+     * all workflows, so the query is NOT filtered by the current workflow — but the
+     * folders belonging to the selected workflow are listed first.
      * Returns Map: path relative to the repository root -> absolute path.
      */
     private Map<String, String> getWorkflowFiles(long workflowId) {
         Map<String, String> result = new LinkedHashMap<>()
+        // Folders for the selected workflow first, then the rest (shared supporting data).
         def rows = db.list("SELECT fi.path FROM file_info fi " +
                 "INNER JOIN file_types ft ON ft.id = fi.filetype " +
-                "WHERE fi.entity='workflow_info' AND ft.suffix = 'folder' ORDER BY fi.path")
+                "WHERE fi.entity='workflow_info' AND ft.suffix = 'folder' " +
+                "ORDER BY (fi.entityID = ${workflowId}) DESC, fi.path" )
         for (def row : rows) {
             String filePathStr = row.$path
             if (filePathStr == null || filePathStr.isBlank())
@@ -210,26 +222,10 @@ public class RunWorkflowOperation extends GOperationSupport {
             DataElementPath filePath = DataElementPath.create(filePathStr)
             if (filePath.exists()) {
                 GenericFileDataCollection folder = filePath.getDataElement(GenericFileDataCollection.class)
-                collectItemsRecursive(folder, result)
+                RepositoryFileUtils.collectItemsRecursive( folder, result, true );
             }
         }
         return result
-    }
-
-
-    private void collectItemsRecursive(GenericFileDataCollection folder, Map<String, String> result) {
-        if (folder == null || !folder.getCompletePath().exists()) return
-            for (String name : folder.getNameList()) {
-                DataElementPath p = folder.getCompletePath().getChildPath(name)
-                File f = folder.getFile(name)
-                if (f != null && f.exists()) {
-                    result.put(p.toString(), f.getAbsolutePath())
-                }
-                // descend into subfolders
-                def child = p.getDataElement()
-                if (child instanceof GenericFileDataCollection && p.exists())
-                    collectItemsRecursive(child, result)
-            }
     }
 
     /**
@@ -318,7 +314,7 @@ public class RunWorkflowOperation extends GOperationSupport {
         GenericFileDataCollection prjDc = projectPath.getDataCollection();
 
         DataElementPath results = projectPath.getChildPath("results" );
-        GenericFileDataCollection resutsDc = DataCollectionUtils.createSubCollection(results);
+        GenericFileDataCollection resultsDc = DataCollectionUtils.createSubCollection(results);
 
 
         def wfRow = db.recordWithParams( "SELECT ft.suffix, fi.path, wi.params FROM workflow_info wi " +
@@ -352,7 +348,7 @@ public class RunWorkflowOperation extends GOperationSupport {
         if(!resultsPath.exists()) {
             DataCollectionUtils.createSubCollection(resultsPath);
         }
-        File resultsDir = resutsDc.getFile(runResultsSubdir);
+        File resultsDir = resultsDc.getFile(runResultsSubdir);
         db.update("UPDATE workflow_runs SET comment = ? WHERE id = ?", runResultsSubdir, workflowRunId)
 
         boolean useDocker = false
@@ -367,62 +363,73 @@ public class RunWorkflowOperation extends GOperationSupport {
         settings.getNextflowSettings().setPublishOutput("copy" )
 
 
-        if(suffix.equals(".nf" )) {
-            nextFlowScript = ApplicationUtils.readAsString(workflowFile);
-            settings.getNextflowSettings().setPublishDir(resultsDir.getAbsolutePath() )
+        try {
+            if(".nf".equals( suffix )) {
+                nextFlowScript = ApplicationUtils.readAsString(workflowFile);
+                settings.getNextflowSettings().setPublishDir(resultsDir.getAbsolutePath() )
+            }
+            else if(".wdl".equals( suffix )){
+                Map<String, Diagram> diagrams = WDLImporter.loadWDLDiagrams(workflowFile.toPath());
+                generateNextflow(diagrams, outputDir, resultsDir.toPath(), settings);
+                File nfWorkflowFile = outputDir.resolve(workflowName + ".nf").toFile();
+                nextFlowScript = ApplicationUtils.readAsString(nfWorkflowFile);
+            }
+            else {
+                resultsPath.remove()
+                db.update("UPDATE workflow_runs SET status = ? WHERE id = ?", "failed", workflowRunId)
+                setResult(OperationResult.error("Unknown workflow type"))
+                return
+            }
+
+            def serverUrl = request.getServerUrl()
+
+
+            String referer = null
+            if( request != null && request.getRawRequest() != null ) {
+                referer = request.getRawRequest().getHeader( "referer" )
+            }
+            if(referer != null) {
+                serverUrl = referer.replaceAll('/$', '')
+            }
+
+            def serverDockerUrl = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_server_url'" );
+            if( serverDockerUrl != null ) {
+                serverUrl = serverDockerUrl
+            }
+
+            def towerAddress = serverUrl+"/nf"
+
+
+
+            GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
+
+            // Pass the project results folder to the workflow. Hand-written .nf
+            // scripts declare `params.resultsDir` and reference it in publishDir;
+            // generated (WDL) scripts already bake it in via setPublishDir.
+            workflowParams.put("resultsDir", resultsDir.getAbsolutePath())
+
+            String json = JsonOutput.toJson(workflowParams)
+            File jsonFile = outputDir.resolve("parameters.json" ).toFile();
+            ApplicationUtils.writeString(jsonFile, json );
+
+            NextFlowRunner.generateFunctions(outputDir.toAbsolutePath().toString())
+
+
+            NextFlowRunner.runNextFlow("${workflowRunId}", workflowName, nextFlowScript, false, settings, towerAddress, context, jsonFile.toString(), true)
+
+            setResult(OperationResult.finished("Workflow ${workflowName} started"))
         }
-        else if(suffix.equals(".wdl" )){
-            Map<String, Diagram> diagrams = WDLImporter.loadWDLDiagrams(workflowFile.toPath());
-            generateNextflow(diagrams, outputDir, resultsDir.toPath(), settings);
-            File nfWorkflowFile = outputDir.resolve(workflowName + ".nf").toFile();
-            nextFlowScript = ApplicationUtils.readAsString(nfWorkflowFile);
-        }
-        else {
-            resultsPath.remove()
+        catch ( Exception e ) {
+            // A workflow_runs row was already created; if anything from script
+            // generation through runNextFlow fails, mark the run failed and drop
+            // the partially-created results folder so it doesn't linger.
+            log.error( "Workflow ${workflowName} (run ${workflowRunId}) failed to start: " + e.getMessage() )
+            if( resultsPath.exists() ) {
+                resultsPath.remove()
+            }
             db.update("UPDATE workflow_runs SET status = ? WHERE id = ?", "failed", workflowRunId)
-            setResult(OperationResult.error("Unknown workflow type"))
-            return
+            setResult(OperationResult.error("Failed to start workflow ${workflowName}: ${e.getMessage()}"))
         }
-
-
-
-        def serverUrl = request.getServerUrl()
-
-
-        String referer = null
-        if( request != null && request.getRawRequest() != null ) {
-            referer = request.getRawRequest().getHeader( "referer" )
-        }
-        if(referer != null) {
-            serverUrl = referer.replaceAll('/$', '')
-        }
-
-        def serverDockerUrl = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_server_url'" );
-        if( serverDockerUrl != null ) {
-            serverUrl = serverDockerUrl
-        }
-
-        def towerAddress = serverUrl+"/nf"
-
-
-
-        GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
-
-        // Pass the project results folder to the workflow. Hand-written .nf
-        // scripts declare `params.resultsDir` and reference it in publishDir;
-        // generated (WDL) scripts already bake it in via setPublishDir.
-        workflowParams.put("resultsDir", resultsDir.getAbsolutePath())
-
-        String json = JsonOutput.toJson(workflowParams)
-        File jsonFile = outputDir.resolve("parameters.json" ).toFile();
-        ApplicationUtils.writeString(jsonFile, json );
-
-        NextFlowRunner.generateFunctions(outputDir.toAbsolutePath().toString())
-
-
-        NextFlowRunner.runNextFlow("${workflowRunId}", workflowName, nextFlowScript, false, settings, towerAddress, context, jsonFile.toString(), true)
-
-        setResult(OperationResult.finished("Workflow ${workflowName} started"))
     }
 
 

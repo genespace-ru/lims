@@ -1,8 +1,10 @@
 package ru.biosoft.nextflow;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,12 +25,12 @@ import com.developmentontheedge.be5.database.QRec;
 import com.developmentontheedge.be5.web.Request;
 import com.developmentontheedge.be5.web.Response;
 
-import ru.biosoft.access.core.DataElement;
 import ru.biosoft.access.core.DataElementPath;
 import ru.biosoft.access.file.FileTypeRegistry;
 import ru.biosoft.access.file.GenericFileDataCollection;
 import ru.biosoft.lims.repository.RepositoryManager;
 import ru.biosoft.util.ApplicationUtils;
+import ru.biosoft.util.RepositoryFileUtils;
 
 public class NextflowResultsProcessingController extends NextflowController
 {
@@ -68,7 +70,6 @@ public class NextflowResultsProcessingController extends NextflowController
 
         String projectName = db.getString( "SELECT name FROM projects WHERE ID=?", projectId );
         DataElementPath projectPath = DataElementPath.create( repoPath ).getChildPath( projectName );
-        Integer qcRunId = null;
 
         String resFile = body.getString( "results" );
         if( resFile != null )
@@ -112,13 +113,14 @@ public class NextflowResultsProcessingController extends NextflowController
                             }
                         }
                         Long fileInfo = fileName != null ? db.oneLong( "SELECT ID FROM file_info WHERE filename=? AND project=? ", fileName, projectId ) : null;
-                        qcRunId = db.updateRaw( sql, projectId, sampleId, fileInfo, workflowId, params.toString() );
+                        db.updateRaw( sql, projectId, sampleId, fileInfo, workflowId, params.toString() );
                     }
                 }
 
             }
             catch (IOException e)
             {
+                log.warning( "Failed to read MultiQC results file: " + e.getMessage() );
             }
         }
         String reportFileStr = body.getString( "report" );
@@ -161,14 +163,18 @@ public class NextflowResultsProcessingController extends NextflowController
                 DataElementPath resultsPath = DataElementPath.create( repoPath ).getChildPath( projectName ).getChildPath( "results" ).getChildPath( runFolderPath );
                 GenericFileDataCollection folder = resultsPath.getDataElement( GenericFileDataCollection.class );
 
+                // Cache resolved file_type ids for the duration of this call so we don't
+                // hit the DB once per output file for the same extension.
+                Map<String, Long> fileTypeCache = new HashMap<>();
+
                 File outputsPath = folder.getFile( "outputs.json" );
                 //Here we need outputs.json containing absolute paths in projects/ProjectName/results/workflow_run folder
                 //This folder is set as base publishDir in nextflow generation process 
                 if( outputsPath.exists() )
                 {
-                    File resultsFile = ((GenericFileDataCollection) folder.getOrigin()).getFile( folder.getName() );
-                    Path resultsPath2 = resultsFile.toPath();
-                    try( JsonReader jsonReader = Json.createReader( new java.io.FileReader( outputsPath ) ) )
+                    // The run folder this outputs.json belongs to is simply the parent of the file.
+                    Path resultsPath2 = outputsPath.getParentFile().toPath();
+                    try( JsonReader jsonReader = Json.createReader( new FileReader( outputsPath ) ) )
                     {
                         JsonObject outputs = jsonReader.readObject();
                         for ( Entry<String, JsonValue> entry : outputs.entrySet() )
@@ -190,7 +196,7 @@ public class NextflowResultsProcessingController extends NextflowController
                             }
                             Path relPath = resultsPath2.relativize( resultFile.toPath() );
                             DataElementPath resPath = getFromRelativePath( relPath );
-                            Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( resultFile.getName() ) );
+                            Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( resultFile.getName() ), fileTypeCache );
                             db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)",
                                     resultFile.getName(), fileTypeId, resPath.toString(), resultFile.length(), projectId, "workflow_runs", workflowRunId );
                         }
@@ -203,57 +209,52 @@ public class NextflowResultsProcessingController extends NextflowController
                 else
                 {
                     Map<String, String> allFiles = new LinkedHashMap<>();
-                    collectItemsRecursive( folder, allFiles );
+                    RepositoryFileUtils.collectItemsRecursive( folder, allFiles, false );
                     for ( Entry<String, String> file : allFiles.entrySet() )
                     {
                         File resultFile = new File( file.getValue() );
-                        Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( file.getValue() ) );
+                        Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( file.getValue() ), fileTypeCache );
                         db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)", resultFile.getName(), fileTypeId,
                                 file.getKey(), resultFile.length(), projectId, "workflow_runs", workflowRunId );
                     }
                 }
-
             }
-
         }
         return "{ \"result\":\"ok\"}";
     }
 
-    private long getFileType(File file, String fileExt)
+    private long getFileType(File file, String fileExt, Map<String, Long> cache)
     {
-        Long typeID = db.oneLong( "SELECT id FROM file_types prj WHERE suffix = ?", fileExt );
-        if( typeID != null )
-            return typeID;
-        String genericType = ".binary";
-        if( FileTypeRegistry.isTextFile( file ) )
+        String ext = fileExt == null ? "" : fileExt;
+        // Fast path: the extension has a direct file_types match — result is purely
+        // extension-determined, so cache under the bare extension.
+        Long byExt = cache.get( ext );
+        if( byExt != null )
+            return byExt;
+
+        Long typeID = db.oneLong( "SELECT id FROM file_types WHERE suffix = ?", ext );
+        if( typeID == null )
         {
-            genericType = ".text";
+            // No direct match: fall back to a generic type based on whether this file
+            // is text or binary. That depends on file content, so include it in the key.
+            String genericType = FileTypeRegistry.isTextFile( file ) ? ".text" : ".binary";
+            String key = ext + "|" + genericType;
+            Long byGeneric = cache.get( key );
+            if( byGeneric != null )
+                return byGeneric;
+            typeID = db.oneLong( "SELECT id FROM file_types WHERE suffix = ?", genericType );
+            if( typeID == null )
+            {
+                String descr = genericType.equals( ".text" ) ? "Generic text file" : "Generic binary file";
+                typeID = db.insert( "INSERT INTO file_types (suffix, description) VALUES (?,?)", genericType, descr );
+            }
+            cache.put( key, typeID );
         }
-        typeID = db.oneLong( "SELECT id FROM file_types prj WHERE suffix = ?", genericType );
-        if( typeID != null )
-            return typeID;
         else
         {
-            String descr = genericType.equals( ".text" ) ? "Generic text file" : "Generic binary file";
-            typeID = db.insert( "INSERT INTO file_types (suffix, description) VALUES (?,?)", genericType, descr );
-            return typeID;
+            cache.put( ext, typeID );
         }
-    }
-
-    private void collectItemsRecursive(GenericFileDataCollection folder, Map<String, String> result) {
-        if( folder == null || !folder.getCompletePath().exists() )
-            return;
-            for (String name : folder.getNameList()) {
-            DataElementPath p = folder.getCompletePath().getChildPath( name );
-            File f = folder.getFile( name );
-                if (f != null && f.exists()) {
-                result.put( p.toString(), f.getAbsolutePath() );
-                }
-                // descend into subfolders
-                DataElement child = p.getDataElement();
-                if (child instanceof GenericFileDataCollection && p.exists())
-                    collectItemsRecursive( (GenericFileDataCollection) child, result );
-            }
+        return typeID;
     }
 
     private DataElementPath getFromRelativePath(Path path)
