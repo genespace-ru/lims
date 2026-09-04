@@ -22,7 +22,7 @@ workflow_info:
         reference: file_info
         doc: Файл со сценарием данных.
     - title:
-        type: VARCHAR(20)
+        type: VARCHAR(50)
         doc: Название сценария.
     - description:
         type: TEXT

@@ -20,9 +20,13 @@ import org.json.JSONObject
 import com.developmentontheedge.beans.DynamicPropertySet as DPS
 import com.developmentontheedge.beans.DynamicPropertySetSupport
 import biouml.model.Diagram
+import biouml.model.Node
 import biouml.plugins.wdl.WorkflowSettings
+import biouml.plugins.wdl.WorkflowUtil
 
 import com.developmentontheedge.beans.BeanInfoConstants
+import com.developmentontheedge.beans.DynamicProperty
+
 import groovy.json.JsonException
 import groovy.json.JsonSlurper
 import jakarta.servlet.http.HttpServletResponse
@@ -36,6 +40,7 @@ import ru.biosoft.util.RepositoryFileUtils
 import ru.biosoft.util.TempFiles
 import ru.biosoft.util.archive.ArchiveFactory
 import biouml.plugins.wdl.diagram.WDLImporter
+import biouml.plugins.wdl.nextflow.NextFlowImporter
 
 public class ImportWorkflowOperation extends GOperationSupport {
 
@@ -113,7 +118,9 @@ public class ImportWorkflowOperation extends GOperationSupport {
         def name = workflowItem.name
         File workflowTmp = new File(tempDir, name)
         workflowItem.inputStream.withCloseable { ins ->
-            workflowTmp.withOutputStream { outs -> IOUtils.copy(ins,outs) }
+            workflowTmp.withOutputStream { outs ->
+                IOUtils.copy(ins,outs)
+            }
         }
 
         Path workflows = repo.getWorkflowsPath()
@@ -144,7 +151,9 @@ public class ImportWorkflowOperation extends GOperationSupport {
                     else {
                         setResult( OperationResult.error(
                                 "Archive contains ${files.size()} workflows: " +
-                                files.collect { it.substring(it.lastIndexOf('/') + 1) }.join(", ") +
+                                files.collect {
+                                    it.substring(it.lastIndexOf('/') + 1)
+                                }.join(", ") +
                                 ". Specify the main workflow name." ) )
                         return
                     }
@@ -161,7 +170,9 @@ public class ImportWorkflowOperation extends GOperationSupport {
                         if( matches.isEmpty() ) {
                             setResult( OperationResult.error(
                                     "Workflow '${mainName}' not found in archive. Available: " +
-                                    files.collect { it.substring(it.lastIndexOf('/') + 1) }.join(", ") ) )
+                                    files.collect {
+                                        it.substring(it.lastIndexOf('/') + 1)
+                                    }.join(", ") ) )
                             return
                         }
                         //several files with the same name — take the first
@@ -175,7 +186,9 @@ public class ImportWorkflowOperation extends GOperationSupport {
                         if( matches.isEmpty() ) {
                             setResult( OperationResult.error(
                                     "Workflow '${mainName}' not found in archive. Available: " +
-                                    files.collect { it.substring(it.lastIndexOf('/') + 1) }.join(", ") ) )
+                                    files.collect {
+                                        it.substring(it.lastIndexOf('/') + 1)
+                                    }.join(", ") ) )
                             return
                         }
                         //several files with the same name — take the first
@@ -273,15 +286,34 @@ public class ImportWorkflowOperation extends GOperationSupport {
         String format = workflowName.substring(workflowName.lastIndexOf('.') + 1)
         switch (format?.toLowerCase()) {
             case "nf":
+                NextFlowImporter nfImporter = new NextFlowImporter()
+                String nextflow = ApplicationUtils.readAsString(workflowPath.toFile() )
+                Set<String> paramNames = nfImporter.getParams( nextflow)
+                if(paramNames != null && ! paramNames.isEmpty()) {
+                    JSONObject json = new JSONObject()
+                    for (String paramName : paramNames) {
+                        String name = paramName.startsWith("params." )?paramName.substring(7 ):paramName
+                        json.put(name, new JSONObject().put("type", "String"))
+                    }
+                    return json.toString(2)
+                }
                 break
             case "wdl":
                 Map<String, Diagram> diagrams = WDLImporter.loadWDLDiagrams(workflowPath)
                 Diagram diagram = diagrams.get(workflowName )
-                WorkflowSettings settings = new WorkflowSettings()
-                settings.initParameters( diagram )
-                File tempDir = TempFiles.getTempDirectory()
-                File jsonFile = settings.generateParametersJSON(tempDir.getAbsolutePath() )
-                return ApplicationUtils.readAsString(jsonFile )
+                JSONObject json = new JSONObject()
+                List<Node> externalParameters = WorkflowUtil.getExternalParameters( diagram );
+                for( Node externalParameter : externalParameters ) {
+                    String type = WorkflowUtil.getType( externalParameter );
+                    String name = WorkflowUtil.getName( externalParameter );
+                    Object value = WorkflowUtil.getExpression( externalParameter );
+                    JSONObject jsonParam = new JSONObject()
+                    jsonParam.put("type", type)
+                    if(value != null)
+                        jsonParam.put("default", value.toString())
+                    json.put(name, jsonParam)
+                }
+                return json.toString(2)
             default:
                 return null
         }

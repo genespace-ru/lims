@@ -44,18 +44,18 @@ public class RepositoryFileUtils
             File f = folder.getFile( name );
             if( f != null && f.exists() )
             {
-                result.put( p.toString(), f.getAbsolutePath() );
-            }
-            DataElement child = p.getDataElement();
-            if( child instanceof GenericFileDataCollection && p.exists() )
-            {
-                GenericFileDataCollection subFolder = (GenericFileDataCollection) child;
-                if( includeFolders )
+                DataElement child = p.getDataElement();
+                if( child instanceof GenericFileDataCollection && p.exists() )
                 {
-                    File folderFile = folder.getFile( subFolder.getName() );
-                    result.put( p.toString(), folderFile.getAbsolutePath() );
+                    GenericFileDataCollection subFolder = (GenericFileDataCollection) child;
+                    if( includeFolders )
+                    {
+                        result.put( p.toString(), f.getAbsolutePath() );
+                    }
+                    collectItemsRecursive( subFolder, result, includeFolders );
                 }
-                collectItemsRecursive( subFolder, result, includeFolders );
+                else
+                    result.put( p.toString(), f.getAbsolutePath() );
             }
         }
     }

@@ -366,7 +366,9 @@ public class RunWorkflowOperation extends GOperationSupport {
         try {
             if(".nf".equals( suffix )) {
                 nextFlowScript = ApplicationUtils.readAsString(workflowFile);
+                //outdir
                 settings.getNextflowSettings().setPublishDir(resultsDir.getAbsolutePath() )
+                workflowParams.put("outdir", resultsDir.getAbsolutePath())
             }
             else if(".wdl".equals( suffix )){
                 Map<String, Diagram> diagrams = WDLImporter.loadWDLDiagrams(workflowFile.toPath());
