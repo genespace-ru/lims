@@ -258,7 +258,7 @@ public class ImportWorkflowOperation extends GOperationSupport {
         }
         else {
             database.file_info << [fileType: typeID, fileName: workflowName,
-                path: workflowDePath.toString(), size: Files.size(workflowPath ), project: -1,
+                path: workflowDePath.toString(), size: Files.size(workflowPath ),
                 entity: "workflow_info"]
             fileId = db.oneLong( "SELECT id FROM file_info WHERE fileType = ? AND fileName =? AND path = ? and entity=?",
                     typeID, workflowName, workflowDePath.toString(), "workflow_info" );

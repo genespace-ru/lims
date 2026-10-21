@@ -30,7 +30,8 @@ file_info:
     - project:
         type: KEYTYPE
         reference: projects
-        doc: Проект, которому принадлежит файл.
+        canBeNull: true
+        doc: Проект, которому принадлежит файл. NULL для файлов, не привязанных к проекту (workflow и т.п.)
     - entity:
         type: VARCHAR(255)
         canBeNull: true

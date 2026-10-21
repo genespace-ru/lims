@@ -18,6 +18,7 @@ reports:
     - sample_id:
         type: KEYTYPE
         reference: samples
+        canBeNull: true
     - description:
         type: TEXT
         canBeNull: true
