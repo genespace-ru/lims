@@ -139,7 +139,8 @@ file_info:
       layout: '{"type":"modalForm"}'
       code: com.developmentontheedge.be5.server.operations.FilterOperation
   - Delete:
+      type: Groovy
       records: 2
       roles: [Administrator]
       layout: '{"type":"modalForm"}'
-      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+      file: operations.RemoveFileInfo.groovy
