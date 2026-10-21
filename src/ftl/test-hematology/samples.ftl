@@ -1,11 +1,11 @@
 DELETE FROM samples;
 DELETE FROM run_samples;
 
-<#macro SAMPLE id, project_id, type, title, 
+<#macro SAMPLE id, project, type, title,
         plate, well, index_plate_well, I7_index_id, index1, I5_index_id, index2,
         description="null", comment="null">
-INSERT INTO samples(id, project, typeID, title, description,comment) 
-VALUES(${id}, ${project_id}, ${type}, ${title?str}, ${description}, ${comment});
+INSERT INTO samples(id, project, typeID, title, description,comment)
+VALUES(${id}, ${project}, ${type}, ${title?str}, ${description}, ${comment});
 
 INSERT INTO run_samples(id, run_id, sample_id, 
   plate, well, index_plate_well, I7_index_id, index1, I5_index_id, index2)  

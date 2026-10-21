@@ -10,9 +10,11 @@ reports:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - project_id:
+    - project:
         type: KEYTYPE
         reference: projects
+        oldNames:
+        - project_id
     - sample_id:
         type: KEYTYPE
         reference: samples
@@ -49,9 +51,9 @@ reports:
               rep.description AS "Description;<quick visible='true' />",
               <@COMMON_WHO_FIELDS 'rep' />
             FROM reports rep
-                INNER JOIN projects p ON p.ID = rep.project_id
+                INNER JOIN projects p ON p.ID = rep.project
                 INNER JOIN samples s ON s.ID = rep.sample_id
-            ORDER BY rep.project_id
+            ORDER BY rep.project
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'

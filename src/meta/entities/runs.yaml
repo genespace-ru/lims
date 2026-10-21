@@ -11,9 +11,11 @@ runs:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - project_id:
+    - project:
         type: KEYTYPE
         reference: projects
+        oldNames:
+        - project_id
     - name:
         type: VARCHAR(100)
     - status:
@@ -55,7 +57,7 @@ runs:
               '<pre>' || r.data || '</pre>' AS "File data;<quick visible='false' />",
               <@COMMON_WHO_FIELDS 'r' />
             FROM runs r
-            INNER JOIN projects p ON p.ID = r.project_id
+            INNER JOIN projects p ON p.ID = r.project
             LEFT JOIN systemsettings s ON s.section_name='lims' AND s.setting_name='projects_dir'
             ORDER BY p.name
   - '*** Selection view ***':
@@ -80,7 +82,7 @@ runs:
              p.whoInserted___,
              p.whoModified___
             FROM projects p
-            LEFT JOIN runs r ON r.project_id = p.ID
+            LEFT JOIN runs r ON r.project = p.ID
             LEFT JOIN systemsettings s ON s.section_name='lims' AND s.setting_name='projects_dir'
             WHERE p.ID = <parameter:___prjID />
   operations:

@@ -19,6 +19,19 @@ public class RemoveProject extends GOperationSupport {
     @Inject
     private RepositoryManager repo;
 
+    // Tables that have a column referencing projects
+    // Order matters: children before parents to avoid dangling references mid-cascade.
+    private static final List<String> REFERENCING_TABLES = [
+        'task_runs',
+        'workflow_runs',
+        'qc_runs',
+        'runs',
+        'analyses',
+        'reports',
+        'file_info',
+        'samples',
+    ]
+
     @Override
     public void invoke(Object parameters) throws Exception {
         DPS params = parameters as DPS ?: new DynamicPropertySetSupport()
@@ -31,6 +44,11 @@ public class RemoveProject extends GOperationSupport {
                 if(projectPath.exists()) {
                     projectPath.remove()
                 }
+            }
+            // Remove child records from all tables that reference projects.
+            // Tables are not collections or genericCollection, so automatic removal is not performed
+            for ( tableName in REFERENCING_TABLES ) {
+                database.getEntity( tableName ).removeBy([ project: prj.$ID ])
             }
             database.projects.removeBy([ID: prj.$ID])
         }

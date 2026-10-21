@@ -127,7 +127,7 @@ attachments:
                 AS "Who Created;<quick visible='true' />" 
         FROM attachments<parameter:_tcloneid_ default=""/> a 
            INNER JOIN runs r ON a.ownerID = CONCAT( 'runs.', r.ID )
-        WHERE r.project_id = <parameter:___prjID />
+        WHERE r.project = <parameter:___prjID />
         ORDER BY a.creationDate___ DESC
   operations:
   - Delete:

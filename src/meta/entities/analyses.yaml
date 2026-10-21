@@ -9,9 +9,11 @@ analyses:
         type: KEYTYPE
         autoIncrement: true
         primaryKey: true
-    - project_id:
+    - project:
         type: KEYTYPE
         reference: projects
+        oldNames:
+        - project_id
     - name:
         type: VARCHAR(100)
     - icon:

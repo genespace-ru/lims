@@ -328,7 +328,7 @@ public class LoadProject extends GOperationSupport {
         }
 
         def fileData = IOUtils.toString(new FileInputStream(sampleSheetFile), StandardCharsets.UTF_8);
-        def runId = database.runs << [project_id: projectId, name: runName, status:"completed", data:fileData]
+        def runId = database.runs << [project: projectId, name: runName, status:"completed", data:fileData]
 
         String sampleFileName = sampleSheetFile.getName();
         String sampleFileExt = sampleFileName.replaceFirst(~/^([^\.])+/, '')
