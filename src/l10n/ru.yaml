@@ -48,6 +48,13 @@ ru:
     - topics: displayName
       entries:
       - displayName: Анализы
+  - projects:
+    - topics: displayName
+      entries:
+      - displayName: Проекты
+    - topics: operationName
+      entries:
+      - CreateEmpty: Создать пустой
   - device_types:
     - topics: displayName
       entries:
@@ -64,6 +71,10 @@ ru:
     - topics: displayName
       entries:
       - displayName: Сценарии анализа
+  - workflow_info:
+    - topics: displayName
+      entries:
+      - displayName: Сценарии
   - query.jsp:
     - topics: page
       entries:
@@ -100,3 +111,7 @@ ru:
       entries:
       - Value: Значение
       - Name: Имя
+  - file_info:
+    - topics: operationName
+      entries:
+      - Import: Импортировать

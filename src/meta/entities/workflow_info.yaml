@@ -1,7 +1,8 @@
 workflow_info:
-  type: dictionary
+  type: table
   primaryKey: ID
-  displayName: Workflow info
+  order: '22'
+  displayName: Workflows
   doc: |-
     Информация о типах сценариев.
     На данный момент сценарий - это файл со сценарием Nextflow или WDL.
@@ -55,7 +56,7 @@ workflow_info:
   
   - All records:
       type: 1D
-      roles: '@AllRoles'
+      roles: '@AllRolesExceptGuest'
       layout: '{"quickType":"select"}'
       operations:
       - Insert
@@ -97,7 +98,7 @@ workflow_info:
   - Edit:
       records: 1
       layout: '{"type":"modalForm"}'
-      roles: [Administrator]
+      roles: ['@AllRolesExceptGuest']
       code: com.developmentontheedge.be5.server.operations.SilentEditOperation
   - Delete:
       records: 2
@@ -107,6 +108,6 @@ workflow_info:
   - Import:
       type: Groovy
       layout: '{"type":"modalForm"}'
-      roles: [Administrator, User]
+      roles: ['@AllRolesExceptGuest']
       file: operations.ImportWorkflowOperation.groovy
  

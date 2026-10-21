@@ -43,7 +43,7 @@ devices:
   queries:
   - All records:
       type: 1D
-      roles: '@AllRolesExceptGuest'
+      roles: [Administrator]
       defaultView: true
       operations:
       - Delete

@@ -171,6 +171,19 @@ public class RepositoryManager
 
     public static void importArchiveFile(File file, DataCollection parent) throws Exception
     {
+        importArchiveFile( file, parent, null );
+    }
+
+    /**
+     * Imports an archive into the parent collection, preserving directory structure.
+     * @param file the archive file
+     * @param parent the target DataCollection
+     * @param importedPaths if non-null, populated with the DataElementPath strings
+     *                      of files that were actually imported (skipping existing)
+     * @throws Exception on error
+     */
+    public static void importArchiveFile(File file, DataCollection parent, List<String> importedPaths) throws Exception
+    {
         ArchiveFile archiveFile = ArchiveFactory.getArchiveFile( file );
         if( archiveFile == null )
             throw new Exception( "Specified file is not an archive" );
@@ -200,6 +213,10 @@ public class RepositoryManager
                 File entryFile = getChildFile( (FileBasedCollection<?>) parent, entryName );
                 ApplicationUtils.copyFile( entryFile, tmpFile, null );
                 numImported++;
+                if( importedPaths != null )
+                {
+                    importedPaths.add( entryPath.toString() );
+                }
             }
             catch (Exception e)
             {

@@ -40,6 +40,7 @@ import com.developmentontheedge.beans.DynamicPropertySet as DPS
 import com.developmentontheedge.beans.DynamicPropertySetSupport
 
 import ru.biosoft.util.download.FileDownloader
+import ru.biosoft.lims.util.FileTypeUtils
 
 import com.developmentontheedge.beans.BeanInfoConstants
 
@@ -372,7 +373,8 @@ public class LoadProject extends GOperationSupport {
                 if(params.$readsType.equals("single" )) {
                     if(namesNoExt.containsKey(sampleName.toLowerCase())) {
                         File fname = namesNoExt.get(sampleName);
-                        long fileTypeId = getFileType(fname, fname.getName().replace(sampleName, ""))
+                        long fileTypeId = FileTypeUtils.getOrCreateTypeId(db, fname)
+                        //getFileType(fname, fname.getName().replace(sampleName, ""))
                         fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
                     }
                 }
@@ -380,13 +382,13 @@ public class LoadProject extends GOperationSupport {
                     def readName = (sampleName + "_r1").toLowerCase()
                     if(namesNoExt.containsKey(readName)) {
                         File fname = namesNoExt.get(readName);
-                        long fileTypeId = getFileType(fname, fname.getName().replace(sampleName, ""))
+                        long fileTypeId = FileTypeUtils.getOrCreateTypeId(db, fname)
                         fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
                     }
                     readName = (sampleName + "_r2").toLowerCase()
                     if(namesNoExt.containsKey(readName)) {
                         File fname = namesNoExt.get(readName);
-                        long fileTypeId = getFileType(fname, fname.getName().replace(sampleName, ""))
+                        long fileTypeId = FileTypeUtils.getOrCreateTypeId(db, fname)
                         fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
                     }
                 }
@@ -421,25 +423,6 @@ public class LoadProject extends GOperationSupport {
             return false;
         def projID = db.oneLong( "SELECT id FROM projects prj WHERE name = ?", projectName)
         return ( projID != null );
-    }
-
-    def long getFileType(File file, String fileExt) {
-
-        def typeID = db.oneLong( "SELECT id FROM file_types prj WHERE suffix = ?", fileExt)
-        if(typeID != null)
-            return Long.valueOf(typeID)
-        def genericType = ".binary"
-        if(FileTypeRegistry.isTextFile(file)) {
-            genericType = ".text"
-        }
-        typeID = db.oneLong( "SELECT id FROM file_types prj WHERE suffix = ?", genericType)
-        if(typeID != null)
-            return typeID
-        else {
-            def descr = genericType.equals(".text" )?"Generic text file": "Generic binary file"
-            typeID = database.file_types << [suffix: genericType, description: descr]
-            return typeID
-        }
     }
 
     def long getSampleType(String name) {

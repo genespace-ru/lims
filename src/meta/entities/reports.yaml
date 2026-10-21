@@ -34,7 +34,7 @@ reports:
   queries:
   - All records:
       type: 1D
-      roles: '@AllRolesExceptGuest'
+      roles: [Administrator]
       layout: '{"quickType":"select"}'
       operations:
       - Insert

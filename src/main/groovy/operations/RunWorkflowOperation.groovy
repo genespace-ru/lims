@@ -270,12 +270,16 @@ public class RunWorkflowOperation extends GOperationSupport {
         for (def d : defaults) {
             if (d == null) continue
                 String p = d.toString()
-            String abs = files.get(p)
-                    ?: files.findAll {
-                        it.value == p
-                    }.values().first()
-            if (abs != null) {
-                result << abs
+            if(files.containsKey(p ))
+                result << files.get(p)
+            else {
+                def abspaths = files.findAll {
+                    it.value == p
+                }
+                def abs = abspaths.isEmpty()?null: abspaths.values().first()
+                if (abs != null) {
+                    result << abs
+                }
             }
         }
         return result

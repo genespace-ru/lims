@@ -3,7 +3,7 @@ samples:
   primaryKey: ID
   order: '16'
   displayName: Образцы
-  doc: Отдельные образцы для секвинирования. За основу взяты поля Illumina.
+  doc: Отдельные образцы для секвенирования. За основу взяты поля Illumina.
 
   scheme:
     columns:

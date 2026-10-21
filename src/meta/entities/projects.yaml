@@ -35,6 +35,7 @@ projects:
       layout: '{"quickType":"select"}'
       operations:
       - Insert
+      - CreateEmpty
       - Edit
       - Delete
       - Filter
@@ -94,6 +95,11 @@ projects:
       roles: [Administrator, User]
       layout: '{"type":"modalForm"}'
       file: operations.LoadProject.groovy
+  - CreateEmpty:
+      type: Groovy
+      roles: [Administrator, User]
+      layout: '{"type":"modalForm"}'
+      file: operations.CreateEmptyProject.groovy
   - Edit:
       roles: [Administrator, User]
       records: 1

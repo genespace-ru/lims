@@ -69,20 +69,20 @@ runs:
       invisible: true
       layout: '{"tableBox":"runTab", "mode":"named", "hideTitle":"true"}'
       code: |2-
-            SELECT 
-              r.id AS "ID" ,
+            SELECT
+              COALESCE(r.id, -1) AS "ID" ,
               p.ID AS "___prjID",
-              r.name AS "Name",
-              r.status AS "Status",
-              r.data AS "Data;<quick visible='false' />",
+              COALESCE(r.name, 'Нет запусков для этого проекта') AS "Name",
+              COALESCE(r.status, '') AS "Status",
+              COALESCE(r.data, '') AS "Data;<quick visible='false' />",
              TO_CHAR(p.creationDate___,     'DD.MM.YYYY, HH24:MI') AS "creationdate___",
              TO_CHAR(p.modificationDate___, 'DD.MM.YYYY, HH24:MI') AS "modificationdate___",
              p.whoInserted___,
              p.whoModified___
-            FROM runs r
-            INNER JOIN projects p ON p.ID = r.project_id
+            FROM projects p
+            LEFT JOIN runs r ON r.project_id = p.ID
             LEFT JOIN systemsettings s ON s.section_name='lims' AND s.setting_name='projects_dir'
-            WHERE r.project_id = <parameter:___prjID />
+            WHERE p.ID = <parameter:___prjID />
   operations:
   - Insert:
       roles: [Administrator]
