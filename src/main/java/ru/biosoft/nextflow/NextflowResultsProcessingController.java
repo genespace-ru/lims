@@ -182,9 +182,20 @@ public class NextflowResultsProcessingController extends NextflowController
                             if( !( entry.getValue() instanceof JsonObject ) )
                                 continue;
                             JsonObject fileInfo = (JsonObject) entry.getValue();
+                            String type = fileInfo.getString( "type", null );
                             //TODO: put non-file results somewhere
-                            if( !"File".equals( fileInfo.getString( "type", null ) ) )
+                            if( !"File".equals( type ) && !"Directory".equals( type ) )
                                 continue;
+                            // A WDL Directory output is published as a whole folder (e.g. a
+                            // report with its css/images assets). outputs.json only stores a
+                            // recursive listing for it (no root path), so resolve the published
+                            // folder from the entry key (<workflow>.out.<taskName>) and register
+                            // every file under it recursively.
+                            if( "Directory".equals( type ) )
+                            {
+                                registerPublishedDirectory( entry.getKey(), folder, resultsPath2, projectId, workflowRunId, fileTypeCache );
+                                continue;
+                            }
                             String value = fileInfo.getString( "value", null );
                             if( value == null )
                                 continue;
@@ -208,6 +219,8 @@ public class NextflowResultsProcessingController extends NextflowController
                 }
                 else
                 {
+                    // No outputs.json: register every file found on disk, plus each
+                    // directory as a 'folder' row so the folder structure is browsable.
                     Map<String, String> allFiles = new LinkedHashMap<>();
                     RepositoryFileUtils.collectItemsRecursive( folder, allFiles, false );
                     for ( Entry<String, String> file : allFiles.entrySet() )
@@ -217,10 +230,77 @@ public class NextflowResultsProcessingController extends NextflowController
                         db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)", resultFile.getName(), fileTypeId,
                                 file.getKey(), resultFile.length(), projectId, "workflow_runs", workflowRunId );
                     }
+                    Long folderTypeId = getOrCreateFolderTypeId();
+                    Map<String, String> allFolders = new LinkedHashMap<>();
+                    RepositoryFileUtils.collectItemsRecursive( folder, allFolders, true );
+                    for ( Entry<String, String> dirEntry : allFolders.entrySet() )
+                    {
+                        File dirFile = new File( dirEntry.getValue() );
+                        if( !dirFile.isDirectory() )
+                            continue;
+                        String relPath = dirEntry.getKey();
+                        // Skip the run folder itself — it is the results root, not a result.
+                        if( relPath.isEmpty() )
+                            continue;
+                        db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)",
+                                dirFile.getName(), folderTypeId, relPath, 0L, projectId, "workflow_runs", workflowRunId );
+                    }
                 }
             }
         }
         return "{ \"result\":\"ok\"}";
+    }
+
+    /**
+     * Register every file under a published WDL Directory output.
+     *
+     * outputs.json keys directory entries as "&lt;workflow&gt;.out.&lt;taskName&gt;". The
+     * generated Nextflow script publishes each task to "&lt;publishDir&gt;/&lt;taskName&gt;",
+     * so the published folder is the run folder with the task name appended. We walk it
+     * recursively and insert a file_info row per file, mirroring the no-outputs.json
+     * fallback branch above.
+     */
+    private void registerPublishedDirectory( String outputKey, GenericFileDataCollection runFolder,
+            Path resultsPath2, Long projectId, Integer workflowRunId, Map<String, Long> fileTypeCache )
+    {
+        int outIdx = outputKey.lastIndexOf( ".out." );
+        String taskName = ( outIdx >= 0 && outIdx + 5 < outputKey.length() )
+                ? outputKey.substring( outIdx + 5 )
+                : outputKey;
+        DataElementPath dirPath = runFolder.getCompletePath().getChildPath( taskName );
+        File dirFile = runFolder.getFile( taskName );
+        if( dirFile == null || !dirFile.isDirectory() )
+        {
+            log.warning( "Published directory for output '" + outputKey + "' not found: " + ( dirFile == null ? "<null>" : dirFile.getAbsolutePath() ) );
+            return;
+        }
+        GenericFileDataCollection dirFolder = dirPath.getDataElement( GenericFileDataCollection.class );
+        Map<String, String> allFiles = new LinkedHashMap<>();
+        RepositoryFileUtils.collectItemsRecursive( dirFolder, allFiles, false );
+        for ( Entry<String, String> file : allFiles.entrySet() )
+        {
+            File resultFile = new File( file.getValue() );
+            if( !resultFile.exists() )
+                continue;
+            Path relPath = resultsPath2.relativize( resultFile.toPath() );
+            DataElementPath resPath = getFromRelativePath( relPath );
+            Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( resultFile.getName() ), fileTypeCache );
+            db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)",
+                    resultFile.getName(), fileTypeId, resPath.toString(), resultFile.length(), projectId, "workflow_runs", workflowRunId );
+        }
+    }
+
+    /**
+     * Gets or creates the 'folder' file type in the file_types dictionary.
+     * Used to register directories in file_info.
+     */
+    private Long getOrCreateFolderTypeId()
+    {
+        Long id = db.oneLong( "SELECT id FROM file_types WHERE suffix = ?", "folder" );
+        if( id != null )
+            return id;
+        Long[] result = db.insert( "INSERT INTO file_types (suffix, description) VALUES (?, ?) RETURNING id", "folder", "Folder" );
+        return result[0];
     }
 
     private long getFileType(File file, String fileExt, Map<String, Long> cache)

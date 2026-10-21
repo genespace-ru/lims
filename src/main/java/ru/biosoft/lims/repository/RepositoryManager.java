@@ -171,7 +171,7 @@ public class RepositoryManager
 
     public static void importArchiveFile(File file, DataCollection parent) throws Exception
     {
-        importArchiveFile( file, parent, null );
+        importArchiveFile( file, parent, null, null );
     }
 
     /**
@@ -180,9 +180,11 @@ public class RepositoryManager
      * @param parent the target DataCollection
      * @param importedPaths if non-null, populated with the DataElementPath strings
      *                      of files that were actually imported (skipping existing)
+     * @param importedFolders if non-null, populated with the DataElementPath strings
+     *                      of directories that were created (skipping existing)
      * @throws Exception on error
      */
-    public static void importArchiveFile(File file, DataCollection parent, List<String> importedPaths) throws Exception
+    public static void importArchiveFile(File file, DataCollection parent, List<String> importedPaths, List<String> importedFolders) throws Exception
     {
         ArchiveFile archiveFile = ArchiveFactory.getArchiveFile( file );
         if( archiveFile == null )
@@ -196,11 +198,23 @@ public class RepositoryManager
         while ( (entry = archiveFile.getNextEntry()) != null )
         {
             i++;
-            if( entry.isDirectory() )
-                continue;
             String[] pathFields = entry.getName().split( "[\\\\\\/]+" );
             String entryName = pathFields[pathFields.length - 1];
             DataElementPath entryPath = StreamEx.of( pathFields ).without( "." ).without( ".." ).remove( String::isEmpty ).foldLeft( rootPath, DataElementPath::getChildPath );
+            if( entry.isDirectory() )
+            {
+                // Record newly-created directories so the caller can register them
+                // in file_info with a 'folder' type. createFoldersForPath is a no-op
+                // for an already-existing folder, so entryPath.exists() tells us
+                // whether this directory was just created by this import.
+                if( importedFolders != null && !entryPath.exists() )
+                {
+                    DataCollectionUtils.createFoldersForPath( entryPath );
+                    if( entryPath.exists() )
+                        importedFolders.add( entryPath.toString() );
+                }
+                continue;
+            }
             DataCollectionUtils.createFoldersForPath( entryPath );
 
             if( entryPath.exists() )
