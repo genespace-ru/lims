@@ -104,7 +104,7 @@ workflow_info:
       records: 2
       roles: [Administrator]
       layout: '{"type":"modalForm"}'
-      file: operations.DeleteWorkflowOperation.groovy
+      file: operations.RemoveWorkflow.groovy
   - Import:
       type: Groovy
       layout: '{"type":"modalForm"}'

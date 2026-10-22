@@ -33,7 +33,7 @@ import ru.biosoft.lims.repository.RepositoryManager
  *   3. file_info    — rows with entity='workflow_runs', entityID=run ID
  *   4. workflow_runs — the record itself
  */
-public class DeleteWorkflowRunOperation extends GOperationSupport {
+public class RemoveWorkflowRun extends GOperationSupport {
 
     @Inject
     private RepositoryManager repo;

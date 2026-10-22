@@ -17,7 +17,7 @@ import ru.biosoft.access.core.DataElementPath
  *   3. file_info      — the row linking to the script file
  *   4. workflow_info  — the record itself
  */
-public class DeleteWorkflowOperation extends GOperationSupport {
+public class RemoveWorkflow extends GOperationSupport {
 
     @Override
     public void invoke(Object parameters) throws Exception {

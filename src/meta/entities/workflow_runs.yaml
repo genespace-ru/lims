@@ -135,7 +135,7 @@ workflow_runs:
       records: 1
       layout: '{"type":"modalForm"}'
       roles: ['@AllRolesExceptGuest']
-      file: operations.DeleteWorkflowRunOperation.groovy
+      file: operations.RemoveWorkflowRun.groovy
   - QualityControl:
       type: Groovy
       layout: '{"type":"modalForm"}'
