@@ -25,14 +25,26 @@ public class RemoveFileInfo extends GOperationSupport {
         List<String> removedFromDisk = []
         List<String> notOnDisk = []
 
+        int childRowsRemoved = 0
+
         for ( int i=0 ; i < context.records.length ; ++i ) {
             def fi = database.getEntity( getInfo().getEntity().name ).get( context.records[i] )
             String path = fi.$path
             if ( path != null && !path.isEmpty() ) {
                 DataElementPath dePath = DataElementPath.create( path )
                 if ( dePath.exists() ) {
+                    boolean isDirectory = dePath.getDataElement() instanceof ru.biosoft.access.core.DataCollection
                     dePath.remove()
                     removedFromDisk.add( path )
+                    // Removing a directory deletes the whole subtree on disk, so any
+                    // file_info rows whose path is nested under it become dangling —
+                    // clear them too. The separator is appended so a sibling path that
+                    // merely shares a prefix (e.g. "foo" vs "foobar") is not matched.
+                    if ( isDirectory ) {
+                        childRowsRemoved += db.updateRaw(
+                            "DELETE FROM file_info WHERE path LIKE ? AND ID <> ?",
+                            path.replace('\\', '/') + '/%', fi.$ID )
+                    }
                 } else {
                     notOnDisk.add( path )
                 }
@@ -43,6 +55,8 @@ public class RemoveFileInfo extends GOperationSupport {
         String msg = "Removed ${context.records.length} record(s)"
         if ( !removedFromDisk.isEmpty() )
             msg += ", deleted from disk: " + removedFromDisk.size() + " item(s)"
+        if ( childRowsRemoved > 0 )
+            msg += ", removed ${childRowsRemoved} nested file_info row(s)"
         if ( !notOnDisk.isEmpty() )
             msg += ", not found on disk: " + notOnDisk.size() + " item(s)"
         setResult( OperationResult.finished( msg ) )

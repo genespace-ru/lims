@@ -88,8 +88,7 @@ workflow_runs:
         type: VARCHAR(100)
         canBeNull: true 
 
-queries:
-  
+  queries:
   - All records:
       type: 1D
       roles: '@AllRoles'
@@ -110,4 +109,41 @@ queries:
       roles: '@AllRolesExceptGuest'
       code: |2-
             SELECT id, title FROM workflow_runs wr ORDER BY title
+  - ForProjectCard:
+      type: 1D
+      invisible: true
+      layout: '{"hideTitle":"true", "quickType":"select"}'
+      roles: ['@AllRolesExceptGuest']
+      operations:
+      - DeleteWorkflowRun
+      - QualityControl
+      - RunWorkflow
+      code: |-
+            SELECT
+            wr.id as "ID",
+            wi.title as "Workflow",
+            wr.creation_time as "Created",
+            wr.completion_time as "Completed"
+            FROM workflow_runs wr
+            LEFT JOIN workflow_info wi ON wi.ID = wr.workflow_info
+            WHERE wr.project = <parameter:___prjID />
+            ORDER BY wi.title, wr.creation_time
+
+  operations:
+  - DeleteWorkflowRun:
+      type: Groovy
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: ['@AllRolesExceptGuest']
+      file: operations.DeleteWorkflowRunOperation.groovy
+  - QualityControl:
+      type: Groovy
+      layout: '{"type":"modalForm"}'
+      roles: ['@AllRolesExceptGuest']
+      file: operations.QualityControlOperation.groovy
+  - RunWorkflow:
+      type: Groovy
+      roles: ['@AllRolesExceptGuest']
+      layout: '{"type":"modalForm"}'
+      file: operations.RunWorkflowOperation.groovy
           

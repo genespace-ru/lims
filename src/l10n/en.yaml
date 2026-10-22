@@ -37,6 +37,12 @@ en:
       - changeDate: Change date
       - 'no': no
       - 'yes': yes
+  - workflow_runs:
+    - topics: operationName
+      entries:
+      - RunWorkflow: Run workflow
+      - QualityControl: Quality control
+      - DeleteWorkflowRun: Delete workflow run
   - testtable:
     - topics: operationName
       entries:

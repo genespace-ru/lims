@@ -98,7 +98,7 @@ file_info:
   - ForProjectCard:
       type: 1D
       invisible: true
-      layout: '{"hideTitle":"true", "quickType":"select"}'
+      layout: '{"hideTitle":"true", "quickType":"select", "defaultPageLimit":20}'
       roles: '@AllRolesExceptGuest'
       operations:
       - Import

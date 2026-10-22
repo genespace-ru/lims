@@ -89,7 +89,6 @@ workflow_info:
             FROM workflow_info wi
             INNER JOIN file_info fi ON fi.id = wi.file_info
             ORDER BY wi.title
-  
   operations:
   - Insert:
       roles: [Administrator]
@@ -101,10 +100,11 @@ workflow_info:
       roles: ['@AllRolesExceptGuest']
       code: com.developmentontheedge.be5.server.operations.SilentEditOperation
   - Delete:
+      type: Groovy
       records: 2
       roles: [Administrator]
       layout: '{"type":"modalForm"}'
-      code: com.developmentontheedge.be5.server.operations.SilentDeleteOperation
+      file: operations.DeleteWorkflowOperation.groovy
   - Import:
       type: Groovy
       layout: '{"type":"modalForm"}'
