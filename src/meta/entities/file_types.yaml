@@ -1,8 +1,8 @@
 file_types:
   type: dictionary
   primaryKey: ID
-  displayName: Типы файлов
-  doc: Типы  файлов с данными и результатами.
+  displayName: File types
+  doc: Types of files with data and results.
 
   scheme:
     columns:
@@ -12,18 +12,18 @@ file_types:
         primaryKey: true
     - suffix:
         type: VARCHAR(100)
-        doc: Тип файла.
+        doc: Type of the file.
     - icon:
         type: VARCHAR(200)
         canBeNull: true
-        doc: Иконка для отображения типа файлов.
+        doc: Icon for displaying the file type.
     - description:
         type: TEXT
         canBeNull: true
     - comment:
         type: TEXT
         canBeNull: true
-        doc: Комментарий.
+        doc: Comment.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

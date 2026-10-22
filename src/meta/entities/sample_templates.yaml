@@ -2,7 +2,7 @@ sample_templates:
   type: dictionary
   primaryKey: ID
   displayName: Sample templates
-  doc: Шаблон для описания свойств образца. Содержит описание набора аттрибутов, которые используются для описания образца.
+  doc: Template for describing sample properties. Contains a description of the set of attributes used to describe a sample.
 
   scheme:
     columns:
@@ -16,7 +16,7 @@ sample_templates:
         canBeNull: true
     - data:
         type: TEXT
-        doc: Шаблон для описания свойств образца данных (в разработке @todo).
+        doc: Template for describing sample data properties (under development @todo).
     - comment:
         type: TEXT
         canBeNull: true

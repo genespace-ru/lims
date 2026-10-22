@@ -1,8 +1,8 @@
 attribute_groups:
   primaryKey: ID
   type: dictionary
-  displayName: Группа аттрибутов
-  doc: Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.
+  displayName: Attribute group
+  doc: Group for grouping attributes (properties) for annotation of SNVs and CNVs.
 
   scheme:
     columns:
@@ -12,30 +12,30 @@ attribute_groups:
         primaryKey: true
     - title:
         type: VARCHAR(100)
-        doc: Название группы. Где это возможно используются названия группы аттрибутов из VEP и/или Genomenal.
+        doc: Name of the group. Where possible, attribute group names from VEP and/or Genomenal are used.
     - title_ru:
         type: VARCHAR(100)
         canBeNull: true        
     - description:
         type: TEXT
-        doc: Описание группы аттрибутов. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
+        doc: Description of the attribute group. Where possible, attribute names from VEP and/or Genomenal are used.
         canBeNull: true
     - description_ru:
         type: TEXT
-        doc: Описание группы аттрибутов. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
+        doc: Description of the attribute group. Where possible, attribute names from VEP and/or Genomenal are used.
         canBeNull: true
     - comment:
         type: TEXT
-        doc: Комментарий.
+        doc: Comment.
         canBeNull: true
     - displayOrder:
         type: INT
         canBeNull: true
-        doc: Порядок отображения групп аттрибутов в представлении.
+        doc: Display order of the attribute group in the view.
     - viewName:
         type: VARCHAR(100)
         canBeNull: true
-        doc: Название view (из snv_.yaml) для отображения этой группы свойств.        
+        doc: Name of the view (from snv_.yaml) to display this group of properties.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

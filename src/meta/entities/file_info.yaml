@@ -2,7 +2,7 @@ file_info:
   type: genericCollection
   primaryKey: ID
   displayName: Files
-  doc: Информация о файлах с данными и результатами
+  doc: Information about files with data and results
 
   scheme:
     columns:
@@ -23,23 +23,23 @@ file_info:
         canBeNull: true
     - path:
         type: VARCHAR(255)
-        doc: Полный путь до файла в репозитории.
+        doc: Full path to the file in the repository.
     - size:
         type: INT
-        doc: Размер файла в байтах.
+        doc: Size of the file in bytes.
     - project:
         type: KEYTYPE
         reference: projects
         canBeNull: true
-        doc: Проект, которому принадлежит файл. NULL для файлов, не привязанных к проекту (workflow и т.п.)
+        doc: Project the file belongs to. NULL for files not tied to a project (workflow, etc.)
     - entity:
         type: VARCHAR(255)
         canBeNull: true
-        doc: Сущность, с которой связан файл (sample, project).
+        doc: Entity the file is linked to (sample, project).
     - entityID:
         type: KEYTYPE
         canBeNull: true
-        doc: Идентификатор сущности, с которой связан файл.
+        doc: Identifier of the entity the file is linked to.
     - comment:
         type: VARCHAR(255)
         canBeNull: true

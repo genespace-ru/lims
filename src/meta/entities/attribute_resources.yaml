@@ -1,16 +1,16 @@
 attribute_resources:
   type: collection
   primaryKey: ID
-  displayName: Ресурсы для аттрибутов
+  displayName: Resources for attributes
   doc: |-
-    Ресурсы, которые были использованы для вычисления значения аттрибута при аннотации SNV и CNV.
-    
-    Как правило, для каждого аттрибута необходимо указать:
-      * базу данных;
-      * программу;
-      * рекомендацию. 
-    
-    Pending: версионирование ресурсов.
+    Resources that were used to calculate the attribute value when annotating SNVs and CNVs.
+
+    Typically, for each attribute the following must be specified:
+      * a database;
+      * a program;
+      * a recommendation.
+
+    Pending: versioning of resources.
 
   scheme:
     columns:
@@ -21,11 +21,11 @@ attribute_resources:
     - attribute: 
         type: INT
         reference: attributes
-        doc: Аттрибут. 
-    - resource: 
+        doc: Attribute.
+    - resource:
         type: INT
         reference: resources
-        doc: Ресурс (программа, база данных или рекомендация), использованная для получения значения аттрибута. 
+        doc: Resource (program, database, or recommendation) used to obtain the attribute value.
     - comment:
         type: TEXT
         canBeNull: true

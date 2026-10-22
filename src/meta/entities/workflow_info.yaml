@@ -4,13 +4,13 @@ workflow_info:
   order: '22'
   displayName: Workflows
   doc: |-
-    Информация о типах сценариев.
-    На данный момент сценарий - это файл со сценарием Nextflow или WDL.
-    Pending: 
-    - формат и хранение аттрибутов для запуска задачи.
-    - иконка для представления сценария
-    - граф для представления задач в сценарии
-    - поддержка WDL.
+    Information about workflow types.
+    Currently a workflow is a file with a Nextflow or WDL script.
+    Pending:
+    - format and storage of attributes for launching a task.
+    - icon for representing the workflow
+    - graph for representing tasks in the workflow
+    - WDL support.
 
   scheme:
     columns:
@@ -21,24 +21,24 @@ workflow_info:
     - file_info:
         type: KEYTYPE
         reference: file_info
-        doc: Файл со сценарием данных.
+        doc: File with the data script.
     - title:
         type: VARCHAR(50)
-        doc: Название сценария.
+        doc: Name of the workflow.
     - description:
         type: TEXT
-        doc: Описание сценания, может быть текст HTML.
+        doc: Description of the workflow, may be HTML text.
         canBeNull: true
     - comment:
         type: TEXT
-        doc: Комментарий.
+        doc: Comment.
         canBeNull: true
     - params:
-        type: JSON 
-        canBeNull: true        
-        doc: |- 
-          Описание параметров для запуска, чтобы из них можно было автоматически 
-          сформировать форму для ввода параметров. 
+        type: JSON
+        canBeNull: true
+        doc: |-
+          Description of launch parameters so that a form for parameter input can be
+          automatically generated from them.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

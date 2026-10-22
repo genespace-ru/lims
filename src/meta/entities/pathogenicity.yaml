@@ -1,8 +1,8 @@
 pathogenicity:
   type: dictionary
   primaryKey: ID
-  displayName: Патогенность
-  doc: Справочник возможных значений патогенности SNV/CNV.   
+  displayName: Pathogenicity
+  doc: Dictionary of possible pathogenicity values for SNV/CNV.
 
   scheme:
     columns:
@@ -12,14 +12,14 @@ pathogenicity:
         primaryKey: true
     - title:
         type: VARCHAR(20)
-        doc: Название типа аттрибута.
+        doc: Name of the attribute type.
     - description:
         type: TEXT
         canBeNull: true
-        doc: Описание типа аттрибута.
+        doc: Description of the attribute type.
     - comment:
         type: TEXT
-        doc: Комментарий.
+        doc: Comment.
         canBeNull: true
     - creationDate___:
         type: TIMESTAMP

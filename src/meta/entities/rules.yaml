@@ -1,11 +1,11 @@
 rules:
   type: table
   primaryKey: ID
-  displayName: Правила
-  doc: |- 
-    Правила для вычисления аттрибутов для аннотации SNV и CNV.
-    
-    Pending: input - список входных аттрибутов. Пока перечисляются их title через запятую.
+  displayName: Rules
+  doc: |-
+    Rules for calculating attributes for annotation of SNVs and CNVs.
+
+    Pending: input - list of input attributes. For now their titles are listed through a comma.
 
   scheme:
     columns:
@@ -15,25 +15,25 @@ rules:
         primaryKey: true
     - input:
         type: JSON 
-        doc: Список аттрибутов, которые служат входными значениями.
-    - priority:     
+        doc: List of attributes used as input values.
+    - priority:
         type: INT
-        doc: приоритет вычисления аттрибута.
+        doc: Priority of attribute calculation.
     - attribute:
         type: INT
         reference: attributes
-        doc: Аттрибут, значение которого вычисляется. 
+        doc: Attribute whose value is calculated.
     - code:
         type: TEXT
-        doc: Код (Java/Groovy) для вычисления значения аттрибута.
+        doc: Code (Java/Groovy) for calculating the attribute value.
     - desription:
         type: TEXT
-        canBeNull: true        
-        doc: Описание кода для вычисления значения аттрибута. 
+        canBeNull: true
+        doc: Description of the code for calculating the attribute value.
     - comment:
         type: TEXT
-        canBeNull: true        
-        doc: Название аттрибута. Где это возможно используются названия аттрибутов из VEP и/или Genomenal.
+        canBeNull: true
+        doc: Name of the attribute. Where possible, attribute names from VEP and/or Genomenal are used.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

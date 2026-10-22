@@ -1,8 +1,8 @@
 rule_sets:
   type: dictionary
   primaryKey: ID
-  displayName: Наборы правил
-  doc: Наборы правил, используемые для аннотации SNV и CNV.
+  displayName: Rule sets
+  doc: Sets of rules used for annotation of SNVs and CNVs.
 
   scheme:
     columns:
@@ -12,23 +12,23 @@ rule_sets:
         primaryKey: true
     - title:
         type: VARCHAR(100)
-        doc: Название набора правил.
+        doc: Name of the rule set.
     - version:
         type: VARCHAR(50)
-        canBeNull: true        
-        doc: Версия ресурса.
+        canBeNull: true
+        doc: Version of the resource.
     - description:
         type: TEXT
         canBeNull: true
-    - recommendation: 
+    - recommendation:
         type: INT
         reference: resources
         canBeNull: true
-        doc: Ссылка на рекомендации, на основе которых построен данный набор правил.        
+        doc: Link to the recommendation on which this rule set is based.
     - comment:
         type: TEXT
         canBeNull: true
-        doc: Разные комментарии, в том числе вопросы и замечания. 
+        doc: Various comments, including questions and remarks.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

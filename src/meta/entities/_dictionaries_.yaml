@@ -1,6 +1,6 @@
 _dictionaries_:
   type: table
-  displayName: Справочники
+  displayName: Dictionaries
   order: '70'
   primaryKey: dummy
 
@@ -9,32 +9,32 @@ _dictionaries_:
       type: '1D_unknown'
       roles: '@AllRoles'
       code: |-
-            <@DICTIONARY_REF 'attributes', 'Аттрибуты', 
-                'Аттрибуты (свойства) SNV, CNV или другой сущности.' />
-            UNION <@DICTIONARY_REF 'attribute_groups', 'Аттрибуты - группы', 
-                'Группа для группирования аттрибутов (свойств) для аннотации SNV и CNV.' /> 
-            UNION <@DICTIONARY_REF 'attribute_types', 'Аттрибуты - типы данных', 
-                'Типы аттрибутов (int, string и т.п.).' />
+            <@DICTIONARY_REF 'attributes', 'Attributes',
+                'Attributes (properties) of SNVs, CNVs, or another entity.' />
+            UNION <@DICTIONARY_REF 'attribute_groups', 'Attributes - groups',
+                'Group for grouping attributes (properties) for annotation of SNVs and CNVs.' />
+            UNION <@DICTIONARY_REF 'attribute_types', 'Attributes - data types',
+                'Types of attributes (int, string, etc.).' />
 
-            UNION <@DICTIONARY_REF 'rule_sets', 'Наборы правил', 
-                'Наборы правил для интерпретации SNV и CNV.' />
-                 
-            UNION <@DICTIONARY_REF 'resources', 'Ресурсы', 
-                'Программы, базы данных и рекоммендации, используемые для анализа и интерпретации геномных данных.' /> 
-            UNION <@DICTIONARY_REF 'resource_types', 'Ресурсы - типы', 
-                    'Типы ресурсов (программа, формат, база данных и т.п.)' /> 
-                  
-            UNION <@DICTIONARY_REF 'sample_templates', 'Образцы - шаблоны для описания', 
-                'Шаблон для описания свойств образца. Содержит описание набора аттрибутов, которые используются для описания образца.' /> 
-            UNION <@DICTIONARY_REF 'sample_types', 'Образцы - типы данных', 
-                'Тип данных образца (метагеномика, тагетное секвинирование и т.п.).' />
-            
-            UNION <@DICTIONARY_REF 'file_types', 'Файлы - типы данных', 
-                'Типы  файлов с данными и результатами.' />
+            UNION <@DICTIONARY_REF 'rule_sets', 'Rule sets',
+                'Sets of rules for interpretation of SNVs and CNVs.' />
 
-            UNION <@DICTIONARY_REF 'workflow_info', 'Сценарии - типы', 
-                'Типы  сценариев для анализа данных.' />
-            UNION <@DICTIONARY_REF 'task_info', 'Задачи - типы', 
-                'Типы  задач для анализа данных.' />
+            UNION <@DICTIONARY_REF 'resources', 'Resources',
+                'Programs, databases and recommendations used for analysis and interpretation of genomic data.' />
+            UNION <@DICTIONARY_REF 'resource_types', 'Resources - types',
+                    'Types of resources (program, format, database, etc.)' />
+
+            UNION <@DICTIONARY_REF 'sample_templates', 'Samples - templates for description',
+                'Template for describing sample properties. Contains a description of the set of attributes used to describe a sample.' />
+            UNION <@DICTIONARY_REF 'sample_types', 'Samples - data types',
+                'Data type of the sample (metagenomics, targeted sequencing, etc.).' />
+
+            UNION <@DICTIONARY_REF 'file_types', 'Files - data types',
+                'Types of files with data and results.' />
+
+            UNION <@DICTIONARY_REF 'workflow_info', 'Workflows - types',
+                'Types of workflows for data analysis.' />
+            UNION <@DICTIONARY_REF 'task_info', 'Tasks - types',
+                'Types of tasks for data analysis.' />
             
             ORDER BY 1 

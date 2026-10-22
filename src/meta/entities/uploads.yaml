@@ -2,7 +2,7 @@ uploads:
   type: table
   primaryKey: ID
   order: '17'
-  displayName: Загрузки
+  displayName: Uploads
 
   scheme:
     columns:

@@ -1,8 +1,8 @@
 resources:
   type: dictionary
   primaryKey: ID
-  displayName: Реестр ресурсов
-  doc: Программы, базы данных и рекоммендации, используемые в системе.
+  displayName: Resource registry
+  doc: Programs, databases and recommendations used in the system.
 
   scheme:
     columns:
@@ -13,29 +13,29 @@ resources:
     - typeID:
         type: KEYTYPE
         reference: resource_types
-        doc: Тип ресурса. 
+        doc: Type of the resource.
     - title:
         type: VARCHAR(100)
-        doc: Название ресурса.
+        doc: Name of the resource.
     - version:
         type: VARCHAR(50)
-        canBeNull: true        
-        doc: Версия ресурса.
+        canBeNull: true
+        doc: Version of the resource.
     - description:
         type: TEXT
         canBeNull: true
     - url:
         type: VARCHAR(100)
-        canBeNull: true        
-        doc: Ссылка на сайт ресурса.
+        canBeNull: true
+        doc: Link to the resource website.
     - license:
         type: VARCHAR(200)
-        canBeNull: true        
-        doc: Лицензия, по которой распространяется ресурс.
+        canBeNull: true
+        doc: License under which the resource is distributed.
     - comment:
         type: TEXT
         canBeNull: true
-        doc: Разные комментарии, в том числе вопросы и замечания. 
+        doc: Various comments, including questions and remarks.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

@@ -3,13 +3,13 @@ snv_:
   primaryKey: ID
   displayName: SNV
   doc: |-
-    Список найденных SNV. Для каждого образца создается отдельная таблица,
-    где название образца является суффиксом в названии таблицы.
-    Например: snv_sample1.
-    Поля vcf_(chrom, pos, id, ref, alt, qual, filter, info) являются обязательными
-    полями VCF v.4.2 (https://samtools.github.io/hts-specs/VCFv4.2.pdf).
-    Их подробное описание смотри в спецификации VCFv4.2.
-    Ограничение - один VCF файл должен содержать данные только для одного образца.
+    List of found SNVs. A separate table is created for each sample,
+    where the sample name is a suffix in the table name.
+    Example: snv_sample1.
+    The vcf_(chrom, pos, id, ref, alt, qual, filter, info) fields are mandatory
+    fields of VCF v.4.2 (https://samtools.github.io/hts-specs/VCFv4.2.pdf).
+    See the VCFv4.2 specification for a detailed description.
+    Limitation - one VCF file must contain data for only one sample.
 
   scheme:
     columns:
@@ -19,65 +19,65 @@ snv_:
         primaryKey: true
     - vcf_chrom:
         type: VARCHAR(50)
-        doc: Хромосома.
+        doc: Chromosome.
     - vcf_pos:
         type: INT
-        doc: Позиция на хромосоме.
+        doc: Position on the chromosome.
     - vcf_id:
         type: VARCHAR(200)
         canBeNull: true 
-        doc: Список идентификаторов, разделитель - ;
+        doc: List of identifiers, separator - ;
     - vcf_ref:
         type: VARCHAR(50)
-        doc: Основания ( A,C,G,T,N) в референсном геноме.
+        doc: Bases (A,C,G,T,N) in the reference genome.
     - vcf_alt: 
         type: VARCHAR(50)
-        doc: Альтернативные основания.
+        doc: Alternative bases.
     - vcf_qual:
         type: DECIMAL(4,1)
         canBeNull: true
-        doc: Качество, Phred-scaled quality score for the assertion made in ALT.
+        doc: Quality, Phred-scaled quality score for the assertion made in ALT.
     - vcf_filter:
         type: VARCHAR(50)
-        doc: Статус, PASS - если поизиция прошла все фильтры.
+        doc: Status, PASS - if the position passed all filters.
     - vcf_info: 
         type: TEXT
         canBeNull: true
-        doc: Дополнительная информация в формате ключ-значение.
+        doc: Additional information in key-value format.
     - vcf_format:         
         type: VARCHAR(1000)
-        doc: Формат для поля генотип.                 
+        doc: Format for the genotype field.
     - attributes:
         type: JSON 
         canBeNull: true        
-        doc: Все аттрибуты (VCF info, format; VEP annotation и другие).
+        doc: All attributes (VCF info, format; VEP annotation and others).
 
     - pathogenicity:
         type: INT
         reference: pathogenicity
         canBeNull: true        
-        doc: Патогенность SNV 
+        doc: Pathogenicity of the SNV
     - pathogenicityAuthority:
         type: INT
         reference: pathogenicity_authority
-        canBeNull: true        
-        doc: Автор или рекоммендации, по которой проставлена патогенность.
+        canBeNull: true
+        doc: Author or recommendation used to assign the pathogenicity.
     - isAttached:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''
-        doc: Нужно ли закрепить, отмеченные SNV, в начале представления.
+        doc: Whether to pin the marked SNVs to the beginning of the view.
     - isHidden:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''
-        doc: Нужно ли показывать SNV в представлении.
+        doc: Whether to show the SNV in the view.
     - includeInReport:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''
-        doc: Нужно ли включать SNV в отчет.
+        doc: Whether to include the SNV in the report.
     - reportComment:
         type: ENUM('yes', 'no')
         defaultValue: '''no'''
-        doc: Нужно ли включать SNV в отчет.
+        doc: Whether to include the SNV in the report.
 
   queries:
   - All records:
@@ -94,16 +94,16 @@ snv_:
             s.id AS "___ID",
           
             '<a href="#!form/snv_/All records/ToggleAttached/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
-            '<img src="/static/images/pin_16_' || s.isAttached || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.isAttached='yes' THEN 'открепить SNV.' ELSE 'закрепить SNV в начале списка.' END) || '"></a>' ||
+            '<img src="/static/images/pin_16_' || s.isAttached || '.svg" title="Click to ' ||
+            ( CASE WHEN s.isAttached='yes' THEN 'unpin the SNV.' ELSE 'pin the SNV to the top of the list.' END) || '"></a>' ||
             
             '<a href="#!form/snv_/All records/ToggleHidden/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
-            '<img src="/static/images/hide_16_' || s.isHidden || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.isHidden='yes' THEN 'показывать' ELSE 'не показывать' END) || ' SNV в списке."></a>' || 
+            '<img src="/static/images/hide_16_' || s.isHidden || '.svg" title="Click to ' ||
+            ( CASE WHEN s.isHidden='yes' THEN 'show' ELSE 'hide' END) || ' the SNV in the list."></a>' ||
 
             '<a href="#!form/snv_/All records/ToggleIncludeInReport/_tcloneid_=<parameter:_tcloneid_ />/ID=' || CAST(s.id AS CHAR) || '">' ||
-            '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Нажмите, чтобы ' ||
-            ( CASE WHEN s.includeInReport='yes' THEN 'не включать' ELSE 'включить' END) || ' SNV в отчет."></a>' 
+            '<img src="/static/images/list_16_' || s.includeInReport || '.svg" title="Click to ' ||
+            ( CASE WHEN s.includeInReport='yes' THEN 'exclude' ELSE 'include' END) || ' the SNV in the report."></a>'
               AS "Actions",
            '<css class="ws-nowrap" />;<nosort/>' 
               AS ";Actions",
@@ -124,7 +124,7 @@ snv_:
             AS "Annotation;<quick visible='true' />",
 
             '<a href="#!table/snv_/SNV card/_tcloneid_=' || <parameter:_tcloneid_ /> || 
-            '/_snvid_=' || s.ID || '">Card</>' AS "Подробно",  
+            '/_snvid_=' || s.ID || '">Card</>' AS "Details",
             
             s.attributes AS "Attributes;<quick visible='false' />",
             COALESCE('<a target="_blank" href="/static/genomebrowser2.html#de=' || ss.setting_value || '&track=' || sss.setting_value || '&pos=' || SUBSTRING(s.vcf_chrom,4) || ':' || s.vcf_pos || '-' || s.vcf_pos+1 || '">' ||'Open in GB'||'</a>', '')AS "GB;<quick visible='true' />"

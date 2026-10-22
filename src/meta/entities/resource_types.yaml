@@ -2,7 +2,7 @@ resource_types:
   type: dictionary
   primaryKey: ID
   displayName: Resource type
-  doc: Типы ресурсов. Например, база данных, программа, docker образ и т.п.  
+  doc: Types of resources. For example, a database, a program, a docker image, etc.
   
   scheme:
     columns:

@@ -2,7 +2,7 @@ reports:
   type: table
   primaryKey: ID
   order: '20'
-  displayName: Отчеты
+  displayName: Reports
 
   scheme:
     columns:

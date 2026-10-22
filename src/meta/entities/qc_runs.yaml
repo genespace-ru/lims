@@ -2,8 +2,8 @@ qc_runs:
   type: table
   primaryKey: ID
   order: '20'
-  displayName:  Контроль качества
-  doc: Информация о результатах Quality Check.
+  displayName: Quality control
+  doc: Information about Quality Check results.
 
   scheme:
     columns:
@@ -14,26 +14,26 @@ qc_runs:
     - project:
         type: KEYTYPE
         reference: projects
-        doc: Проект, для которого был выполнен контроль качества.
+        doc: Project for which the quality control was performed.
     - sample:
         type: KEYTYPE
         reference: samples
         canBeNull: true
-        doc: Образец, для которого был выполнен контроль качества.
+        doc: Sample for which the quality control was performed.
     - file_info:
             type: KEYTYPE
             reference: file_info
             canBeNull: true
-            doc: Файл образца, для которого был выполнен контроль качества.
+            doc: Sample file for which the quality control was performed.
     - workflow:
         type: KEYTYPE
         reference: workflow_runs
         canBeNull: true
-        doc: Сценарий, в рамках которого был проведен контроль качества.
+        doc: Workflow within which the quality control was performed.
     - qc_info:
         type: JSONB
-        canBeNull: true 
-        doc: Результат контроля качества
+        canBeNull: true
+        doc: Quality control result
     
     - creationDate___:
         type: TIMESTAMP

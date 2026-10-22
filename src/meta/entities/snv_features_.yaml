@@ -3,10 +3,10 @@ snv_features_:
   primaryKey: ID
   displayName: SNV (features)
   doc: |-
-    Список features SNV (транскрипт, регуляторный район и т.п.) и их свойств для соответствующей SNV.
-    Для каждого образца создается отдельная таблица,
-    где название образца является суффиксом в названии таблицы.
-    Например: snv_features_sample1.
+    List of SNV features (transcript, regulatory region, etc.) and their properties for the corresponding SNV.
+    A separate table is created for each sample,
+    where the sample name is a suffix in the table name.
+    Example: snv_features_sample1.
 
   scheme:
     columns:
@@ -17,12 +17,12 @@ snv_features_:
     - snv:
         type: INT
         reference: snv_
-        doc: ссылка на SNV, к которой относится данный транскрипт
+        doc: Reference to the SNV this transcript belongs to
     - feature:
         type: VARCHAR(50)
         doc: |-
-          Тип особенности (Transcript, RegulatoryFeature и т.п.).
+          Feature type (Transcript, RegulatoryFeature, etc.).
     - attributes:
-        type: JSON 
-        canBeNull: true        
-        doc: Значения аттрибутов в формате JSON (название аттрибута - значение).
+        type: JSON
+        canBeNull: true
+        doc: Attribute values in JSON format (attribute name - value).

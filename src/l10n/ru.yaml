@@ -18,6 +18,9 @@ ru:
       entries:
       - Logout: Выход
   - _dictionaries_:
+    - topics: displayName
+      entries:
+      - displayName: Справочники
     - topics: viewName
       entries:
       - Device types: Типы устройств
@@ -55,6 +58,19 @@ ru:
     - topics: operationName
       entries:
       - CreateEmpty: Создать пустой
+    - topics: Project card
+      entries:
+      - 'Project: ': 'Проект: '
+      - Project: Проект
+      - Run: Запуск
+      - Samples: Образцы
+      - Workflows: Сценарии
+      - Control: Контроль
+      - Analyses: Анализы
+      - Files: Файлы
+    - topics: ProjectTab
+      entries:
+      - 'Project: ': 'Проект: '
   - device_types:
     - topics: displayName
       entries:
@@ -75,12 +91,157 @@ ru:
     - topics: displayName
       entries:
       - displayName: Сценарии
+    - topics: operationName
+      entries:
+      - Import: Импортировать
   - workflow_runs:
+    - topics: displayName
+      entries:
+      - displayName: Запуски сценариев
     - topics: operationName
       entries:
       - RunWorkflow: Запуск сценария
       - QualityControl: Контроль качества
       - DeleteWorkflowRun: Удалить запуск
+    - topics: ForProjectCard
+      entries:
+      - Workflow: Сценарий
+      - Created: Создан
+      - Completed: Завершен
+      - Status: Статус
+  - runs:
+    - topics: displayName
+      entries:
+      - displayName: Запуски
+    - topics: RunTab
+      entries:
+      - 'No runs for this project': 'Нет запусков для этого проекта'
+  - run_samples:
+    - topics: displayName
+      entries:
+      - displayName: Связь запусков и образцов
+  - run_metrics:
+    - topics: displayName
+      entries:
+      - displayName: Метрики и статистика запусков
+  - run_applications:
+    - topics: displayName
+      entries:
+      - displayName: Приложения, которые могут использоваться в запусках для анализа данных
+  - sequencing_data:
+    - topics: displayName
+      entries:
+      - displayName: Данные секвенирования для каждого связанного образца
+  - task_runs:
+    - topics: displayName
+      entries:
+      - displayName: Задачи
+  - task_info:
+    - topics: displayName
+      entries:
+      - displayName: Задачи - типы
+  - qc_runs:
+    - topics: displayName
+      entries:
+      - displayName: Контроль качества
+  - snv_:
+    - topics: displayName
+      entries:
+      - displayName: SNV
+    - topics: viewName
+      entries:
+      - Details: Подробно
+  - snv_history:
+    - topics: displayName
+      entries:
+      - displayName: SNV архив
+  - snv_meta_:
+    - topics: displayName
+      entries:
+      - displayName: SNV meta
+  - snv_features_:
+    - topics: displayName
+      entries:
+      - displayName: SNV (features)
+  - snv_transcripts_history:
+    - topics: displayName
+      entries:
+      - displayName: SNV транскрипты (архив)
+  - attributes:
+    - topics: displayName
+      entries:
+      - displayName: Аттрибуты
+  - attribute_groups:
+    - topics: displayName
+      entries:
+      - displayName: Группа аттрибутов
+  - attribute_types:
+    - topics: displayName
+      entries:
+      - displayName: Типы аттрибутов
+  - attribute_resources:
+    - topics: displayName
+      entries:
+      - displayName: Ресурсы для аттрибутов
+  - rules:
+    - topics: displayName
+      entries:
+      - displayName: Правила
+  - rule_sets:
+    - topics: displayName
+      entries:
+      - displayName: Наборы правил
+  - rule_set_rules:
+    - topics: displayName
+      entries:
+      - displayName: Правила для набора правил
+  - pathogenicity:
+    - topics: displayName
+      entries:
+      - displayName: Патогенность
+  - pathogenicity_authority:
+    - topics: displayName
+      entries:
+      - displayName: Патогенность (основание)
+  - resources:
+    - topics: displayName
+      entries:
+      - displayName: Реестр ресурсов
+  - resource_types:
+    - topics: displayName
+      entries:
+      - displayName: Resource type
+  - resource_recommendations:
+    - topics: displayName
+      entries:
+      - displayName: Ресурсы - рекомендации
+  - file_info:
+    - topics: displayName
+      entries:
+      - displayName: Files
+    - topics: operationName
+      entries:
+      - Import: Импортировать
+    - topics: ForProjectCard
+      entries:
+      - Path: Путь
+      - File: Файл
+      - Size: Размер
+      - MimeType: MimeType
+      - Sample: Образец
+      - Description: Описание
+  - file_types:
+    - topics: displayName
+      entries:
+      - displayName: Типы файлов
+  - uploads:
+    - topics: displayName
+      entries:
+      - displayName: Загрузки
+  - reports:
+    - topics: displayName
+      entries:
+      - displayName: Отчеты
   - query.jsp:
     - topics: page
       entries:
@@ -117,7 +278,15 @@ ru:
       entries:
       - Value: Значение
       - Name: Имя
-  - file_info:
-    - topics: operationName
+  - sample_types:
+    - topics: displayName
       entries:
-      - Import: Импортировать
+      - displayName: Типы образцов
+  - attachments:
+    - topics: displayName
+      entries:
+      - displayName: Вложения
+  - nf_heartbeat:
+    - topics: displayName
+      entries:
+      - displayName: Пульс NF

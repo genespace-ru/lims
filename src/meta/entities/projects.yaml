@@ -2,8 +2,8 @@ projects:
   type: table
   primaryKey: ID
   order: '15'
-  displayName: Проекты
-  doc: Способ группировки образцов (samples).
+  displayName: Projects
+  doc: A way to group samples.
 
   scheme:
     columns:
@@ -63,7 +63,16 @@ projects:
       code: |-
           SELECT
             pr.ID AS "ID",
-            CONCAT( 'Карточка проекта: ', pr.name ) AS "PageTitle"
+            CONCAT( '{{{Project: }}}', pr.name ) AS "PageTitle",
+            CONCAT(
+              '{{{Project}}}|#!table/projects/ProjectTab/___prjID=',        pr.ID,
+              '||{{{Run}}}|#!table/runs/RunTab/___prjID=',                  pr.ID,
+              '||{{{Samples}}}|#!table/samples/ForProjectCard/___prjID=',    pr.ID,
+              '||{{{Workflows}}}|#!table/workflow_runs/ForProjectCard/___prjID=', pr.ID,
+              '||{{{Control}}}|#!table/projects/ToDo/___prjID=',            pr.ID,
+              '||{{{Analyses}}}|#!table/analyses/ForProjectCard/___prjID=',  pr.ID,
+              '||{{{Files}}}|#!table/file_info/ForProjectCard/___prjID=',    pr.ID
+            ) AS "Tabs"
           FROM projects pr
           WHERE 1 = 1
           <if parameter="ID">
@@ -76,7 +85,7 @@ projects:
       layout: '{"tableBox":"projectTab", "mode":"named", "hideTitle":"true"}'
       code: |-
         SELECT p.ID AS "ID",
-            'Project: ' || p.name AS "PageTitle",
+            '{{{Project: }}}' || p.name AS "PageTitle",
              p.name AS "Name",
              p.description AS "Description",
              TO_CHAR(p.creationDate___,     'DD.MM.YYYY, HH24:MI') AS "creationdate___",

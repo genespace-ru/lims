@@ -12,43 +12,45 @@ import {
 // user is on a tab whose table changes with operations, re-load that tab's table
 // into the navs document so the change is reflected without a manual tab click.
 const NAVS_DOCUMENT = "navs";
-// Tabs whose table must be re-loaded after any operation result. The "Файлы"
-// tab: the Import operation adds files. The "Сценарии" tab: RunWorkflow adds a
-// workflow run, DeleteWorkflowRun removes one — without a reload the table keeps
-// showing the stale (deleted) row and renders an error.
-const REFRESH_TABS = [3, 6]; // indices of "Сценарии" and "Файлы" in `steps`
+// Tabs whose table must be re-loaded after any operation result (matched by the
+// tab URL, which is a stable per-tab identity). The "Files" tab: the Import
+// operation adds files. The "Workflows" tab: RunWorkflow adds a workflow run,
+// DeleteWorkflowRun removes one — without a reload the table keeps showing the
+// stale (deleted) row and renders an error.
+const REFRESH_TABS = [
+  "#!table/workflow_runs/ForProjectCard/___prjID=",
+  "#!table/file_info/ForProjectCard/___prjID=",
+];
+// The server builds the card's `Tabs` cell: each tab is "{{{LocalizedKey}}}|<url>",
+// tabs joined by "||". The {{...}} markers are resolved server-side (ru.yaml), so
+// by the time JS reads the cell the titles are already localized.
+const Tabs = (cell) => (cell && cell.value ? cell.value : "")
+  .split("||")
+  .map((s) => s.split("|"))
+  .filter((p) => p.length === 2)
+  .map((p) => ({ title: p[0], url: p[1] }));
 
 const ProjectCardTableBox = ({ value }) => {
   const project = value.data.attributes.rows[0];
   const title = project.PageTitle.value;
+  const steps = Tabs(project.Tabs);
 
-  // Active tab index. Navs keeps its own internal state and doesn't expose it,
-  // so we mirror it here (set on each tab click). startAtStep is kept a literal
-  // 0 — a dynamic value risks an out-of-range steps[index] in Navs.init.
-  const activeTabRef = useRef(0);
+  // The navs document has no API exposing the current step, so after a tab click
+  // we mirror the *URL* of the active tab here (stable identity) for the
+  // post-operation refresh check below.
+  const activeTabUrlRef = useRef(null);
 
   useEffect(() => {
     be5.ui.setTitle(title);
   }, [title]);
-
-  const steps = [
-    { title: "Проект",   url: "#!table/projects/ProjectTab/___prjID=" + project.ID.value },
-    { title: "Запуск", url: "#!table/runs/RunTab/___prjID=" + project.ID.value },
-    { title: "Образцы", url: "#!table/samples/ForProjectCard/___prjID=" + project.ID.value },
-    { title: "Сценарии", url: "#!table/workflow_runs/ForProjectCard/___prjID=" + project.ID.value },
-    { title: "Контроль", url: "#!table/projects/ToDo/___prjID=" + project.ID.value },
-    { title: "Анализы", url: "#!table/analyses/ForProjectCard/___prjID=" + project.ID.value },
-    { title: "Файлы", url: "#!table/file_info/ForProjectCard/___prjID=" + project.ID.value },
-  ];
 
   useEffect(() => {
     // Fired by be5 after every operation result is processed. If the user is on
     // a tab that must reflect operation results (see REFRESH_TABS), re-load its
     // table so the change is visible without a manual tab click.
     const handler = () => {
-      if (!REFRESH_TABS.includes(activeTabRef.current)) return;
-      const url = steps[activeTabRef.current] && steps[activeTabRef.current].url;
-      if (!url) return;
+      const url = activeTabUrlRef.current;
+      if (!url || !REFRESH_TABS.includes(url)) return;
       // Defer to next tick so the modal unmount finishes first.
       setTimeout(() => processHashUrlForDocument(url, NAVS_DOCUMENT), 0);
     };
@@ -58,7 +60,8 @@ const ProjectCardTableBox = ({ value }) => {
   }, [project.ID.value]);
 
   const onOpenNav = (id) => {
-    activeTabRef.current = id;
+    const step = steps[id];
+    activeTabUrlRef.current = step ? step.url : null;
   };
 
   return (

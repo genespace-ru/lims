@@ -1,7 +1,7 @@
 run_samples:
   type: collection
   primaryKey: ID
-  displayName: Связь запусков и образцов
+  displayName: Link of runs and samples
 
   scheme:
     columns:

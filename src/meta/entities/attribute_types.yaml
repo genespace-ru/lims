@@ -1,8 +1,8 @@
 attribute_types:
   type: dictionary
   primaryKey: ID
-  displayName: Типы аттрибутов
-  doc: Типы  аттрибутов (свойств) для аннотации SNV и CNV.
+  displayName: Attribute types
+  doc: Types of attributes (properties) for annotation of SNVs and CNVs.
 
   scheme:
     columns:
@@ -12,14 +12,14 @@ attribute_types:
         primaryKey: true
     - title:
         type: VARCHAR(20)
-        doc: Название типа аттрибута.
+        doc: Name of the attribute type.
     - description:
         type: TEXT
-        doc: Описание типа аттрибута.
+        doc: Description of the attribute type.
         canBeNull: true
     - comment:
         type: TEXT
-        doc: Комментарий.
+        doc: Comment.
         canBeNull: true
     - creationDate___:
         type: TIMESTAMP

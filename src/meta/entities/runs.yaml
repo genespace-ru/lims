@@ -2,8 +2,8 @@ runs:
   type: table
   primaryKey: ID
   order: '17'
-  displayName: Запуски
-  doc: Запуски секвенатора
+  displayName: Runs
+  doc: Sequencer runs
 
   scheme:
     columns:
@@ -23,7 +23,7 @@ runs:
     - data:
         type: TEXT
         canBeNull: true
-        doc: данные из/для файла запуска секвенатора
+        doc: Data from/to the sequencer run file
     - creationDate___:
         type: TIMESTAMP
         canBeNull: true        
@@ -74,13 +74,13 @@ runs:
             SELECT
               COALESCE(r.id, -1) AS "ID" ,
               p.ID AS "___prjID",
-              COALESCE(r.name, 'Нет запусков для этого проекта') AS "Name",
+              COALESCE(r.name, '{{{No runs for this project}}}') AS "Name",
               COALESCE(r.status, '') AS "Status",
               COALESCE(r.data, '') AS "Data;<quick visible='false' />",
-             TO_CHAR(p.creationDate___,     'DD.MM.YYYY, HH24:MI') AS "creationdate___",
-             TO_CHAR(p.modificationDate___, 'DD.MM.YYYY, HH24:MI') AS "modificationdate___",
-             p.whoInserted___,
-             p.whoModified___
+             TO_CHAR(r.creationDate___,     'DD.MM.YYYY, HH24:MI') AS "creationdate___",
+             TO_CHAR(r.modificationDate___, 'DD.MM.YYYY, HH24:MI') AS "modificationdate___",
+             r.whoInserted___,
+             r.whoModified___
             FROM projects p
             LEFT JOIN runs r ON r.project = p.ID
             LEFT JOIN systemsettings s ON s.section_name='lims' AND s.setting_name='projects_dir'

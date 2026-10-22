@@ -1,8 +1,8 @@
 pathogenicity_authority:
   type: dictionary
   primaryKey: ID
-  displayName: Патогенность (основание)
-  doc: Справочник источников для проставления патогенности.   
+  displayName: Pathogenicity (basis)
+  doc: Dictionary of sources for assigning pathogenicity.
 
   scheme:
     columns:
@@ -12,18 +12,18 @@ pathogenicity_authority:
         primaryKey: true
     - title:
         type: VARCHAR(20)
-        doc: Название типа аттрибута.
+        doc: Name of the attribute type.
     - description:
         type: TEXT
         canBeNull: true
-        doc: Описание типа аттрибута.
-    - resource: 
+        doc: Description of the attribute type.
+    - resource:
         type: INT
         reference: resources
-        doc: Ресурс, используемый для рекоммендаций.
+        doc: Resource used for recommendations.
     - comment:
         type: TEXT
-        doc: Комментарий.
+        doc: Comment.
         canBeNull: true
     - creationDate___:
         type: TIMESTAMP

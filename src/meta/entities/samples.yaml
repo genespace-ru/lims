@@ -2,8 +2,8 @@ samples:
   type: table
   primaryKey: ID
   order: '16'
-  displayName: Образцы
-  doc: Отдельные образцы для секвенирования. За основу взяты поля Illumina.
+  displayName: Samples
+  doc: Individual samples for sequencing. Based on Illumina fields.
 
   scheme:
     columns:
@@ -14,12 +14,12 @@ samples:
     - project:
         type: KEYTYPE
         reference: projects
-        doc: Проект, которому принадлежит данный образец.
+        doc: Project this sample belongs to.
     - typeID:
         type: KEYTYPE
         reference: sample_types
         canBeNull: true
-        doc: Тип данных образца. 
+        doc: Data type of the sample.
     - title:
         type: VARCHAR(100)
     - description:

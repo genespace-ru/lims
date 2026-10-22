@@ -1,10 +1,10 @@
 snv_history:
   type: table
   primaryKey: ID
-  displayName: SNV архив
+  displayName: SNV archive
   doc: |-
-    Список ранее найденных и проаннотированных SNV, которые могут быть 
-    повторно использованы для аннотации новых образцов.
+    List of previously found and annotated SNVs that can be
+    reused for annotating new samples.
 
   scheme:
     columns:
@@ -15,28 +15,28 @@ snv_history:
     - VEP_ID:
         type: VARCHAR(50)
         canBeNull: true        
-        doc: Идентификатор SNV в VEP файле.
+        doc: SNV identifier in the VEP file.
     - location:
         type: VARCHAR(50)
-        doc: |- 
-          Расположение SNV в стандартном формате (chr:start or chr:start-end)
+        doc: |-
+          SNV location in the standard format (chr:start or chr:start-end)
     - allele:
         type: VARCHAR(10)
-        doc: Вариант, исопльзуемы для рассчета последствий SNV.
+        doc: Variant used to calculate the consequences of the SNV.
     - pathogenicity:
         type: INT
         reference: pathogenicity
         canBeNull: true        
-        doc: Патогенность SNV 
+        doc: Pathogenicity of the SNV
     - pathogenicityAuthority:
         type: INT
         reference: pathogenicity_authority
         canBeNull: true        
-        doc: Автор или рекоммендации, по которой проставлена патогенность.
+        doc: Author or recommendation used to assign the pathogenicity.
     - attributes:
         type: JSON 
         canBeNull: true        
-        doc: Значения аттрибутов в формате JSON (название аттрибута - значение).
+        doc: Attribute values in JSON format (attribute name - value).
     - creationDate___:
         type: TIMESTAMP
         canBeNull: true

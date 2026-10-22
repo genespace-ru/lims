@@ -3,10 +3,10 @@ task_info:
   primaryKey: ID
   displayName: Task info
   doc: |-
-    Информация о типах задач (импорт, контроль качества и т.п.).
-    Pending: 
-    - формат и хранение аттрибутов для запуска задачи
-    - иконка для представления задачи.
+    Information about task types (import, quality control, etc.).
+    Pending:
+    - format and storage of attributes for launching a task
+    - icon for representing the task.
 
   scheme:
     columns:
@@ -16,21 +16,21 @@ task_info:
         primaryKey: true
     - title:
         type: VARCHAR(20)
-        doc: Название задачи.
+        doc: Name of the task.
     - description:
         type: TEXT
-        doc: Описание задачи, может быть текст HTML.
+        doc: Description of the task, may be HTML text.
         canBeNull: true
     - comment:
         type: TEXT
-        doc: Комментарий.
+        doc: Comment.
         canBeNull: true
     - params:
-        type: JSON 
-        canBeNull: true        
-        doc: |- 
-          Описание параметров для запуска, чтобы из них можно было автоматически 
-          сформировать форму для ввода параметров. 
+        type: JSON
+        canBeNull: true
+        doc: |-
+          Description of launch parameters so that a form for parameter input can be
+          automatically generated from them.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP

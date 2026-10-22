@@ -2,8 +2,8 @@ task_runs:
   type: table
   primaryKey: ID
   order: '20'
-  displayName:  Задачи
-  doc: Информация о запущенных и выполненных задачах.
+  displayName: Tasks
+  doc: Information about launched and completed tasks.
 
   scheme:
     columns:
@@ -14,41 +14,41 @@ task_runs:
     - project:
         type: KEYTYPE
         reference: projects
-        doc: Проект, для которого была запущена задача.
+        doc: Project for which the task was launched.
     - sample:
         type: KEYTYPE
         reference: samples
         canBeNull: true
-        doc: Образец, для которого была запущена задача.
+        doc: Sample for which the task was launched.
     - workflow:
         type: KEYTYPE
         reference: workflow_runs
         canBeNull: true
-        doc: Сценарий, в рамках которого была запущена задача.
-    - task_info: 
+        doc: Workflow within which the task was launched.
+    - task_info:
         type: KEYTYPE
         reference: task_info
         canBeNull: true
-        doc: Информация о задаче (классе).
+        doc: Information about the task (class).
     - start:
         type: TIMESTAMP
         canBeNull: true
-        doc: Время запуска задачи.
+        doc: Task start time.
     - end:
         type: TIMESTAMP
         canBeNull: true
-        doc: Время окончания задачи.
+        doc: Task end time.
     - status:
         type: VARCHAR(100)
-        doc: Статус выполнения задачи.
+        doc: Task execution status.
     - params:
-        type: JSON 
-        canBeNull: true        
-        doc: Параметры запуска.
+        type: JSON
+        canBeNull: true
+        doc: Launch parameters.
     - log:
-        type: TEXT 
-        canBeNull: true        
-        doc: Лог сообщений.
+        type: TEXT
+        canBeNull: true
+        doc: Message log.
     - comment:
         type: VARCHAR(255)
         canBeNull: true
@@ -57,11 +57,11 @@ task_runs:
     - task_run_id:
         type: INT
         canBeNull: true 
-        doc: Идентификатор задачи nextflow
+        doc: Nextflow task identifier
     - run_info:
         type: JSONB
-        canBeNull: true 
-        doc: Параметры задачи nextflow
+        canBeNull: true
+        doc: Nextflow task parameters
     
     - creationDate___:
         type: TIMESTAMP
