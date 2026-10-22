@@ -14,8 +14,10 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.json.JsonArray;
+import javax.json.JsonNumber;
 import javax.json.JsonObject;
 import javax.json.JsonString;
+import javax.json.JsonValue;
 import javax.servlet.RequestDispatcher;
 
 import com.developmentontheedge.be5.database.DbService;
@@ -161,10 +163,21 @@ public class TraceController extends NextflowController
 
     protected String complete(Request req, JsonObject body, int workflowId) throws Exception
     {
-    	String status = body.getJsonObject("workflow").getString("status", "succeeded");  
+        JsonObject wf = body.getJsonObject( "workflow" );
 
-    	db.updateRaw("UPDATE workflow_runs SET status=?, completion_time=CURRENT_TIMESTAMP, complete_request=?::jsonb WHERE id=?",
-        		status, body.toString(), workflowId);
+        boolean success = wf.getBoolean( "success", false );
+        JsonValue exitStatus = wf.get( "exitStatus" );
+        String status = success ? "succeeded"
+                : (exitStatus != null && !exitStatus.equals( JsonValue.NULL ) 
+                && (exitStatus instanceof JsonNumber && ((JsonNumber) exitStatus).intValue() == 0)) ? "succeeded"
+                        : "failed";
+
+        db.updateRaw( "UPDATE workflow_runs SET status=?, completion_time=CURRENT_TIMESTAMP, complete_request=?::jsonb WHERE id=?", status, body.toString(), workflowId );
+        if( status == "failed" )
+        {
+            String msg = wf.getString( "errorMessage", "" );
+            db.updateRaw( "UPDATE workflow_runs SET log=? WHERE id=?", msg, workflowId );
+        }
 
         String targetUrl = req.getServerUrl() + "/nf/parse/results?workflowId=" + workflowId;
         String jsonParams = "{\"workflowId\": " + workflowId + "}";

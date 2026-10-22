@@ -123,7 +123,8 @@ workflow_runs:
             wr.id as "ID",
             wi.title as "Workflow",
             wr.creation_time as "Created",
-            wr.completion_time as "Completed"
+            wr.completion_time as "Completed",
+            wr.status as "Status"
             FROM workflow_runs wr
             LEFT JOIN workflow_info wi ON wi.ID = wr.workflow_info
             WHERE wr.project = <parameter:___prjID />
