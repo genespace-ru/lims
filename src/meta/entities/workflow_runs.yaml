@@ -133,7 +133,7 @@ workflow_runs:
   operations:
   - DeleteWorkflowRun:
       type: Groovy
-      records: 1
+      records: 2
       layout: '{"type":"modalForm"}'
       roles: ['@AllRolesExceptGuest']
       file: operations.RemoveWorkflowRun.groovy
