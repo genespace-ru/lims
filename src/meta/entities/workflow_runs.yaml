@@ -91,6 +91,7 @@ workflow_runs:
   queries:
   - All records:
       type: 1D
+      invisible: true
       roles: '@AllRoles'
       layout: '{"quickType":"select"}'
       code: |2-
