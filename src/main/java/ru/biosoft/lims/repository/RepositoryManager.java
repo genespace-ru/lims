@@ -334,6 +334,12 @@ public class RepositoryManager
         return getRepoPath( workflowsDir );
     }
 
+    public Path getDatabasesPath()
+    {
+        init();
+        return getRepoPath( databasesDir );
+    }
+
     private Path getRepoPath(String pathStr)
     {
         init();

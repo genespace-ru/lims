@@ -63,6 +63,7 @@ workflow_info:
       - Edit
       - Delete
       - Import
+      - ImportDatabase
       code: |2-
             SELECT 
               wi.id AS "ID",
@@ -110,4 +111,10 @@ workflow_info:
       layout: '{"type":"modalForm"}'
       roles: ['@AllRolesExceptGuest']
       file: operations.ImportWorkflowOperation.groovy
+  - ImportDatabase:
+      type: Groovy
+      records: 1
+      layout: '{"type":"modalForm"}'
+      roles: [Administrator]
+      file: operations.ImportDatabaseOperation.groovy
  
