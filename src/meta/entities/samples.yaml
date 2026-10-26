@@ -63,7 +63,7 @@ samples:
                   '<a href="#!table/projects/All records/ID=' || prj.ID || '">' ||  
                   prj.name || '</a>' AS "Project"
                   FROM projects prj
-                  INNER JOIN runs r ON r.project_id = prj.ID
+                  INNER JOIN runs r ON r.project = prj.ID
                   INNER JOIN run_samples rs ON rs.run_id = r.ID AND rs.sample_id = <var:___sampleID />
               </sql>' AS "Project;<quick visible='true' />",
               '<sql>SELECT DISTINCT 
@@ -107,7 +107,7 @@ samples:
                   '<a href="#!table/projects/All records/ID=' || prj.ID || '">' ||  
                   prj.name || '</a>' AS "Project"
                   FROM projects prj
-                  INNER JOIN runs r ON r.project_id = prj.ID
+                  INNER JOIN runs r ON r.project = prj.ID
                   INNER JOIN run_samples rs ON rs.run_id = r.ID AND rs.sample_id = <var:___sampleID />
               </sql>' AS "Project;<quick visible='false' />",
               '<sql>SELECT DISTINCT 

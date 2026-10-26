@@ -332,7 +332,7 @@ public class LoadProject extends GOperationSupport {
 
         String sampleFileName = sampleSheetFile.getName();
         String sampleFileExt = sampleFileName.replaceFirst(~/^([^\.])+/, '')
-        long fileType = getFileType(sampleSheetFile, sampleFileExt)
+        long fileType = FileTypeUtils.getOrCreateTypeId(db, sampleSheetFile)
         def fileId = database.file_info << [fileName: sampleFileName,  fileType: fileType,
             path: proj.getCompletePath().getChildPath(sampleFileName).toString(), size: sampleSheetFile.length(), project: projectId,
             entity: "run", entityID: runId]

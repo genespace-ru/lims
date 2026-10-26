@@ -43,10 +43,26 @@ ru:
       entries:
       - QualityControl: Контроль качества
       - RunWorkflow: Запуск сценария
+    - topics: All records
+      entries:
+      - Project: Проект
+      - Run: Запуск
+      - Title: Название
+      - Type: Тип
+      - Description: Описание
+      - Created: Создан
+      - Modified: Изменен
   - devices:
     - topics: displayName
       entries:
       - displayName: Устройства
+    - topics: All records
+      entries:
+      - Serial: Серийный номер
+      - Title: Название
+      - Type: Тип
+      - Status: Статус
+      - Statistics: Статистика
   - analyses:
     - topics: displayName
       entries:
@@ -58,6 +74,10 @@ ru:
     - topics: operationName
       entries:
       - CreateEmpty: Создать пустой
+    - topics: All records
+      entries:
+      - Name: Имя
+      - Description: Описание
     - topics: Project card
       entries:
       - 'Project: ': 'Проект: '
@@ -94,6 +114,14 @@ ru:
     - topics: operationName
       entries:
       - Import: Импортировать
+    - topics: All records
+      entries:
+      - Title: Название
+      - Description: Описание
+      - Comment: Комментарий
+      - Parameters: Параметры
+      - Created: Создан
+      - Modified: Изменен
   - workflow_runs:
     - topics: displayName
       entries:
@@ -113,6 +141,13 @@ ru:
     - topics: displayName
       entries:
       - displayName: Запуски
+    - topics: All records
+      entries:
+      - Name: Название
+      - Project: Проект
+      - Status: Статус
+      - Created: Создан
+      - Modified: Изменен
     - topics: RunTab
       entries:
       - 'No runs for this project': 'Нет запусков для этого проекта'
@@ -136,6 +171,15 @@ ru:
     - topics: displayName
       entries:
       - displayName: Задачи
+    - topics: All records
+      entries:
+      - Project: Проект
+      - Sample: Образец
+      - Task: Задача
+      - Comment: Комментарий
+      - Parameters: Параметры
+      - Created: Создан
+      - Modified: Изменен
   - task_info:
     - topics: displayName
       entries:
