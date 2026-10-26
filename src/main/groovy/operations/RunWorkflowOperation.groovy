@@ -43,21 +43,11 @@ public class RunWorkflowOperation extends GOperationSupport {
     protected NextflowService nf;
     Map<String, Object> presets
 
-    // -----------------------------------------------------------------
-    // Step 1-2: fetch workflows from workflow_info + file_info,
-    //           return them as a dropdown so the user picks one.
-    // Step 4:   read workflow_info.params JSON, build a DynamicPropertySet
-    //           with typed fields (String/File/Int) for each parameter.
-    // Step 5:   File/String parameters show a dropdown of files from the
-    //           current project's file repository.
-    // -----------------------------------------------------------------
-
     @Override
     Object getParameters(Map<String, Object> presetValues) throws Exception {
         presets = presetValues
         DynamicPropertySetSupport params = new DynamicPropertySetSupport()
 
-        // --- 1. Resolve the current project from the context ------------
         String prjIdStr = (String) presetValues.get("___prjID")
         if (prjIdStr == null || prjIdStr.isBlank()) {
             prjIdStr = (String) context.params.get("___prjID")
@@ -68,9 +58,10 @@ public class RunWorkflowOperation extends GOperationSupport {
         }
         long prjId = Long.parseLong(prjIdStr)
         params._prjID_ = [value: prjIdStr, DISPLAY_NAME: "Project ID", TYPE: String, HIDDEN: true]
+        def prjRow = db.recordWithParams("SELECT name FROM projects WHERE id = ?", prjId)
+        String projectName = prjRow?.getString("name")
 
-        // --- 2. Load all workflows into a dropdown ----------------------
-        // Uses the custom selection view that JOINs workflow_info with file_info
+        //Load all workflows into a dropdown ----------------------
         def workflowTags = queries.getTagsFromCustomSelectionView(
                 "workflow_info", "Workflow Selection")
 
@@ -88,7 +79,7 @@ public class RunWorkflowOperation extends GOperationSupport {
             DISPLAY_NAME: "Workflow"
         ]
 
-        // --- 3. If a workflow was selected, build parameter form --------
+        //Build parameter form by workflow params
         Long selectedWorkflowId = params.getValue("workflowID") as Long
         if (selectedWorkflowId != null) {
             params._workflowInfoId_ = [value: String.valueOf(selectedWorkflowId),
@@ -106,9 +97,8 @@ public class RunWorkflowOperation extends GOperationSupport {
                     def paramSpecs = new JsonSlurper().parseText(paramsJson)
 
                     // Collect files once — reused for all File-type params:
-                    // project files and workflow files. Maps: display label
-                    // (path relative to the repository root) -> absolute path,
-                    // which is what nextflow receives.
+                    // project files and workflow files.
+                    // Maps: display label relative to project/prjName or relative to databases -> absolute path,
                     Map<String, String> projectFiles = getProjectFiles(prjId)
                     Map<String, String> workflowFiles = getWorkflowFiles(selectedWorkflowId)
 
@@ -125,12 +115,11 @@ public class RunWorkflowOperation extends GOperationSupport {
                         boolean isList = type.startsWith("Array")
 
                         if ("File".equals(type) || type.startsWith("Array")) {
-                            // File parameter: single dropdown grouped into two sections —
-                            // "Project files" and "Workflow files" — separated by a
-                            // non-selectable label row (a tag with an empty value).
-                            // Display: relative path; the stored/selected value
-                            // is the absolute path.
-                            String[][] tags = buildFileTags(projectFiles, workflowFiles)
+                            // File parameter: grouped dropdown (one group per top-level folder).
+                            // Uses the GroupedSelectPropertyInput custom component via
+                            // extraAttrs inputType. Display: relative path; the stored
+                            // selected value is the absolute path.
+                            String[][] tags = buildFileTags(projectFiles, workflowFiles, projectName)
                             prop.setAttribute(BeanInfoConstants.TAG_LIST_ATTR, tags)
                             // Array parameters accept multiple files
                             if (isList) {
@@ -165,7 +154,7 @@ public class RunWorkflowOperation extends GOperationSupport {
 
     /**
      * Collect files from file_info for the given project.
-     * Returns Map: path relative to the project repository -> absolute path.
+     * Returns Map: path relative to the project samples folder -> absolute path.
      */
     private Map<String, String> getProjectFiles(long prjId) throws Exception {
         Map<String, String> result = new LinkedHashMap<>()
@@ -186,14 +175,12 @@ public class RunWorkflowOperation extends GOperationSupport {
 
                 DataElementPath filePath = DataElementPath.create(filePathStr)
                 // filePathStr is a complete repo-root-relative path (e.g. "projects/<prj>/...").
-                // DataElementPath.create(...).exists() resolves it against the registered
-                // roots (projects/databases/workflows) and returns true only if the file is
-                // actually present, so this also filters out stale file_info rows.
                 if (filePath.exists()) {
                     // Resolve the absolute file via the parent collection (single walk).
                     File f = filePath.getParentPath().getDataElement(GenericFileDataCollection.class).getFile(filePath.getName())
                     if (f != null) {
-                        result.put(filePathStr, f.getAbsolutePath())
+                        def relativePath = filePath.getPathDifference(projectPath );
+                        result.put(relativePath, f.getAbsolutePath())
                     }
                 }
             }
@@ -229,32 +216,49 @@ public class RunWorkflowOperation extends GOperationSupport {
     }
 
     /**
-     * Build a tag list for File-type parameters: a single flat list with two sections,
-     * "Project files" and "Workflow files", separated by a non-selectable label row
-     * (empty value). The frontend renders a tag with an empty value as a disabled
-     * label, so the row acts as a visual separator.
-     * Tags are [absolutePath, relativePath] — the value is the absolute path,
-     * the display label is the relative path.
+     * Build a tag list for File-type parameters using grouped options.
+     * Rows are [value, label] pairs:
+     *   - File row:     [absolutePath, relativePath]
+     *   - Group header: ["", "@@group@@<groupName>"]  (recognized by the patched SelectPropertyInput)
+     *
+     * Each top-level folder becomes a react-select group. The group label
+     * includes the section context: "PrjName / folder" for project files,
+     * "Genome / folder" for workflow reference files.
      */
-    private static String[][] buildFileTags(Map<String, String> projectFiles, Map<String, String> workflowFiles) {
+    private static String[][] buildFileTags(Map<String, String> projectFiles,
+            Map<String, String> workflowFiles,
+            String projectName) {
         List<String[]> tags = new ArrayList<>()
         if (projectFiles.isEmpty() && workflowFiles.isEmpty()) {
-            tags << ["(no files)", "(no files)"]
+            tags << [
+                "",
+                "@@group@@No files available"
+            ]
             return tags as String[][]
         }
-        if (!projectFiles.isEmpty()) {
-            tags << ["", "----Project files----"]
-            projectFiles.each { rel, abs ->
-                tags << [abs, rel]
-            }
-        }
-        if (!workflowFiles.isEmpty()) {
-            tags << ["", "----Genome files----"]
-            workflowFiles.each { rel, abs ->
-                tags << [abs, rel]
-            }
-        }
+        String prjPrefix = (projectName != null && !projectName.isBlank()) ? projectName : "Project"
+        appendGroupedTags(tags, projectFiles, prjPrefix)
+        appendGroupedTags(tags, workflowFiles, "Genome")
         return tags as String[][]
+    }
+
+    private static void appendGroupedTags(List<String[]> tags,
+            Map<String, String> files,
+            String sectionPrefix) {
+        if (files.isEmpty()) return
+            // Group by first path segment; "(root)" for files at the top level
+            Map<String, List<String[]>> groups = new LinkedHashMap<>()
+        files.each { rel, abs ->
+            String group = rel.contains('/') ? rel.substring(0, rel.indexOf('/')) : "(root)"
+            groups.computeIfAbsent(group, { _ -> new ArrayList<String[]>() }) << [abs, rel]
+        }
+        groups.each { groupName, entries ->
+            tags << [
+                "",
+                "@@group@@${sectionPrefix} / ${groupName}"
+            ]
+            entries.each { tags << it }
+        }
     }
 
     /**

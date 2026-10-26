@@ -177,23 +177,23 @@ public class ImportFilesToProject extends GOperationSupport {
 
         // Register directories created by archive unpacking with a 'folder' file type
         if (!importedFolders.isEmpty()) {
-            def folderTypeId = getOrCreateFolderTypeId(db)
+            def folderTypeId = FileTypeUtils.getOrCreateFolderTypeId(db)
             for (String folderPath in importedFolders) {
                 def existing = db.oneLong(
                         "SELECT ID FROM file_info WHERE path = ? AND project = ?",
                         folderPath, projectId)
                 if (existing != null) continue
 
-                database.file_info << [
-                    fileName: new File(folderPath).getName(),
-                    fileType: folderTypeId,
-                    path: folderPath,
-                    size: 0,
-                    project: projectId,
-                    entity: "sample",
-                    entityID: null,
-                    comment: comment
-                ]
+                    database.file_info << [
+                        fileName: new File(folderPath).getName(),
+                        fileType: folderTypeId,
+                        path: folderPath,
+                        size: 0,
+                        project: projectId,
+                        entity: "sample",
+                        entityID: null,
+                        comment: comment
+                    ]
             }
         }
 
@@ -202,23 +202,5 @@ public class ImportFilesToProject extends GOperationSupport {
         } else {
             setResult(OperationResult.finished("Some files failed: " + String.join("\n", errors)))
         }
-        // No FrontendActions: the be5 framework auto-closes the modal on a bare
-        // FINISHED result (forms.js) and shows the success alert, leaving the user
-        // on the project card. The card's "Файлы" tab refresh is handled on the
-        // frontend (ProjectCardTableBox listens for the executeFrontendActions bus
-        // event and re-loads the active tab into the navs document).
-    }
-
-    /**
-     * Gets or creates the 'folder' file type in the file_types dictionary.
-     * Used to register directories in file_info.
-     */
-    private static long getOrCreateFolderTypeId(DbService db) {
-        Long id = db.oneLong("SELECT id FROM file_types WHERE suffix = ?", "folder")
-        if (id != null) {
-            return id
-        }
-        Long[] result = db.insert("INSERT INTO file_types (suffix, description) VALUES (?, ?) RETURNING id", "folder", "Folder")
-        return result[0]
     }
 }

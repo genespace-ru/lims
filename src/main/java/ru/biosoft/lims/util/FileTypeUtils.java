@@ -57,4 +57,18 @@ public class FileTypeUtils {
         Long[] result = db.insert( "INSERT INTO file_types (suffix, description) VALUES (?, ?) RETURNING id", genericType, description );
         return result[0];
     }
+
+    /**
+     * Gets or creates the 'folder' file type in the file_types dictionary. Used to register directories in file_info.
+     */
+    public static long getOrCreateFolderTypeId(DbService db)
+    {
+        Long id = db.oneLong( "SELECT id FROM file_types WHERE suffix = ?", "folder" );
+        if( id != null )
+        {
+            return id;
+        }
+        Long[] result = db.insert( "INSERT INTO file_types (suffix, description) VALUES (?, ?) RETURNING id", "folder", "Folder" );
+        return result[0];
+    }
 }
