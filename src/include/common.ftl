@@ -7,6 +7,6 @@
 
 <#macro DICTIONARY_REF table, title, description>
     SELECT
-        '<a href="./#!table/${table}/All records">${title}</a>' AS "Справочник",
-                ${description?str} AS "Описание"
+        '<a href="./#!table/${table}/All records">{{{${title}}}}</a>' AS "Dictionary",
+                '{{{${description}}}}' AS "Description"
 </#macro>

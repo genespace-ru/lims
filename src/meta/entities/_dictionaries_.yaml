@@ -24,7 +24,7 @@ _dictionaries_:
             UNION <@DICTIONARY_REF 'resource_types', 'Resources - types',
                     'Types of resources (program, format, database, etc.)' />
 
-            UNION <@DICTIONARY_REF 'sample_templates', 'Samples - templates for description',
+            UNION <@DICTIONARY_REF 'sample_templates', 'Samples - templates for description.',
                 'Template for describing sample properties. Contains a description of the set of attributes used to describe a sample.' />
             UNION <@DICTIONARY_REF 'sample_types', 'Samples - data types',
                 'Data type of the sample (metagenomics, targeted sequencing, etc.).' />

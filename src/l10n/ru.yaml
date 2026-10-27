@@ -28,6 +28,32 @@ ru:
       - Analyses: Анализы
       - Templates: Шаблоны
       - Workflows: Сценарии анализа
+    - topics: All records
+      entries:
+      - Dictionary: Справочник
+      - Description: Описание
+      - Attributes: Аттрибуты
+      - Attributes - groups: Аттрибуты - группы
+      - Attributes - data types: Аттрибуты - типы данных
+      - Rule sets: Наборы правил
+      - Resources: Ресурсы
+      - Resources - types: Ресурсы - типы
+      - Samples - templates for description: Образцы - шаблоны описания
+      - Samples - data types: Образцы - типы данных
+      - Files - data types: Файлы - типы данных
+      - Workflows - types: Сценарии - типы
+      - Tasks - types: Задачи - типы
+      - Attributes (properties) of SNVs, CNVs, or another entity.: Атрибуты (свойства) SNV, CNV или другой сущности.
+      - Group for grouping attributes (properties) for annotation of SNVs and CNVs.: Группа для группировки атрибутов (свойств) для аннотации SNV и CNV.
+      - Types of attributes (int, string, etc.).: Типы атрибутов (int, string и т.п.).
+      - Sets of rules for interpretation of SNVs and CNVs.: Наборы правил для интерпретации SNV и CNV.
+      - Programs, databases and recommendations used for analysis and interpretation of genomic data.: Программы, базы данных и рекомендации, используемые для анализа и интерпретации геномных данных.
+      - Types of resources (program, format, database, etc.): Типы ресурсов (программа, формат, база данных и т.п.)
+      - Template for describing sample properties. Contains a description of the set of attributes used to describe a sample.: Шаблон для описания свойств образца. Содержит описание набора атрибутов, которые используются для описания образца.
+      - Data type of the sample (metagenomics, targeted sequencing, etc.).: Тип данных образца (метагеномика, таргетное секвенирование и т.п.).
+      - Types of files with data and results.: Типы файлов с данными и результатами.
+      - Types of workflows for data analysis.: Типы сценариев для анализа данных.
+      - Types of tasks for data analysis.: Типы задач для анализа данных.
   - users:
     - topics: displayName
       entries:
@@ -137,6 +163,7 @@ ru:
       - Created: Создан
       - Completed: Завершен
       - Status: Статус
+      - Files for project: Файлы проекта
   - runs:
     - topics: displayName
       entries:
