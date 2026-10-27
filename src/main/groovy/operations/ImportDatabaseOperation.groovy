@@ -35,6 +35,7 @@ import ru.biosoft.util.RepositoryFileUtils
 import ru.biosoft.lims.util.FileTypeUtils
 
 import ru.biosoft.access.DataCollectionUtils
+import ru.biosoft.access.LocalRepository
 
 public class ImportDatabaseOperation extends GOperationSupport {
 
@@ -120,49 +121,39 @@ public class ImportDatabaseOperation extends GOperationSupport {
                     IOUtils.copy(ins, outs)
                 }
             }
-            // Handle archives: use RepositoryManager's built-in unpacker
-            if (ArchiveFactory.getArchiveFile(tempFile) == null) {
+            ArchiveFile archiveFile = ArchiveFactory.getArchiveFile(tempFile)
+            if (archiveFile != null) {
+                //TODO: pending: add checkbox to register already existed database to selected workflow
+                String dbDirName = importArchiveFile(archiveFile, repositoryPath, fileName)
+                DataElementPath dbPath = DataElementPath.create("databases").getChildPath(dbDirName)
+                String dbPathStr = dbPath.toString()
+
+                //Register database to workflow_info
+                def existing = db.oneLong( "SELECT ID FROM file_info WHERE path = ? AND entity='workflow_info' AND entityID=?",
+                dbPathStr, workflowId)
+                if (existing == null) {
+                    def folderTypeId = FileTypeUtils.getOrCreateFolderTypeId(db)
+                    database.file_info << [
+                        fileName: dbDirName,
+                        fileType: folderTypeId,
+                        path: dbPathStr,
+                        size: fileItem.getSize(),
+                        project: null,
+                        entity: "workflow_info",
+                        entityID: workflowId,
+                        comment: comment
+                    ]
+                }
+                ((LocalRepository)dbPath.getParentCollection()).updateRepository()
+                setResult(OperationResult.finished("Imported database ${dbDirName}"))
+            }
+            else {
                 //Error: we use only archives to import as database
                 setResult(OperationResult.error("File ${fileName} is not an archive; only archives can be imported as a database"))
                 return
             }
-            // Decide the destination folder:
-            //  - If the archive unpacks into a single top-level folder, use that
-            //    folder's name as the database directory (it becomes a child of
-            //    'databases').
-            //  - Otherwise (several top-level items), create a preliminary folder
-            //    named after the archive (without extension) and unpack into it.
-            String topFolder = singleTopLevelFolder(tempFile)
-            String dbDirName = (topFolder != null) ? topFolder : dbName
-            DataElementPath dbPath = DataElementPath.create("databases").getChildPath(dbDirName)
-            if (dbPath.exists()) {
-                setResult(OperationResult.error("Database " + dbDirName + " already exists"))
-                return
-            }
-            //TODO: pending: add checkbox to register already existed database to selected workflow
-            File destDir = repositoryPath.resolve(dbDirName).toFile()
-            importArchiveFile(tempFile, destDir)
-            String dbPathStr = dbPath.toString()
-
-            //Register database to workflow_info
-            def existing = db.oneLong( "SELECT ID FROM file_info WHERE path = ? AND entity='workflow_info' AND entityID=?",
-            dbPathStr, workflowId)
-            if (existing == null) {
-                def folderTypeId = FileTypeUtils.getOrCreateFolderTypeId(db)
-                database.file_info << [
-                    fileName: dbDirName,
-                    fileType: folderTypeId,
-                    path: dbPathStr,
-                    size: destDir.length(),
-                    project: null,
-                    entity: "workflow_info",
-                    entityID: workflowId,
-                    comment: comment
-                ]
-            }
-            setResult(OperationResult.finished("Imported database ${dbDirName}"))
         } catch (Exception e) {
-            log.error("Error importing ${fileName}: ${e.message}")
+            //log.error("Error importing ${fileName}: ${e.message}")
             setResult(OperationResult.error("Error importing ${fileName}: ${e.message}"))
             return
         } finally {
@@ -171,52 +162,25 @@ public class ImportDatabaseOperation extends GOperationSupport {
     }
 
     /**
-     * Inspects an archive and returns the name of its single top-level folder if
-     * the archive unpacks into exactly one top-level directory (and nothing else).
-     * Returns {@code null} if the archive has several top-level items, or if its
-     * top-level item is a file.
+     * Unpacks an archive into the tmp directory, preserving the archive's
+     * internal folder structure. 
+     * Decide the destination folder:
+     *  - If the archive unpacks into a single top-level folder, use that
+     *  folder's name as the database directory (it becomes a child of 'databases').
+     *  - Otherwise (several top-level items), create a preliminary folder
+     *  named after the archive (without extension) and unpack into it.
+     *  Copy all files from tmp to destination folder.
      */
-    private static String singleTopLevelFolder(File file) throws Exception {
-        ArchiveFile archiveFile = ArchiveFactory.getArchiveFile( file )
-        if ( archiveFile == null )
-            return null
-        Map<String, Boolean> topLevel = new LinkedHashMap<>()  // name -> isDirectory
-        ArchiveEntry entry
-        while ( ( entry = archiveFile.getNextEntry() ) != null ) {
-            String[] pathFields = StreamEx.of( entry.getName().split( "[\\\\\\/]+" ) )
-                    .without( "." ).without( ".." ).remove( String::isEmpty )
-                    .toArray( String[]::new )
-            if ( pathFields.length == 0 )
-                continue
-            String top = pathFields[0]
-            // A directory entry reports its own type; files under a folder keep
-            // the folder's directory flag.
-            if ( entry.isDirectory() ) {
-                topLevel.put( top, true )
-            } else if ( !topLevel.containsKey( top ) ) {
-                topLevel.put( top, false )
-            }
-        }
-        if ( topLevel.size() != 1 )
-            return null
-        Map.Entry<String, Boolean> only = topLevel.entrySet().iterator().next()
-        return only.getValue() ? only.getKey() : null
-    }
-
-    /**
-     * Unpacks an archive into the destination directory, preserving the archive's
-     * internal folder structure. Every file and folder from the archive is copied
-     * under {@code dest}, keeping its relative path (the archive's own top-level
-     * folder, if any, is reproduced as-is).
-     */
-    public static void importArchiveFile(File file, File dest) throws Exception {
-        ArchiveFile archiveFile = ArchiveFactory.getArchiveFile( file );
+    public static String importArchiveFile(ArchiveFile archiveFile, Path repository, String archiveName) throws Exception {
         if( archiveFile == null )
         throw new Exception( "Specified file is not an archive" );
         int i = 0;
         ArchiveEntry entry;
         int numImported = 0;
         List<String> importErrors = new ArrayList<>();
+        File dest = TempFiles.dir("zipDBImport_" +  archiveName);
+
+        Map<String, Boolean> topLevel = new LinkedHashMap<>()  // name -> isDirectory
         while ( (entry = archiveFile.getNextEntry()) != null ) {
             i++;
             // Split the archive entry path; drop "." and ".." segments.
@@ -224,6 +188,7 @@ public class ImportDatabaseOperation extends GOperationSupport {
             .without( "." ).without( ".." ).remove( String::isEmpty ).toArray( String[]::new );
             if( pathFields.length == 0 )
             continue;
+
             String entryName = pathFields[pathFields.length - 1];
             // Rebuild the nested destination path under dest.
             File entryDest = dest;
@@ -257,5 +222,29 @@ public class ImportDatabaseOperation extends GOperationSupport {
         if( !importErrors.isEmpty() ) {
             throw new Exception( "Error importing archived data: \n" + String.join( "\n", importErrors ) );
         }
+        //It archive had one top-level folder, it will be database itself.
+        //Any collection may be packed with configs this way.
+        //If archive had several top-level items packed in one file, create a new folder for database with name as archive name
+        //In this case it will be GenericFileCollection
+        File source = dest;
+        String dbName = null;
+        File[] tops = dest.listFiles();
+        if(tops.length == 1 && tops[0].isDirectory()) {
+            source = tops[0];
+            dbName = source.getName();
+        }
+        else {
+            dbName =  RepositoryFileUtils.stripArchiveExtensions(archiveName);
+        }
+        if(DataElementPath.create("databases" ).getChildPath(dbName ).exists()) {
+            //Database already exist, remove all unpacked and return error
+            dest.delete();
+            throw new Exception("Database " + dbName + " already exists.");
+        }
+        Path destPath = repository.resolve(dbName );
+        Path sourcePath = source.toPath();
+        RepositoryFileUtils.copyDirOverwrite(sourcePath, destPath );
+        dest.delete();
+        return dbName;
     }
 }
