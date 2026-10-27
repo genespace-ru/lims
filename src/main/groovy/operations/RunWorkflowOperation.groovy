@@ -37,6 +37,12 @@ public class RunWorkflowOperation extends GOperationSupport {
 
     private static final Logger log = Logger.getLogger( RunWorkflowOperation.class.getName() )
 
+    // Separator (section header) rows in a file dropdown carry this value prefix so
+    // that a selected separator is detectable and can be rejected. The rows are still
+    // rendered as visible (non-collapsible) list entries; the prefix marks them as
+    // invalid choices rather than real files.
+    static final String SEP_PREFIX = "separator/"
+
     @Inject
     private RepositoryManager repo;
     @Inject
@@ -116,9 +122,10 @@ public class RunWorkflowOperation extends GOperationSupport {
 
                         if ("File".equals(type) || type.startsWith("Array")) {
                             // File parameter: grouped dropdown (one group per top-level folder).
-                            // Uses the GroupedSelectPropertyInput custom component via
-                            // extraAttrs inputType. Display: relative path; the stored
-                            // selected value is the absolute path.
+                            // Display: relative path; the stored selected value is the
+                            // absolute path. Folder section headers are rendered as
+                            // non-selectable separator rows whose value carries the
+                            // SEP_PREFIX (see buildFileTags).
                             String[][] tags = buildFileTags(projectFiles, workflowFiles, projectName)
                             prop.setAttribute(BeanInfoConstants.TAG_LIST_ATTR, tags)
                             // Array parameters accept multiple files
@@ -149,6 +156,22 @@ public class RunWorkflowOperation extends GOperationSupport {
         // Apply preset values (from previous step if user went back)
         params = DpsUtils.setValues(params, presetValues)
 
+        // A section-header (separator) row in a file dropdown is not a real file.
+        // Its value carries SEP_PREFIX; if the user submitted one, flag it with a
+        // per-field error (validator.setError) so a red message appears right next
+        // to the control WITHOUT disabling the form button. The error clears
+        // automatically once the user picks a real file.
+        for (def prop : params.propertyIterator()) {
+            Object value = params.getValue(prop.getName())
+            List<?> values = (value instanceof Object[]) ? (value as Object[]) as List : (value == null ? [] : [value])
+            for (def v : values) {
+                if (v != null && v.toString().startsWith(SEP_PREFIX)) {
+                    validator.setError( prop, "Please select an actual file (not a section header)." )
+                    return params
+                }
+            }
+        }
+
         return params
     }
 
@@ -167,7 +190,7 @@ public class RunWorkflowOperation extends GOperationSupport {
 
         DataElementPath projectPath = DataElementPath.create(repoPath).getChildPath(projectName )
         if (projectPath.exists()) {
-            def rows = db.list("SELECT path FROM file_info WHERE project = ${prjId} ORDER BY path")
+            def rows = db.list("SELECT path FROM file_info WHERE project = ${prjId} ORDER BY ID,path")
             for (def row : rows) {
                 String filePathStr = row.$path
                 if (filePathStr == null || filePathStr.isBlank())
@@ -216,14 +239,16 @@ public class RunWorkflowOperation extends GOperationSupport {
     }
 
     /**
-     * Build a tag list for File-type parameters using grouped options.
+     * Build a tag list for File-type parameters.
      * Rows are [value, label] pairs:
      *   - File row:     [absolutePath, relativePath]
-     *   - Group header: ["", "@@group@@<groupName>"]  (recognized by the patched SelectPropertyInput)
+     *   - Section header: [SEP_PREFIX + "prefix/groupName", "------- prefix/groupName -------"]
      *
-     * Each top-level folder becomes a react-select group. The group label
-     * includes the section context: "PrjName / folder" for project files,
-     * "Genome / folder" for workflow reference files.
+     * Section headers are non-selectable dividers. They are emitted with the
+     * SEP_PREFIX value so that if one is (erroneously) selected it can be detected
+     * and rejected in getParameters()/invoke(). Real files are grouped under their
+     * top-level folder: "PrjName / folder" for project files,
+     * "Common / folder" for workflow reference files.
      */
     private static String[][] buildFileTags(Map<String, String> projectFiles,
             Map<String, String> workflowFiles,
@@ -231,14 +256,14 @@ public class RunWorkflowOperation extends GOperationSupport {
         List<String[]> tags = new ArrayList<>()
         if (projectFiles.isEmpty() && workflowFiles.isEmpty()) {
             tags << [
-                "",
-                "@@group@@No files available"
+                SEP_PREFIX + "none",
+                "No files available"
             ]
             return tags as String[][]
         }
         String prjPrefix = (projectName != null && !projectName.isBlank()) ? projectName : "Project"
         appendGroupedTags(tags, projectFiles, prjPrefix)
-        appendGroupedTags(tags, workflowFiles, "Genome")
+        appendGroupedTags(tags, workflowFiles, "Common")
         return tags as String[][]
     }
 
@@ -246,16 +271,19 @@ public class RunWorkflowOperation extends GOperationSupport {
             Map<String, String> files,
             String sectionPrefix) {
         if (files.isEmpty()) return
-            // Group by first path segment; "(root)" for files at the top level
-            Map<String, List<String[]>> groups = new LinkedHashMap<>()
+        // Group by first path segment; "(root)" for files at the top level
+        Map<String, List<String[]>> groups = new LinkedHashMap<>()
         files.each { rel, abs ->
             String group = rel.contains('/') ? rel.substring(0, rel.indexOf('/')) : "(root)"
+            rel = rel.contains('/') ? rel.substring(rel.indexOf('/')+1):rel
             groups.computeIfAbsent(group, { _ -> new ArrayList<String[]>() }) << [abs, rel]
         }
         groups.each { groupName, entries ->
+            // Section header: a non-selectable divider row. The SEP_PREFIX in the
+            // value marks it as invalid if selected.
             tags << [
-                "",
-                "@@group@@${sectionPrefix} / ${groupName}"
+                SEP_PREFIX + "${sectionPrefix}/${groupName}",
+                "------- ${sectionPrefix}/${groupName} -------"
             ]
             entries.each { tags << it }
         }
@@ -293,10 +321,6 @@ public class RunWorkflowOperation extends GOperationSupport {
     public void invoke(Object parameters) throws Exception {
         DPS params = parameters as DPS ?: new DynamicPropertySetSupport()
 
-        // Collect all filled parameters back into JSON to pass as nextflow json file
-        // Collect all filled parameters back to pass as nextflow json file.
-        // Multi-select (Array) parameters arrive as String[] — serialize them
-        // as JSON arrays, everything else as a plain string.
         Map<String, Object> workflowParams = new LinkedHashMap<>()
         for (def prop : params.propertyIterator()) {
             String key = prop.getName()
@@ -305,8 +329,21 @@ public class RunWorkflowOperation extends GOperationSupport {
                 continue
             if (value == null)
                 continue
+            // A file parameter that holds a section-header (separator) value is not
+            // a real file. Reject it before creating any workflow run.
             if (value instanceof Object[]) {
+                for (def v : value as Object[]) {
+                    if (v != null && v.toString().startsWith(SEP_PREFIX)) {
+                        setResult(OperationResult.error(
+                            "Please select an actual file (not a section header) for ${prop.getDisplayName() ?: key}."))
+                        return
+                    }
+                }
                 workflowParams.put(key, (value as Object[]) as List)
+            } else if (value.toString().startsWith(SEP_PREFIX)) {
+                setResult(OperationResult.error(
+                    "Please select an actual file (not a section header) for ${prop.getDisplayName() ?: key}."))
+                return
             } else {
                 workflowParams.put(key, value.toString())
             }
