@@ -26,6 +26,8 @@ import com.developmentontheedge.be5.database.DbService;
 import com.developmentontheedge.be5.web.Request;
 import com.developmentontheedge.be5.web.Response;
 
+import ru.biosoft.lims.SystemSettings;
+
 @Singleton
 public class TraceController extends NextflowController
 {
@@ -183,7 +185,14 @@ public class TraceController extends NextflowController
             db.updateRaw( "UPDATE workflow_runs SET log=? WHERE id=?", msg, workflowId );
         }
 
-        String targetUrl = req.getServerUrl() + "/nf/parse/results?workflowId=" + workflowId;
+        String traceApiUrl = null;
+        try {
+            traceApiUrl = SystemSettings.getNextflowTraceAPI();
+        } catch (NullPointerException e) {
+            log.warning( "nextflow-trace-api setting not found, falling back to server URL" );
+        }
+        String base = (traceApiUrl != null) ? traceApiUrl : req.getServerUrl() + "/nf";
+        String targetUrl = base + "/parse/results?workflowId=" + workflowId;
         log.log( Level.INFO, "Parse results request: " + targetUrl );
         String jsonParams = "{\"workflowId\": " + workflowId + "}";
         HttpRequest asyncRequest = HttpRequest.newBuilder().uri( URI.create( targetUrl ) ).POST( HttpRequest.BodyPublishers.ofString( jsonParams ) ).build();
