@@ -116,6 +116,12 @@ public class QualityControlOperation extends GOperationSupport {
                 WorkflowSettings settings = new WorkflowSettings();
                 settings.setParameters( initParameters( nextflowParams ) );
                 settings.setUseDocker(useDocker )
+                // Same as RunWorkflowOperation: 'copy' on docker servers so task
+                // containers get a real file; unset (default 'symlink') otherwise.
+                String stageInputMode = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='stage_input_mode'" )
+                if( stageInputMode != null && !stageInputMode.isBlank() ) {
+                    settings.getNextflowSettings().setStageInput( stageInputMode )
+                }
                 File json = settings.generateParametersJSON(outputDir.toAbsolutePath().toString() )
                 GeneSpaceContext context = new GeneSpaceContext(repo.getProjectsPath(), repo.getWorkflowsPath(), repo.getGenomePath(), outputDir)
                 NextFlowRunner.runNextFlow("$workflowRunId", "fastqc", nextFlowScript, false, settings, towerAddress, context, json)

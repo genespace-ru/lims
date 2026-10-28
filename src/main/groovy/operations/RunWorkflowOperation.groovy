@@ -406,6 +406,13 @@ public class RunWorkflowOperation extends GOperationSupport {
         settings.setOutputPath(results )
         settings.setUseDocker(useDocker)
         settings.getNextflowSettings().setPublishOutput("copy" )
+        // Stage input mode: docker-based servers need 'copy' so task containers
+        // receive a real file (a 'symlink' to the data path dangles inside the
+        // task container). Non-docker servers can leave this unset (default 'symlink').
+        String stageInputMode = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='stage_input_mode'" )
+        if( stageInputMode != null && !stageInputMode.isBlank() ) {
+            settings.getNextflowSettings().setStageInput( stageInputMode )
+        }
 
 
         try {
