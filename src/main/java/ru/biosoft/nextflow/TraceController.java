@@ -10,6 +10,8 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -32,6 +34,8 @@ public class TraceController extends NextflowController
 
     @Inject 
     protected NextflowService nf;
+
+    private static final Logger log = Logger.getLogger( TraceController.class.getName() );
 
     // Create a thread pool for background tasks
     private final ExecutorService executor = Executors.newFixedThreadPool( 10 );
@@ -180,6 +184,7 @@ public class TraceController extends NextflowController
         }
 
         String targetUrl = req.getServerUrl() + "/nf/parse/results?workflowId=" + workflowId;
+        log.log( Level.INFO, "Parse results request: " + targetUrl );
         String jsonParams = "{\"workflowId\": " + workflowId + "}";
         HttpRequest asyncRequest = HttpRequest.newBuilder().uri( URI.create( targetUrl ) ).POST( HttpRequest.BodyPublishers.ofString( jsonParams ) ).build();
 
