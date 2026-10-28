@@ -121,7 +121,7 @@ file_info:
             FROM file_info fi
             LEFT JOIN samples s ON s.ID = fi.entityID
             WHERE fi.project = <parameter:___prjID />
-            ORDER BY fi.fileName
+            ORDER BY fi.id, fi.fileName
   
   operations:
   - Import:

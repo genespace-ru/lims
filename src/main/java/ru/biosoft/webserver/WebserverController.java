@@ -56,7 +56,7 @@ public class WebserverController extends BaseControllerSupport
 
             Map<String, String[]> uriParameters = request.getParameters();
 
-            final String subTarget = target.substring( 1 );
+            final String subTarget = TextUtil2.decodeURL( target.substring( 1 ) );
             final Map<String, Object> arguments = new HashMap<>();
             response.setStatus( HttpServletResponse.SC_OK );
 
