@@ -129,7 +129,7 @@ workflow_runs:
             FROM workflow_runs wr
             LEFT JOIN workflow_info wi ON wi.ID = wr.workflow_info
             WHERE wr.project = <parameter:___prjID />
-            ORDER BY wi.title, wr.creation_time
+            ORDER BY wr.id, wi.title, wr.creation_time
 
   operations:
   - DeleteWorkflowRun:
