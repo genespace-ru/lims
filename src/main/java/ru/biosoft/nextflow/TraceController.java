@@ -191,8 +191,8 @@ public class TraceController extends NextflowController
         } catch (NullPointerException e) {
             log.warning( "nextflow-trace-api setting not found, falling back to server URL" );
         }
-        String base = (traceApiUrl != null) ? traceApiUrl : req.getServerUrl() + "/nf";
-        String targetUrl = base + "/parse/results?workflowId=" + workflowId;
+        String base = (traceApiUrl != null) ? traceApiUrl : req.getServerUrl() + "/nf/";
+        String targetUrl = base + "parse/results?workflowId=" + workflowId;
         log.log( Level.INFO, "Parse results request: " + targetUrl );
         String jsonParams = "{\"workflowId\": " + workflowId + "}";
         HttpRequest asyncRequest = HttpRequest.newBuilder().uri( URI.create( targetUrl ) ).POST( HttpRequest.BodyPublishers.ofString( jsonParams ) ).build();
