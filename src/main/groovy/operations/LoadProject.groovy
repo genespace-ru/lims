@@ -375,7 +375,7 @@ public class LoadProject extends GOperationSupport {
                         File fname = namesNoExt.get(sampleName);
                         long fileTypeId = FileTypeUtils.getOrCreateTypeId(db, fname)
                         //getFileType(fname, fname.getName().replace(sampleName, ""))
-                        fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
+                        fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "samples", entityID: sampleId]
                     }
                 }
                 else if(params.$readsType.equals("paired" )) {
@@ -383,13 +383,13 @@ public class LoadProject extends GOperationSupport {
                     if(namesNoExt.containsKey(readName)) {
                         File fname = namesNoExt.get(readName);
                         long fileTypeId = FileTypeUtils.getOrCreateTypeId(db, fname)
-                        fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
+                        fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "samples", entityID: sampleId]
                     }
                     readName = (sampleName + "_r2").toLowerCase()
                     if(namesNoExt.containsKey(readName)) {
                         File fname = namesNoExt.get(readName);
                         long fileTypeId = FileTypeUtils.getOrCreateTypeId(db, fname)
-                        fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "sample", entityID: sampleId]
+                        fileId = database.file_info << [fileName: fname.name,  fileType: fileTypeId, path: samples.getCompletePath().getChildPath(fname.name).toString(), size: fname.length(), project: projectId, entity: "samples", entityID: sampleId]
                     }
                 }
             }
