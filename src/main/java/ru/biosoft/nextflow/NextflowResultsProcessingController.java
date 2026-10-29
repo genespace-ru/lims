@@ -246,13 +246,89 @@ public class NextflowResultsProcessingController extends NextflowController
                                 dirFile.getName(), folderTypeId, relPath, 0L, projectId, "workflow_runs", workflowRunId );
                     }
                 }
+
+                // After file registration, check for a MultiQC FastQC summary and
+                // parse it into qc_runs so per-sample QC metrics are available in
+                // the Quality control view.
+                parseMultiQCIfPresent( folder, projectId, workflowRunId );
             }
         }
         return "{ \"result\":\"ok\"}";
     }
 
     /**
-     * Register every file under a published WDL Directory output.
+     * If the run folder contains a MultiQC FastQC summary (multiqc_data/multiqc_fastqc.txt),
+     * parse it and insert per-sample QC metrics into the qc_runs table.
+     *
+     * This replicates the logic of {@link #parseMultiQCResults} but reads the summary
+     * from the run folder on disk rather than from a file path in a POST body, so it
+     * works for any workflow that publishes a MultiQC FastQC report — not just the
+     * legacy QualityControl button.
+     */
+    private void parseMultiQCIfPresent( GenericFileDataCollection runFolder, Long projectId, Integer workflowRunId )
+    {
+        File summaryFile = runFolder.getFile( "multiqc_data/multiqc_fastqc.txt" );
+        if( !summaryFile.exists() )
+            return;
+
+        try
+        {
+            String content = ApplicationUtils.readAsString( summaryFile );
+            String[] lines = content.split( "\n" );
+            if( lines.length < 2 )
+                return;
+
+            String[] columns = lines[0].split( "\\s+" );
+            String sql = "INSERT INTO qc_runs(project, sample, file_info, workflow, qc_info) VALUES(?, ?, ?, ?, ?::jsonb)";
+
+            for ( int i = 1; i < lines.length; i++ )
+            {
+                String line = lines[i].trim();
+                if( line.isEmpty() )
+                    continue;
+
+                String[] values = line.split( "\\s+" );
+                JsonObjectBuilder job = Json.createObjectBuilder();
+                String fileName = null;
+                String sample = null;
+                int maxColNum = Math.min( columns.length, values.length );
+                for ( int j = 0; j < maxColNum; j++ )
+                {
+                    if( columns[j].equalsIgnoreCase( "Filename" ) )
+                        fileName = values[j];
+                    else if( columns[j].equalsIgnoreCase( "sample" ) )
+                        sample = values[j];
+                    else
+                        job.add( columns[j], values[j] );
+                }
+                JsonObject params = job.build();
+
+                Long sampleId = null;
+                if( sample != null )
+                {
+                    sampleId = db.oneLong( "SELECT ID FROM samples WHERE title=? AND project=? ", sample, projectId );
+                    if( sampleId == null && sample.lastIndexOf( "_" ) > 0 )
+                    {
+                        // try to strip the reads suffix (e.g. Sample_1 -> Sample)
+                        String stripped = sample.substring( 0, sample.lastIndexOf( "_" ) );
+                        sampleId = db.oneLong( "SELECT ID FROM samples WHERE title=? AND project=? ", stripped, projectId );
+                    }
+                }
+
+                Long fileInfoId = fileName != null
+                        ? db.oneLong( "SELECT ID FROM file_info WHERE filename=? AND project=? ", fileName, projectId )
+                        : null;
+
+                db.updateRaw( sql, projectId, sampleId, fileInfoId, workflowRunId, params.toString() );
+            }
+        }
+        catch ( Exception e )
+        {
+            log.warning( "Failed to parse MultiQC FastQC summary into qc_runs: " + e.getMessage() );
+        }
+    }
+
+    /**
      *
      * outputs.json keys directory entries as "&lt;workflow&gt;.out.&lt;taskName&gt;". The
      * generated Nextflow script publishes each task to "&lt;publishDir&gt;/&lt;taskName&gt;",
