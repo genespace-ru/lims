@@ -29,6 +29,20 @@ public class SystemSettings
 		return value;
 	}
 	
+    public static String getValueWithDefault(String section, String setting, String defautValue)
+    {
+        String key = section + "--" + setting;
+        if( valuesMap.containsKey( key ) )
+            return valuesMap.get( key );
+
+        String value = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name=? AND setting_name=?", section, setting );
+        if( value == null )
+            return defautValue;
+
+        valuesMap.put( key, value );
+        return value;
+    }
+
 	public static String getDirectory(String section, String setting, String title, boolean asLinux)
 	{
 		String dir = getValue(section, setting, title);  
