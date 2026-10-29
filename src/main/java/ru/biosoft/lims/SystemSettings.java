@@ -23,7 +23,7 @@ public class SystemSettings
 		if( value == null )
 			throw new NullPointerException(
 	                "Setting " + title + " is not specified in systemsettings." + System.lineSeparator() +
-	                "Please specify its, section_name=" + section + ", setting_name=" + setting + ".");
+                            "Please specify " + title + ", section_name=" + section + ", setting_name=" + setting + "." );
 		
 		valuesMap.put(key, value);
 		return value;

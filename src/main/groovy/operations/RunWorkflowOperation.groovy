@@ -26,6 +26,7 @@ import ru.biosoft.access.core.DataElementPath
 import ru.biosoft.access.DataCollectionUtils
 import ru.biosoft.access.file.GenericFileDataCollection
 import ru.biosoft.lims.repository.RepositoryManager
+import ru.biosoft.lims.SystemSettings
 import ru.biosoft.nextflow.NextflowService
 import ru.biosoft.util.ApplicationUtils
 import ru.biosoft.util.RepositoryFileUtils
@@ -397,7 +398,7 @@ public class RunWorkflowOperation extends GOperationSupport {
         db.update("UPDATE workflow_runs SET comment = ? WHERE id = ?", runResultsSubdir, workflowRunId)
 
         boolean useDocker = false
-        String useDockerStr = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_nextflow'" )
+        String useDockerStr = SystemSettings.getValueWithDefault( "lims", "docker_nextflow", null )
         if(useDockerStr != null) {
             useDocker = Boolean.parseBoolean(useDockerStr )
         }
@@ -409,7 +410,7 @@ public class RunWorkflowOperation extends GOperationSupport {
         // Stage input mode: docker-based servers need 'copy' so task containers
         // receive a real file (a 'symlink' to the data path dangles inside the
         // task container). Non-docker servers can leave this unset (default 'symlink').
-        String stageInputMode = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='stage_input_mode'" )
+        String stageInputMode = SystemSettings.getValueWithDefault( "lims", "stage_input_mode", null )
         if( stageInputMode != null && !stageInputMode.isBlank() ) {
             settings.getNextflowSettings().setStageInput( stageInputMode )
         }
@@ -446,7 +447,7 @@ public class RunWorkflowOperation extends GOperationSupport {
                 serverUrl = referer.replaceAll('/$', '')
             }
 
-            def serverDockerUrl = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='docker_server_url'" );
+            def serverDockerUrl = SystemSettings.getValueWithDefault( "lims", "docker_server_url", null );
             if( serverDockerUrl != null ) {
                 serverUrl = serverDockerUrl
             }

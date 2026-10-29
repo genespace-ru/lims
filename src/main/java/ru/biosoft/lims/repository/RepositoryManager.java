@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -27,12 +26,12 @@ import ru.biosoft.access.core.DataElementPath;
 import ru.biosoft.access.file.FileBasedCollection;
 import ru.biosoft.access.file.GenericFileDataCollection;
 import ru.biosoft.exception.ExceptionRegistry;
+import ru.biosoft.lims.SystemSettings;
 import ru.biosoft.util.ApplicationUtils;
 import ru.biosoft.util.TempFiles;
 import ru.biosoft.util.archive.ArchiveEntry;
 import ru.biosoft.util.archive.ArchiveFactory;
 import ru.biosoft.util.archive.ArchiveFile;
-import ru.biosoft.webserver.WebserverController;
 
 public class RepositoryManager
 {
@@ -67,16 +66,12 @@ public class RepositoryManager
 
     public void initRepositories() throws Exception
     {
-        projectsDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='projects_dir'" );
-        if( projectsDir == null )
-            throw new NullPointerException( "Project repository is not specified in systemsettings." + System.lineSeparator()
-                    + "Please specify project repository in systemsettings, section_name=lims, setting_name=projects_repo. " );
-
+        projectsDir = SystemSettings.getValue( "lims", "projects_dir", "Project repository" );
         initRepository( projectsDir );
         DataCollection<?> projects = repositoryMap.get( projectsDir );
         log.info( "Projects repo " + projects.getCompletePath().toString() );
 
-        databasesDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='databases_dir'" );
+        databasesDir = SystemSettings.getValueWithDefault( "lims", "databases_dir", null );
         if( databasesDir != null )
         {
             initRepository( databasesDir );
@@ -84,7 +79,7 @@ public class RepositoryManager
             log.info( "Databases repo " + databases.getCompletePath().toString() );
         }
 
-        workflowsDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='workflows_dir'" );
+        workflowsDir = SystemSettings.getValueWithDefault( "lims", "workflows_dir", null );
         if( workflowsDir != null )
         {
             initRepository( workflowsDir );
@@ -92,7 +87,7 @@ public class RepositoryManager
             log.info( "Workflows repo " + workflows.getCompletePath().toString() );
         }
         log.info( "Repositories initialized" );
-        genomesDir = db.getString( "SELECT setting_value FROM systemsettings WHERE section_name='lims' AND setting_name='genomes_dir'" );
+        genomesDir = SystemSettings.getValueWithDefault( "lims", "genomes_dir", null );
         if( genomesDir != null )
         {
             //Genomes is not supposed to be used as repository in tree
