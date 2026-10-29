@@ -102,7 +102,14 @@ public class QualityControlOperation extends GOperationSupport {
         Path outputDir = TempFiles.getTempDirectory().toPath()
 
         int workflowRunId = nf.insertWorkflowRun ((int)prj.$id, (int)workflowInfoId)
-        db.update("UPDATE workflow_runs SET comment = ? WHERE id = ?", "workflow_run_"+workflowRunId, workflowRunId)
+        String runFolderPath = "workflow_run_" + workflowRunId
+        db.update("UPDATE workflow_runs SET comment = ? WHERE id = ?", runFolderPath, workflowRunId)
+
+        DataElementPath runPath = projectPath.getChildPath("results").getChildPath(runFolderPath)
+        if( !runPath.exists() ) {
+            DataCollectionUtils.createSubCollection(runPath);
+        }
+        File runDir = prjDc.getFile("results/" + runFolderPath);
 
         String serverUrl = request.getServerUrl()
         String referer = null
@@ -126,7 +133,7 @@ public class QualityControlOperation extends GOperationSupport {
 
         Map<String, Object> nextflowParams = new LinkedHashMap<>();
         nextflowParams.put("reads", fastqFiles)
-        nextflowParams.put("resultsDir", resultsDir.getAbsolutePath())
+        nextflowParams.put("resultsDir", runDir.getAbsolutePath())
 
         WorkflowSettings settings = new WorkflowSettings();
         settings.setUseDocker(useDocker )
