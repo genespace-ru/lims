@@ -104,10 +104,11 @@ file_info:
       - Import
       - Edit
       - Delete
-      - Filter
+      - ProjectCardFilter
       code: |-
             SELECT
               fi.id AS "ID" ,
+              fi.project AS "___prjID",
               (CASE WHEN fi.entity='workflow_info' OR fi.entity='workflow_runs' THEN COALESCE('<a target="_blank" href="/webserver/web/content/' || fi.path || '">' || fi.path ||'</a>', fi.path) ELSE fi.path END) AS "Path;<quick visible='true'/>",
               fi.fileName AS "File",
               fi.size AS "Size",
@@ -126,7 +127,7 @@ file_info:
   operations:
   - Import:
       type: Groovy
-      roles: [Administrator, User]
+      roles: ['@AllRolesExceptGuest']
       layout: '{"type":"modalForm"}'
       file: operations.ImportFilesToProject.groovy
   - Edit:
@@ -138,9 +139,14 @@ file_info:
       roles: [Administrator]
       layout: '{"type":"modalForm"}'
       code: com.developmentontheedge.be5.server.operations.FilterOperation
+  - ProjectCardFilter:
+      type: Groovy
+      layout: '{"type":"modalForm"}'
+      roles: ['@AllRolesExceptGuest']
+      file: operations.ProjectCardFilterOperation.groovy
   - Delete:
       type: Groovy
       records: 2
-      roles: [Administrator]
+      roles: ['@AllRolesExceptGuest']
       layout: '{"type":"modalForm"}'
       file: operations.RemoveFileInfo.groovy
