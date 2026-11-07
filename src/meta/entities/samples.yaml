@@ -123,7 +123,9 @@ samples:
               st.title AS "Type;<quick visible='true'/>",
               '<link table="sample_types" queryName="All records" using="___typeID" columns="ID" />' AS ";Type",
 
-             '<a href="#!table/snv_/All records/_tcloneid_=' || s.ID || '">viewer</a>' AS "SNV",  
+             ( CASE WHEN EXISTS ( SELECT 1 FROM pg_class WHERE relname = 'snv_' || s.ID::text )
+                 THEN '<a href="#!table/snv_/All records/_tcloneid_=' || s.ID || '">viewer</a>'
+                 ELSE '' END ) AS "SNV",
 
               s.description AS "Description;<quick visible='true' />",
               s.comment AS "Description;<quick visible='true' />",
