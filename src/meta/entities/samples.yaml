@@ -144,7 +144,7 @@ samples:
       type: 1D
       invisible: true
       layout: '{"hideTitle":"true", "quickType":"select"}'
-      roles: [Administrator]
+      roles: ['@AllRolesExceptGuest']
       operations:
       - Insert
       - Edit
