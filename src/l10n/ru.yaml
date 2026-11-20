@@ -100,6 +100,7 @@ ru:
     - topics: operationName
       entries:
       - CreateEmpty: Создать пустой
+      - ProjectCardFilter: Фильтр
     - topics: All records
       entries:
       - Name: Имя
@@ -289,10 +290,11 @@ ru:
   - file_info:
     - topics: displayName
       entries:
-      - displayName: Files
+      - displayName: Файлы
     - topics: operationName
       entries:
       - Import: Импортировать
+      - ProjectCardFilter : Фильтр
     - topics: ForProjectCard
       entries:
       - Path: Путь
