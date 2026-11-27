@@ -158,6 +158,7 @@ ru:
       - RunWorkflow: Запуск сценария
       - QualityControl: Контроль качества
       - DeleteWorkflowRun: Удалить запуск
+      - RunOpenCRAVAT: OpenCRAVAT
     - topics: ForProjectCard
       entries:
       - Workflow: Сценарий
@@ -295,6 +296,11 @@ ru:
       entries:
       - Import: Импортировать
       - ProjectCardFilter : Фильтр
+    - topics: Import
+      entries:
+      - Sample: Образец
+      - NoSample: Без образца
+      - NoSampleHint: Файлы без образца могут быть недоступны в некоторых анализах и пайплайнах.
     - topics: ForProjectCard
       entries:
       - Path: Путь

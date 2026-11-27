@@ -43,6 +43,13 @@ en:
       - RunWorkflow: Run workflow
       - QualityControl: Quality control
       - DeleteWorkflowRun: Delete workflow run
+      - RunOpenCRAVAT: OpenCRAVAT
+  - file_info:
+    - topics: Import
+      entries:
+      - Sample: Sample
+      - NoSample: No sample
+      - NoSampleHint: Files without a sample may not be accessible in some analyses and pipelines.
   - testtable:
     - topics: operationName
       entries:
