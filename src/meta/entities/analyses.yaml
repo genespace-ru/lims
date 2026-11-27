@@ -64,7 +64,7 @@ analyses:
       type: 1D
       invisible: true
       layout: '{"hideTitle":"true"}'
-      roles: ['@AllRolesExceptGuest']
+      roles: ['Administrator']
       operations:
       - Insert
       - Edit

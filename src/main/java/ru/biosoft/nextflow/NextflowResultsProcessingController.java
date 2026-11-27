@@ -29,6 +29,7 @@ import ru.biosoft.access.core.DataElementPath;
 import ru.biosoft.access.file.FileTypeRegistry;
 import ru.biosoft.access.file.GenericFileDataCollection;
 import ru.biosoft.lims.repository.RepositoryManager;
+import ru.biosoft.lims.util.FileTypeUtils;
 import ru.biosoft.util.ApplicationUtils;
 import ru.biosoft.util.RepositoryFileUtils;
 
@@ -208,8 +209,11 @@ public class NextflowResultsProcessingController extends NextflowController
                             Path relPath = resultsPath2.relativize( resultFile.toPath() );
                             DataElementPath resPath = getFromRelativePath( relPath );
                             Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( resultFile.getName() ), fileTypeCache );
-                            db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)",
-                                    resultFile.getName(), fileTypeId, resPath.toString(), resultFile.length(), projectId, "workflow_runs", workflowRunId );
+                            // Files listed explicitly in outputs.json are declared results — always shown,
+                            // even if their extension looks like a report asset. The supporting/asset rule
+                            // is applied only on recursive imports (Directory outputs and the no-outputs.json fallback).
+                            db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID, isSupporting) VALUES(?,?,?,?,?,?,?,?)",
+                                    resultFile.getName(), fileTypeId, resPath.toString(), resultFile.length(), projectId, "workflow_runs", workflowRunId, "no" );
                         }
                     }
                     catch ( IOException e )
@@ -227,8 +231,9 @@ public class NextflowResultsProcessingController extends NextflowController
                     {
                         File resultFile = new File( file.getValue() );
                         Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( file.getValue() ), fileTypeCache );
-                        db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)", resultFile.getName(), fileTypeId,
-                                file.getKey(), resultFile.length(), projectId, "workflow_runs", workflowRunId );
+                        String supporting = FileTypeUtils.isSupportingFile( resultFile.getName() ) ? "yes" : "no";
+                        db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID, isSupporting) VALUES(?,?,?,?,?,?,?,?)", resultFile.getName(), fileTypeId,
+                                file.getKey(), resultFile.length(), projectId, "workflow_runs", workflowRunId, supporting );
                     }
                     Long folderTypeId = getOrCreateFolderTypeId();
                     Map<String, String> allFolders = new LinkedHashMap<>();
@@ -242,8 +247,9 @@ public class NextflowResultsProcessingController extends NextflowController
                         // Skip the run folder itself — it is the results root, not a result.
                         if( relPath.isEmpty() )
                             continue;
-                        db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)",
-                                dirFile.getName(), folderTypeId, relPath, 0L, projectId, "workflow_runs", workflowRunId );
+                        // Folder rows are always supporting — they are structure, not results.
+                        db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID, isSupporting) VALUES(?,?,?,?,?,?,?,?)",
+                                dirFile.getName(), folderTypeId, relPath, 0L, projectId, "workflow_runs", workflowRunId, "yes" );
                     }
                 }
 
@@ -361,8 +367,12 @@ public class NextflowResultsProcessingController extends NextflowController
             Path relPath = resultsPath2.relativize( resultFile.toPath() );
             DataElementPath resPath = getFromRelativePath( relPath );
             Long fileTypeId = getFileType( resultFile, FilenameUtils.getExtension( resultFile.getName() ), fileTypeCache );
-            db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID) VALUES(?,?,?,?,?,?,?)",
-                    resultFile.getName(), fileTypeId, resPath.toString(), resultFile.length(), projectId, "workflow_runs", workflowRunId );
+            // A Directory output declared in outputs.json is an intended result — every file
+            // under it is visible, including report assets. The supporting/asset rule applies
+            // only to the no-outputs.json recursive fallback, where we cannot tell results
+            // from their assets.
+            db.insert( "INSERT INTO file_info (filename, filetype, path, size, project, entity, entityID, isSupporting) VALUES(?,?,?,?,?,?,?,?)",
+                    resultFile.getName(), fileTypeId, resPath.toString(), resultFile.length(), projectId, "workflow_runs", workflowRunId, "no" );
         }
     }
 

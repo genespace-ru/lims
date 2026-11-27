@@ -77,6 +77,35 @@ qc_runs:
             JOIN file_info fi ON tr.file_info = fi.ID
             ORDER BY tr.creationDate___ DESC
             
+  - ForProjectCard:
+      type: 1D
+      invisible: true
+      layout: '{"hideTitle":"true"}'
+      roles: ['Administrator']
+      
+      code: |-
+            SELECT
+              qr.id AS "ID",
+              qr.project AS "Project;<quick visible='qrue' />",
+              '<link table="projects" queryName="Project card" using="___projectID" columns="ID" />' AS ";Project",
+              
+              qr.sample AS "___sampleID",
+              qr.sample AS "Sample;<quick visible='qrue' />",
+              '<link table="samples" queryName="All records" using="___sampleID" columns="ID" />' AS ";Sample",
+              
+              qr.file_info AS "___fileInfoID",
+              fi.fileName AS "File;<quick visible='qrue' />",
+              '<link table="file_info" queryName="All records" using="___fileInfoID" columns="ID" />' AS ";File",
+    
+              qr.workflow AS "___workflowRunID",
+              
+              qr.qc_info AS "Parameters;<quick visible='false' />",
+              <@COMMON_WHO_FIELDS 'qr' />
+            FROM qc_runs qr
+            JOIN file_info fi ON qr.file_info = fi.ID
+            WHERE qr.project = <parameter:___prjID />
+            ORDER BY qr.creationDate___ DESC
+            
   - '*** Selection view ***':
       type: 1D_unknown
       roles: '@AllRolesExceptGuest'

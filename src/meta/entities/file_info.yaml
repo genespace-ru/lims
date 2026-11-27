@@ -43,6 +43,11 @@ file_info:
     - comment:
         type: VARCHAR(255)
         canBeNull: true
+    - isSupporting:
+        type: BOOL
+        defaultValue: "'no'"
+        canBeNull: false
+        doc: Supporting/asset file (css, js, fonts, images, folder) published by a workflow. 'yes' = hidden on the project card; 'no' = shown. Directly uploaded files are always 'no'.
     - creationDate___:
         type: TIMESTAMP
         defaultValue: CURRENT_TIMESTAMP
@@ -121,7 +126,9 @@ file_info:
               <@COMMON_WHO_FIELDS 's' />
             FROM file_info fi
             LEFT JOIN samples s ON s.ID = fi.entityID
+            LEFT JOIN file_types ft ON fi.fileType = ft.id
             WHERE fi.project = <parameter:___prjID />
+            AND COALESCE(fi.isSupporting, 'no') = 'no'
             ORDER BY fi.id, fi.fileName
   
   operations:

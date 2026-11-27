@@ -14,6 +14,7 @@ import com.developmentontheedge.be5.server.operations.support.GOperationSupport
 
 import com.developmentontheedge.beans.DynamicPropertySet as DPS
 import com.developmentontheedge.beans.DynamicPropertySetSupport
+import com.developmentontheedge.beans.DynamicProperty
 import com.developmentontheedge.beans.BeanInfoConstants
 
 import org.apache.commons.fileupload.FileItem
@@ -65,6 +66,35 @@ public class ImportFilesToProject extends GOperationSupport {
             CAN_BE_NULL: false]
         params.files.setAttribute(BeanInfoConstants.MULTIPLE_SELECTION_LIST, true)
 
+        // Sample selector: a project's samples plus a "no sample" option.
+        // The chosen sample is stored in file_info.entity='samples'/entityID;
+        // VCF files need this to be importable (snv_ tables are named by sample).
+        List<String[]> sampleTagList = [ [ "", localize("{{{NoSample}}}") ] as String[] ]
+        if (prjId != null) {
+            def sampleRows = db.listWithParams("SELECT ID, title FROM samples WHERE project = ? ORDER BY title", prjId)
+            for (def s : sampleRows) {
+                sampleTagList << [ s.$ID.toString(), s.$title?.toString() ] as String[]
+            }
+        }
+        String[][] sampleTags = new String[sampleTagList.size()][2]
+        for (int i = 0; i < sampleTagList.size(); i++) {
+            sampleTags[i] = sampleTagList.get(i)
+        }
+        DynamicProperty sampleProp = new DynamicProperty("sampleId", "Sample", String.class)
+        sampleProp.setAttribute(BeanInfoConstants.TAG_LIST_ATTR, sampleTags)
+        sampleProp.setAttribute(BeanInfoConstants.CAN_BE_NULL, true)
+        params.add(sampleProp)
+        // Small-letters hint (like LoadProject's sequencesFile label).
+        dpsHelper.addLabelRaw(params, localize("{{{NoSampleHint}}}"))
+
+        // For projects with no samples yet, offer to create one automatically.
+        boolean noSamples = sampleTags.length == 1 // only the "no sample" option
+        if (noSamples) {
+            params.createSample = [value: true,
+                DISPLAY_NAME: "Create sample automatically", TYPE: Boolean,
+                CAN_BE_NULL: true]
+        }
+
         params.comment = [value: "", TYPE: String,
             DISPLAY_NAME: "Comment",
             CAN_BE_NULL: true]
@@ -82,6 +112,12 @@ public class ImportFilesToProject extends GOperationSupport {
             projectId = Long.valueOf(projectId.toString())
         }
         String comment = params.$comment?.toString() ?: ""
+        // Selected sample ("" or null = no sample). Stored in file_info.entityID.
+        def sampleIdVal = params.getValue("sampleId")?.toString()
+        Long sampleId = (sampleIdVal != null && !sampleIdVal.isBlank()) ? Long.valueOf(sampleIdVal) : null
+        // "Create sample automatically" — only shown for projects with no samples.
+        def createSampleVal = params.getValue("createSample")
+        boolean createSample = createSampleVal == Boolean.TRUE || "true".equalsIgnoreCase(createSampleVal?.toString())
 
         if (projectId == null) {
             setResult(OperationResult.error("Project is not specified"))
@@ -107,6 +143,17 @@ public class ImportFilesToProject extends GOperationSupport {
         if (!DataElementPath.create(projectPath.toString()).exists()) {
             setResult(OperationResult.error("Project directory does not exist. Create the project via LoadProject first, or create the directory manually."))
             return
+        }
+
+        // "Create sample automatically": for a project with no samples, create
+        // sample1/sample2/... and assign it to the imported files.
+        if (createSample && sampleId == null) {
+            try {
+                sampleId = nextAutoSampleId(projectId)
+            } catch (Exception e) {
+                setResult(OperationResult.error("Failed to create a sample: " + e.message))
+                return
+            }
         }
 
         DataCollection samples = DataCollectionUtils.createSubCollection(projectPath.getChildPath("samples"), true)
@@ -156,21 +203,23 @@ public class ImportFilesToProject extends GOperationSupport {
         }
 
         // Create file_info records only for files that were just imported
+        // importedPaths are repo-root-relative; resolve against the absolute repo root.
         for (String pathStr in importedPaths) {
             def existing = db.oneLong(
                     "SELECT ID FROM file_info WHERE path = ? AND project = ?",
                     pathStr, projectId)
             if (existing != null) continue
 
-                def typeID = FileTypeUtils.getOrCreateTypeId(db, new File(pathStr));
+            File absFile = new File(repoPath, pathStr)
+            def typeID = FileTypeUtils.getOrCreateTypeId(db, absFile)
             database.file_info << [
                 fileName: new File(pathStr).getName(),
                 fileType: typeID,
                 path: pathStr,
-                size: new File(pathStr).length(),
+                size: absFile.length(),
                 project: projectId,
-                entity: "sample",
-                entityID: null,
+                entity: "samples",
+                entityID: sampleId,
                 comment: comment
             ]
         }
@@ -190,8 +239,8 @@ public class ImportFilesToProject extends GOperationSupport {
                         path: folderPath,
                         size: 0,
                         project: projectId,
-                        entity: "sample",
-                        entityID: null,
+                        entity: "samples",
+                        entityID: sampleId,
                         comment: comment
                     ]
             }
@@ -202,5 +251,26 @@ public class ImportFilesToProject extends GOperationSupport {
         } else {
             setResult(OperationResult.finished("Some files failed: " + String.join("\n", errors)))
         }
+    }
+
+    /**
+     * Creates a new sample titled sample1, sample2, ... (the next free
+     * sequential number for the project) and returns its ID.
+     */
+    private Long nextAutoSampleId(long projectId) {
+        int next = 1
+        def rows = db.listWithParams("SELECT title FROM samples WHERE project = ?", projectId)
+        for (def r : rows) {
+            def t = r.$title?.toString()
+            if (t == null) continue
+            def m = (t =~ /sample(\d+)$/)
+            if (m.find()) {
+                int n = m.group(1).toInteger()
+                if (n >= next) next = n + 1
+            }
+        }
+        String title = "sample" + next
+        // database.<entity> << [...] returns the generated autoincrement ID.
+        return (Long) (database.samples << [project: projectId, title: title])
     }
 }

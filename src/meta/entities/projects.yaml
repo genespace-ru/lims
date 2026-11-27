@@ -69,8 +69,6 @@ projects:
               '||{{{Run}}}|#!table/runs/RunTab/___prjID=',                  pr.ID,
               '||{{{Samples}}}|#!table/samples/ForProjectCard/___prjID=',    pr.ID,
               '||{{{Workflows}}}|#!table/workflow_runs/ForProjectCard/___prjID=', pr.ID,
-              '||{{{Control}}}|#!table/projects/ToDo/___prjID=',            pr.ID,
-              '||{{{Analyses}}}|#!table/analyses/ForProjectCard/___prjID=',  pr.ID,
               '||{{{Files}}}|#!table/file_info/ForProjectCard/___prjID=',    pr.ID
             ) AS "Tabs"
           FROM projects pr

@@ -32,6 +32,11 @@ import ru.biosoft.lims.repository.RepositoryManager
  *   2. results folder on disk — projects/<name>/results/<comment>
  *   3. file_info    — rows with entity='workflow_runs', entityID=run ID
  *   4. workflow_runs — the record itself
+ *
+ * Note: the per-sample snv_&lt;sample&gt; / snv_meta_&lt;sample&gt; tables are NOT
+ * dropped here — a sample's table can be populated by more than one run, so the
+ * table belongs to the sample (and project), not the run. They are dropped when
+ * the sample or the project is removed instead.
  */
 public class RemoveWorkflowRun extends GOperationSupport {
 
