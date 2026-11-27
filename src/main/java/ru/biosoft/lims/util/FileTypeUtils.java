@@ -4,6 +4,8 @@ import com.developmentontheedge.be5.database.DbService;
 import ru.biosoft.access.file.FileTypeRegistry;
 
 import java.io.File;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * Utility for working with file types stored in the file_types dictionary.
@@ -12,7 +14,32 @@ import java.io.File;
  */
 public class FileTypeUtils {
 
+    /**
+     * Extensions of supporting/asset files (report css, js, fonts, images). Such files
+     * are published inside report directories by workflows and are hidden on the project
+     * card via file_info.isSupporting, but are still kept in the table for management.
+     */
+    private static final Set<String> SUPPORTING_EXTENSIONS = Set.of(
+            "css", "js", "map",
+            "png", "jpg", "jpeg", "gif", "svg",
+            "woff", "woff2", "ttf", "eot", "otf" );
+
     private FileTypeUtils() {
+    }
+
+    /**
+     * Whether the given file name has a supporting/asset extension (css, js, fonts, images).
+     * Used to set file_info.isSupporting for workflow-published files.
+     */
+    public static boolean isSupportingFile( String fileName )
+    {
+        if( fileName == null )
+            return false;
+        int dot = fileName.lastIndexOf( '.' );
+        if( dot < 0 || dot == fileName.length() - 1 )
+            return false;
+        String ext = fileName.substring( dot + 1 ).toLowerCase( Locale.ROOT );
+        return SUPPORTING_EXTENSIONS.contains( ext );
     }
 
     /**

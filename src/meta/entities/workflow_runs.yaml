@@ -119,6 +119,12 @@ workflow_runs:
       - DeleteWorkflowRun
       - QualityControl
       - RunWorkflow
+      - RunOpenCRAVAT
+      operationsOrder:
+      - RunWorkflow
+      - QualityControl
+      - RunOpenCRAVAT
+      - DeleteWorkflowRun
       code: |-
             SELECT
             wr.id as "ID",
@@ -148,4 +154,9 @@ workflow_runs:
       roles: ['@AllRolesExceptGuest']
       layout: '{"type":"modalForm"}'
       file: operations.RunWorkflowOperation.groovy
+  - RunOpenCRAVAT:
+      type: Groovy
+      roles: ['@AllRolesExceptGuest']
+      layout: '{"type":"modalForm"}'
+      file: operations.RunOpenCRAVATOperation.groovy
           
