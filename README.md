@@ -98,6 +98,22 @@ mvn be5:generate-doc -DBE5_DOC_PATH=../lims-docs/source
 make.html
 ```
 
+### Детальные (verbose) логи при загрузке VCF
+
+При импорте VCF-файла (VCFLoader) ошибки на отдельных строки записываются в лог.
+По умолчанию выводится только краткое сообщение; для разработки можно включить
+детальный режим — тогда в лог попадёт полная цепочка исключений, а также failing
+SQL и значения строки. Выключатель по умолчанию **выключен**, переопределяется
+без изменения кода:
+
+```sh
+# JVM-флаг (например, в run-конфигурации или для jetty)
+-Dlims.loader.verbose=true
+
+# или переменная окружения
+LIMS_LOADER_VERBOSE=1
+```
+
 ## Восстановление базы из дампа на продуктивном сервере
 
 ```sh
@@ -123,3 +139,15 @@ psql -h localhost -p 5435 -U lims -d lims < Downloads/lims/lims-10-18.sql
 Возможно, для получения последних версий зависимостей потребуется локально собрать и установить проекты
 - Геномный браузер https://github.com/Biosoft-ru/genome-browser
 - Workflow Engine https://github.com/genespace-ru/workflow-engine
+
+
+## OpenCRAVAT setup
+Create folder for opencravat modules and workdir, install modules manually:
+
+Note: in November 2026 only version 3.0.0 does not give errors for install-base modules set
+
+```sh
+docker run -v /data/opencravat/modules:/mnt/modules karchinlab/opencravat:3.0.0 oc module install-base
+docker run -v /data/opencravat/modules:/mnt/modules karchinlab/opencravat:3.0.0 oc module install -y tsvreporter
+docker run -v /data/opencravat/modules:/mnt/modules karchinlab/opencravat:3.0.0 oc module install -y alphamissense clinvar clinvar_acmg go spliceai
+```
