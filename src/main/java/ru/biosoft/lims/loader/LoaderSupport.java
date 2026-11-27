@@ -91,8 +91,17 @@ public abstract class LoaderSupport implements Loader
     protected void postload() {}
 
     /**
-	 * Processes file content line by line.
-	 */
+     * Verbose per-line error logging switch. Off by default so production logs
+     * stay quiet; enable while developing via -Dlims.loader.verbose=true (or the
+     * LIMS_LOADER_VERBOSE=1 environment variable).
+     */
+    private static final boolean VERBOSE =
+            Boolean.parseBoolean(System.getProperty("lims.loader.verbose",
+                    System.getenv().getOrDefault("LIMS_LOADER_VERBOSE", "false")));
+
+    /**
+     * Processes file content line by line.
+     */
     protected void processLine(String line)
     {
         try
@@ -106,10 +115,35 @@ public abstract class LoaderSupport implements Loader
         }
         catch(Throwable t)
         {
-            log.log(Level.SEVERE, getFormat() + "v" + getVersion() +
-                "parsing error: " + t + System.lineSeparator() +
-                "line: " + lineNumber + System.lineSeparator() + line);
+            if( VERBOSE )
+                log.log(Level.SEVERE, getFormat() + "v" + getVersion() +
+                    "parsing error: " + describe(t) + System.lineSeparator() +
+                    "line: " + lineNumber + System.lineSeparator() + line);
+            else
+                log.log(Level.SEVERE, getFormat() + "v" + getVersion() +
+                    "parsing error: " + t + System.lineSeparator() +
+                    "line: " + lineNumber + System.lineSeparator() + line);
         }
+    }
+
+    /**
+     * Builds a detailed, multi-line description of a throwable: the message plus
+     * the full cause chain. Used only when the verbose switch is on.
+     */
+    private static String describe(Throwable t)
+    {
+        StringBuilder sb = new StringBuilder();
+        Throwable cur = t;
+        int depth = 0;
+        while( cur != null )
+        {
+            if( depth > 0 )
+                sb.append(System.lineSeparator()).append("  caused by: ");
+            sb.append(cur.getClass().getName()).append(": ").append(cur.getMessage());
+            cur = cur.getCause();
+            depth++;
+        }
+        return sb.toString();
     }
 
     protected void processMeta(String line)   throws Exception {}

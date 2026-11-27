@@ -5,6 +5,8 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.developmentontheedge.be5.database.DbService;
+
 /**
  * VCFLoader loads SNV from VCFv4.2 file into corresponding database table.
  * 
@@ -41,8 +43,18 @@ public class VCFLoader extends LoaderSupport
 
     protected String snvTableName;
     protected String metaTableName;
-    
-    protected void preload(File file, String project, String sample) 
+
+    /**
+     * Manually assigns the injected DbService (VCFLoader has an implicit
+     * no-arg constructor, so a plain {@code new VCFLoader()} does not get
+     * field injection; callers outside Guice should set this first).
+     */
+    public void setDb(DbService db)
+    {
+        this.db = db;
+    }
+
+    protected void preload(File file, String project, String sample)
     {
         snvTableName  = "snv_"      + sample;
         metaTableName = "snv_meta_" + sample;
@@ -92,7 +104,9 @@ public class VCFLoader extends LoaderSupport
         if( line.charAt(start) == '"' )
         {
             start++;
-            end = line.indexOf('"', start+1);
+            // start now points just after the opening quote; find the closing
+            // quote (which is at `start` for an empty value "").
+            end = line.indexOf('"', start);
         }
         else
         {
@@ -222,16 +236,22 @@ public class VCFLoader extends LoaderSupport
      * chr1     46258772    .   GA  G   0       RefCall .       GT:GQ:DP:AD:VAF:PL  0/0:35:15:13,2:0.133333:0,35,55
      */
     public static final String[] titles = new String[] {"CHROM", "POS", "ID", "REF", "ALT", "QUAL", "FILTER", "INFO", "FORMAT"};
-    protected void processHeader(String line) throws Exception  
+    /**
+     * The sample column names from the header, in order. The first sample (e.g.
+     * "TUMOR" in a somatic tumor/normal VCF) is the one whose genotype/attributes
+     * are stored in the snv_ table; any additional sample columns are ignored.
+     */
+    protected java.util.List<String> sampleNames = new java.util.ArrayList<String>();
+    protected void processHeader(String line) throws Exception
     {
         StringTokenizer tokens = processHeader(line, titles, 9);
 
         if( ! tokens.hasMoreTokens() )
-            throw new Exception("Incorrect header line, it should contain 1 sample, 9 fields.");
-        String token = tokens.nextToken();
-
-        if( tokens.hasMoreTokens() )
-            throw new Exception("Incorrect header line, only one sample is supported.");
+            throw new Exception("Incorrect header line, it should contain at least 1 sample, 9 fields.");
+        // One or more sample columns are allowed (e.g. somatic VCFs carry TUMOR
+        // and NORMAL). The first is used; the rest are accepted but not stored.
+        while( tokens.hasMoreTokens() )
+            sampleNames.add( tokens.nextToken() );
     }
     
     protected void processRow(String line) throws Exception     
@@ -251,11 +271,27 @@ public class VCFLoader extends LoaderSupport
 
         String json = buildJson(format, sample);
 
-        db.updateRaw("INSERT INTO " + snvTableName + 
+        // The VCF missing-value token "." means "no value" for ID and QUAL.
+        // QUAL is numeric (crashes parse otherwise); ID is a nullable string.
+        // (FILTER is NOT NULL in the schema, so its value is stored as-is.)
+        String idValue = ".".equals(id) ? null : id;
+        Double qualValue = ".".equals(qual) ? null : Double.valueOf(qual);
+
+        String sql = "INSERT INTO " + snvTableName +
                      "(vcf_chrom, vcf_pos, vcf_id, vcf_ref, vcf_alt, vcf_qual, vcf_filter, " +
                      " vcf_info, vcf_format, attributes) " +
-                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, to_json(?::json) )", 
-                     chrom, Integer.parseInt(pos), id, ref, alt, Double.parseDouble(qual), filter, info, format, json);
+                     "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, to_json(?::json) )";
+        try
+        {
+            db.updateRaw(sql, chrom, Integer.parseInt(pos), idValue, ref, alt, qualValue, filter, info, format, json);
+        }
+        catch( Exception e )
+        {
+            // Attach the failing SQL (with the row values) so verbose logging can show it.
+            throw new Exception("SQL failed: " + sql + System.lineSeparator() +
+                    "  args: [" + chrom + ", " + pos + ", " + idValue + ", " + ref + ", " + alt +
+                    ", " + qualValue + ", " + filter + ", " + info + ", " + format + ", " + json + "]", e);
+        }
     }
 
     protected String buildJson(String format, String sample)

@@ -28,18 +28,18 @@ snv_:
         canBeNull: true 
         doc: List of identifiers, separator - ;
     - vcf_ref:
-        type: VARCHAR(50)
-        doc: Bases (A,C,G,T,N) in the reference genome.
-    - vcf_alt: 
-        type: VARCHAR(50)
-        doc: Alternative bases.
+        type: TEXT
+        doc: Bases (A,C,G,T,N) in the reference genome. Can be long for large deletions.
+    - vcf_alt:
+        type: TEXT
+        doc: Alternative bases. Can be long for large insertions (multi-base ALT alleles).
     - vcf_qual:
         type: DECIMAL(4,1)
         canBeNull: true
         doc: Quality, Phred-scaled quality score for the assertion made in ALT.
     - vcf_filter:
-        type: VARCHAR(50)
-        doc: Status, PASS - if the position passed all filters.
+        type: TEXT
+        doc: Status, semicolon-separated list of filters (PASS if none). Can be long (many filter flags).
     - vcf_info: 
         type: TEXT
         canBeNull: true
