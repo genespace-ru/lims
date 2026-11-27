@@ -87,7 +87,17 @@ public class SnvTableQueryExecutor implements QueryExecutor
             "            '/_snvid_=' || s.ID || '\">Card</>' AS \"Details\",\n" +
             "            \n" +
             "            s.attributes AS \"Attributes;<quick visible='false' />\",\n" +
-            "            COALESCE('<a target=\"_blank\" href=\"/static/genomebrowser2.html#de=' || ss.setting_value || '&track=' || sss.setting_value || '&pos=' || SUBSTRING(s.vcf_chrom,4) || ':' || s.vcf_pos || '-' || s.vcf_pos+1 || '\">' ||'Open in GB'||'</a>', '')AS \"GB;<quick visible='true' />\"\n" +
+            "            COALESCE('<a target=\"_blank\" href=\"/static-extra/genomebrowser2.html#de=' || ss.setting_value || '&track=' || sss.setting_value ||\n" +
+            "              (CASE WHEN (SELECT fi.path FROM file_info fi\n" +
+            "                          INNER JOIN file_types ft ON ft.id = fi.filetype\n" +
+            "                          WHERE fi.entity = 'samples' AND fi.entityID = <parameter:_tcloneid_ /> AND ft.suffix='.vcf'\n" +
+            "                          ORDER BY fi.ID DESC LIMIT 1) IS NOT NULL\n" +
+            "                   THEN ';' || (SELECT fi.path FROM file_info fi\n" +
+            "                                INNER JOIN file_types ft ON ft.id = fi.filetype\n" +
+            "                                WHERE fi.entity = 'samples' AND fi.entityID = <parameter:_tcloneid_ /> AND ft.suffix='.vcf'\n" +
+            "                                ORDER BY fi.ID DESC LIMIT 1)\n" +
+            "                   ELSE '' END) ||\n" +
+            "              '&pos=' || SUBSTRING(s.vcf_chrom,4) || ':' || s.vcf_pos || '-' || s.vcf_pos+1 || '\">' ||'Open in GB'||'</a>', '')AS \"GB;<quick visible='true' />\"\n" +
             "        FROM snv_<parameter:_tcloneid_ /> s\n" +
             "        LEFT JOIN systemsettings ss ON ss.section_name='lims' AND ss.setting_name='sequence_path'\n" +
             "        LEFT JOIN systemsettings sss ON sss.section_name='lims' AND sss.setting_name='tracks'\n" +
